@@ -1,0 +1,1 @@
+include ':app', ':Konashi:konashi-v2-android-sdk'
