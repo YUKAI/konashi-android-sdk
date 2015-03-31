@@ -27,8 +27,8 @@ public class KonashiUUID {
     public static final String BASE_UUID_STRING = "-03FB-40DA-98A7-B0DEF65C2D4B";
 
     // Battery service UUID
-    public static final UUID BATTERY_SERVICE_UUID                 = UUID.fromString("229B180F" + BASE_UUID_STRING);
-    public static final UUID BATTERY_LEVEL_UUID                   = UUID.fromString("229B2A19" + BASE_UUID_STRING);
+    public static final UUID BATTERY_SERVICE_UUID                 = UUID.fromString("0000180F-0000-1000-8000-00805f9b34fb");
+    public static final UUID BATTERY_LEVEL_UUID                   = UUID.fromString("00002A19-0000-1000-8000-00805f9b34fb");
     
     // konashi service UUID
     public static final UUID KONASHI_SERVICE_UUID                 = UUID.fromString("229BFF00" + BASE_UUID_STRING);

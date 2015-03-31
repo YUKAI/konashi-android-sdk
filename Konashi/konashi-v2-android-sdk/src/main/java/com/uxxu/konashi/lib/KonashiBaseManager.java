@@ -551,7 +551,7 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
                 setStatus(BleStatus.SERVICE_FOUND);
                     
                 // Check the characteristics
-                if(/**!isAvailableCharacteristic(KonashiUUID.BATTERY_SERVICE_UUID, KonashiUUID.BATTERY_LEVEL_UUID) ||**/
+                if(!isAvailableCharacteristic(KonashiUUID.BATTERY_SERVICE_UUID, KonashiUUID.BATTERY_LEVEL_UUID) ||
                    !isAvailableCharacteristic(KonashiUUID.KONASHI_SERVICE_UUID, KonashiUUID.PIO_SETTING_UUID) ||
                    !isAvailableCharacteristic(KonashiUUID.KONASHI_SERVICE_UUID, KonashiUUID.PIO_PULLUP_UUID) ||
                    !isAvailableCharacteristic(KonashiUUID.KONASHI_SERVICE_UUID, KonashiUUID.PIO_OUTPUT_UUID) ||
