@@ -18,34 +18,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical" >
 
-        <Button
-            android:id="@+id/led2_button"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/find_button_margin"
-            android:text="@string/led2"/>
-
-        <Button
-            android:id="@+id/led3_button"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/find_button_margin"
-            android:text="@string/led3"/>
-
-        <Button
-            android:id="@+id/led4_button"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/find_button_margin"
-            android:text="@string/led4"/>
-
-        <Button
-            android:id="@+id/led5_button"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/find_button_margin"
-            android:text="@string/led5"/>
-
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

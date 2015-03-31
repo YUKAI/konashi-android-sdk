@@ -19,10 +19,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".ControllerActivity"
-            android:label="@string/app_name" >
-        </activity>
+
+        <activity android:name=".InputActivity"
+                  android:label="konashi led2" ></activity>
     </application>
 
 </manifest>
