@@ -625,8 +625,13 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
         if(mBluetoothGatt!=null && characteristic!=null){
             boolean registered = mBluetoothGatt.setCharacteristicNotification(characteristic, true);
             BluetoothGattDescriptor descriptor = characteristic.getDescriptor(KonashiUUID.CLIENT_CHARACTERISTIC_CONFIG);
-            descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-            mBluetoothGatt.writeDescriptor(descriptor);
+            // HACK descriptorを呼び出すのはいいけど対象のcharacteristicがdescriptorを備えていない（処理スキップで動くっちゃ動く）
+            if(descriptor!=null){
+                descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+                mBluetoothGatt.writeDescriptor(descriptor);
+            }else{
+                KonashiUtils.log("Descriptor is null!");
+            }
             return registered;
         } else {
             return false;
