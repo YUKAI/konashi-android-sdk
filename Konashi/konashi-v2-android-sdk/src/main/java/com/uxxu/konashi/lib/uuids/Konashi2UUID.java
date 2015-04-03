@@ -1,4 +1,4 @@
-package com.uxxu.konashi.lib;
+package com.uxxu.konashi.lib.uuids;
 
 import java.util.UUID;
 
@@ -23,13 +23,19 @@ import java.util.UUID;
  * limitations under the License.
  * 
  */
-public class KonashiUUID {
+
+public class Konashi2UUID {
+
+    //konashi2,koshain用ベースUUID，konashi(v1)使用時は要調査
     public static final String BASE_UUID_STRING = "-03FB-40DA-98A7-B0DEF65C2D4B";
 
     // Battery service UUID
     public static final UUID BATTERY_SERVICE_UUID                 = UUID.fromString("0000180F-0000-1000-8000-00805f9b34fb");
     public static final UUID BATTERY_LEVEL_UUID                   = UUID.fromString("00002A19-0000-1000-8000-00805f9b34fb");
-    
+
+    /**
+     * 以下UUIDについてはkonashi2,koshainは"229Bxxxx"，konashi(v1)は"0000xxxx"
+     */
     // konashi service UUID
     public static final UUID KONASHI_SERVICE_UUID                 = UUID.fromString("229BFF00" + BASE_UUID_STRING);
 
