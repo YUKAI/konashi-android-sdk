@@ -1,4 +1,4 @@
-package com.uxxu.konashi.lib;
+package com.uxxu.konashi.lib.ui;
 
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
@@ -7,6 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+
+import com.uxxu.konashi.lib.KonashiUtils;
+import com.uxxu.konashi.lib.R;
 
 import java.util.ArrayList;
 

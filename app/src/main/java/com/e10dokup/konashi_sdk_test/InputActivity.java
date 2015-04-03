@@ -8,7 +8,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.uxxu.konashi.lib.Konashi;
-import com.uxxu.konashi.lib.KonashiActivity;
+import com.uxxu.konashi.lib.ui.KonashiActivity;
 import com.uxxu.konashi.lib.KonashiObserver;
 
 public class InputActivity extends KonashiActivity {

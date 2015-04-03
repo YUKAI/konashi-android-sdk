@@ -2,6 +2,8 @@ package com.uxxu.konashi.lib;
 
 import android.content.Context;
 
+import com.uxxu.konashi.lib.uuids.KonashiUUID;
+
 /**
  * konashiを管理するメインクラス
  * 

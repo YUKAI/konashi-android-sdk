@@ -1,7 +1,9 @@
-package com.uxxu.konashi.lib;
+package com.uxxu.konashi.lib.ui;
 
 import android.app.Activity;
 import android.os.Bundle;
+
+import com.uxxu.konashi.lib.KonashiManager;
 
 /**
  * konashiを簡単に使うためのActivity

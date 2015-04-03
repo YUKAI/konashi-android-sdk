@@ -17,7 +17,10 @@ import android.os.Handler;
 import android.os.Message;
 import android.widget.Toast;
 
-import com.uxxu.konashi.lib.BleDeviceSelectionDialog.OnBleDeviceSelectListener;
+import com.uxxu.konashi.lib.ui.BleDeviceSelectionDialog;
+import com.uxxu.konashi.lib.ui.BleDeviceSelectionDialog.OnBleDeviceSelectListener;
+import com.uxxu.konashi.lib.ui.BleDeviceListAdapter;
+import com.uxxu.konashi.lib.uuids.KonashiUUID;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -443,7 +446,7 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
 
             KonashiUtils.log("onCharacteristicChanged: " + characteristic.getUuid());
 
-            if(characteristic.getUuid().equals(KonashiUUID.PIO_INPUT_NOTIFICATION_UUID)){                
+            if(characteristic.getUuid().equals(KonashiUUID.PIO_INPUT_NOTIFICATION_UUID)){
                 value = characteristic.getValue()[0];
                 onUpdatePioInput(value);
             }
