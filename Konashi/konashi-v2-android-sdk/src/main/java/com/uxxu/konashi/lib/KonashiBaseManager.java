@@ -17,10 +17,9 @@ import android.os.Handler;
 import android.os.Message;
 import android.widget.Toast;
 
+import com.uxxu.konashi.lib.ui.BleDeviceListAdapter;
 import com.uxxu.konashi.lib.ui.BleDeviceSelectionDialog;
 import com.uxxu.konashi.lib.ui.BleDeviceSelectionDialog.OnBleDeviceSelectListener;
-import com.uxxu.konashi.lib.ui.BleDeviceListAdapter;
-import com.uxxu.konashi.lib.uuids.KonashiUUID;
 
 import java.util.ArrayList;
 import java.util.Timer;
