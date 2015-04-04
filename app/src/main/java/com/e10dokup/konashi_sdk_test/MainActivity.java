@@ -7,22 +7,26 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.uxxu.konashi.lib.Konashi;
-import com.uxxu.konashi.lib.ui.KonashiActivity;
 import com.uxxu.konashi.lib.KonashiObserver;
+import com.uxxu.konashi.lib.ui.KonashiActivity;
 
 
 public class MainActivity extends KonashiActivity {
-    private static final String TAG = "KonashiSample";
+    private static final String TAG = MainActivity.class.getSimpleName();
+    private final MainActivity self = this;
 
     private LinearLayout mContainer;
     private Button mFindButton;
+    private Button mCheckConnectionButton;
 
     private TextView mSwTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -51,6 +55,18 @@ public class MainActivity extends KonashiActivity {
 
                     mFindButton.setText(getText(R.string.find_button));
                     mContainer.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        mCheckConnectionButton = (Button)findViewById(R.id.check_connection_button);
+        mCheckConnectionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(getKonashiManager().isConnected()){
+                    Toast.makeText(self, getKonashiManager().getPeripheralName() + " is connected!", Toast.LENGTH_LONG).show();
+                }else{
+                    Toast.makeText(self, "konashi isn't connected!", Toast.LENGTH_LONG).show();
                 }
             }
         });
