@@ -21,6 +21,8 @@ public class MainActivity extends KonashiActivity {
     private LinearLayout mContainer;
     private Button mFindButton;
     private Button mCheckConnectionButton;
+    private Button mResetButton;
+    private boolean mIsStatePullUp = false;
 
     private TextView mSwTextView;
 
@@ -68,6 +70,17 @@ public class MainActivity extends KonashiActivity {
                 }else{
                     Toast.makeText(self, "konashi isn't connected!", Toast.LENGTH_LONG).show();
                 }
+            }
+        });
+
+        mResetButton = (Button)findViewById(R.id.reset_button);
+        mResetButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getKonashiManager().reset();
+
+                mFindButton.setText(getText(R.string.find_button));
+                mContainer.setVisibility(View.GONE);
             }
         });
 
@@ -134,19 +147,37 @@ public class MainActivity extends KonashiActivity {
         public void onUpdatePioInput(byte value){
             Log.d(TAG, "onUpdatePioInput: " + value);
 
-            // スイッチの状態を見て、テキスト変える
+            // スイッチの状態を見て、テキストを変え，各ピンをプルアップし，出力する．
             if(getKonashiManager().digitalRead(Konashi.S1)==Konashi.HIGH){
                 mSwTextView.setText(getString(R.string.on));
-                getKonashiManager().digitalWrite(Konashi.LED2, Konashi.HIGH);
-                getKonashiManager().digitalWrite(Konashi.LED3, Konashi.HIGH);
-                getKonashiManager().digitalWrite(Konashi.LED4, Konashi.HIGH);
-                getKonashiManager().digitalWrite(Konashi.LED5, Konashi.HIGH);
+
+                if(!mIsStatePullUp){
+                    getKonashiManager().pinPullup(Konashi.LED2, Konashi.PULLUP);
+                    getKonashiManager().pinPullup(Konashi.LED3, Konashi.PULLUP);
+                    getKonashiManager().pinPullup(Konashi.LED4, Konashi.PULLUP);
+                    getKonashiManager().pinPullup(Konashi.LED5, Konashi.PULLUP);
+
+                    getKonashiManager().digitalWrite(Konashi.LED2, Konashi.HIGH);
+                    getKonashiManager().digitalWrite(Konashi.LED3, Konashi.HIGH);
+                    getKonashiManager().digitalWrite(Konashi.LED4, Konashi.HIGH);
+                    getKonashiManager().digitalWrite(Konashi.LED5, Konashi.HIGH);
+
+                    mIsStatePullUp = true;
+                }else{
+                    getKonashiManager().pinPullup(Konashi.LED2, Konashi.NO_PULLS);
+                    getKonashiManager().pinPullup(Konashi.LED3, Konashi.NO_PULLS);
+                    getKonashiManager().pinPullup(Konashi.LED4, Konashi.NO_PULLS);
+                    getKonashiManager().pinPullup(Konashi.LED5, Konashi.NO_PULLS);
+
+                    getKonashiManager().digitalWrite(Konashi.LED2, Konashi.LOW);
+                    getKonashiManager().digitalWrite(Konashi.LED3, Konashi.LOW);
+                    getKonashiManager().digitalWrite(Konashi.LED4, Konashi.LOW);
+                    getKonashiManager().digitalWrite(Konashi.LED5, Konashi.LOW);
+
+                    mIsStatePullUp = false;
+                }
             } else {
                 mSwTextView.setText(getString(R.string.off));
-                getKonashiManager().digitalWrite(Konashi.LED2, Konashi.LOW);
-                getKonashiManager().digitalWrite(Konashi.LED3, Konashi.LOW);
-                getKonashiManager().digitalWrite(Konashi.LED4, Konashi.LOW);
-                getKonashiManager().digitalWrite(Konashi.LED5, Konashi.LOW);
             }
         }
     };
