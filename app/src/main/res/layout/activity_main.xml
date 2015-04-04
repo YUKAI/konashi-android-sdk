@@ -27,6 +27,13 @@
         android:orientation="vertical" >
 
         <Button
+            android:id="@+id/reset_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/find_button_margin"
+            android:text="@string/reset_button"/>
+
+        <Button
             android:id="@+id/led2_button"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
