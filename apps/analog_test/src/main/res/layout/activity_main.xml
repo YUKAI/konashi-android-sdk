@@ -1,0 +1,67 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              tools:context=".MainActivity" >
+
+    <Button
+        android:id="@+id/find_button"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/find_button_margin"
+        android:text="@string/find_button"/>
+
+    <Button
+        android:id="@+id/check_connection_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/find_button_margin"
+        android:text="@string/check_connection_button"
+        />
+
+    <LinearLayout
+        android:id="@+id/container"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@+id/reset_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/find_button_margin"
+            android:text="@string/reset_button"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/label_power_seekbar"
+            android:layout_margin="@dimen/find_button_margin"
+            android:gravity="left"/>
+
+        <SeekBar
+            android:id="@+id/seekbar_power"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="100"
+            android:progress="0"
+            android:layout_margin="@dimen/find_button_margin" />
+
+        <Button
+            android:id="@+id/button_write_led"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/find_button_margin"
+            android:text="@string/button_write_led"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/text_read_input"
+            android:layout_margin="@dimen/find_button_margin"
+            android:text="@string/text_read_input"/>
+
+    </LinearLayout>
+
+</LinearLayout>

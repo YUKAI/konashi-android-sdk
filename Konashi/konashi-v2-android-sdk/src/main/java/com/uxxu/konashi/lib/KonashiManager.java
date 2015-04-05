@@ -491,6 +491,8 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
             val[0] = (byte)pin;
             val[1] = (byte)((milliVolt >> 8) & 0xFF);
             val[2] = (byte)((milliVolt >> 0) & 0xFF);
+
+            KonashiUtils.log("analogWrite pin: " + pin + ", value: " + milliVolt);
             
             addWriteMessage(KonashiUUID.ANALOG_DRIVE_UUID, val);
         } else {

@@ -1,1 +1,1 @@
-include ':app', ':Konashi:konashi-v2-android-sdk', ':pwm_test'
+include ':apps:app', ':Konashi:konashi-v2-android-sdk', ':apps:pwm_test', ':apps:analog_test'
