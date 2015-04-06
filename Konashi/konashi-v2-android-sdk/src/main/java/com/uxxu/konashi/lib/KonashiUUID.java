@@ -1,4 +1,4 @@
-package com.uxxu.konashi.lib.uuids;
+package com.uxxu.konashi.lib;
 
 import java.util.UUID;
 
@@ -24,7 +24,7 @@ import java.util.UUID;
  * 
  */
 
-public class Konashi2UUID {
+public class KonashiUUID {
 
     //konashi2,koshain用ベースUUID，konashi(v1)使用時は要調査
     public static final String BASE_UUID_STRING = "-03FB-40DA-98A7-B0DEF65C2D4B";
