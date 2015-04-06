@@ -25,6 +25,8 @@ public class MainActivity extends KonashiActivity {
     private boolean mIsStatePullUp = false;
 
     private TextView mSwTextView;
+    private TextView mBatteryLevelText;
+    private TextView mSignalLevelText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +41,11 @@ public class MainActivity extends KonashiActivity {
         // スイッチの状態テキスト
         mSwTextView = (TextView)findViewById(R.id.sw_state);
         mSwTextView.setText(getString(R.string.off));
+
+        // バッテリ，シグナルレベルテキスト
+        mBatteryLevelText = (TextView)findViewById(R.id.text_battery_level);
+        mSignalLevelText = (TextView)findViewById(R.id.text_signal_level);
+
 
         // 一番上に表示されるボタン。konashiにつないだり、切断したり
         mFindButton = (Button)findViewById(R.id.find_button);
@@ -141,6 +148,9 @@ public class MainActivity extends KonashiActivity {
 
             // konashiのポートの定義。S1をINPUTに（デフォルトでINPUTですが）
             getKonashiManager().pinMode(Konashi.S1, Konashi.INPUT);
+
+            getKonashiManager().batteryLevelReadRequest();
+            getKonashiManager().signalStrengthReadRequest();
         }
 
         @Override
@@ -179,6 +189,18 @@ public class MainActivity extends KonashiActivity {
             } else {
                 mSwTextView.setText(getString(R.string.off));
             }
+        }
+
+        @Override
+        public void onUpdateBatteryLevel(int level) {
+            mBatteryLevelText.setText(getString(R.string.label_battery_level) + String.valueOf(level));
+            getKonashiManager().batteryLevelReadRequest();
+        }
+
+        @Override
+        public void onUpdateSignalStrength(int rssi) {
+            mSignalLevelText.setText(getString(R.string.label_signal_level) + String.valueOf(rssi));
+            getKonashiManager().signalStrengthReadRequest();
         }
     };
 }

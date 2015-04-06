@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">konashi UART Tester</string>
+
+    <string name="find_button">Find konashi</string>
+    <string name="disconnect_button">Disconnect konashi</string>
+    <string name="check_connection_button">Check Connection</string>
+    <string name="reset_button">Reset konashi</string>
+    <string name="button_write_uart">UART Write</string>
+</resources>

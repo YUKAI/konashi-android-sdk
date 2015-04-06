@@ -563,7 +563,7 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
         if(mUartSetting==Konashi.UART_ENABLE){
             byte[] val = new byte[1];
             val[0] = data;
-        
+
             addWriteMessage(KonashiUUID.UART_TX_UUID, val);
         } else {
             notifyKonashiError(KonashiErrorReason.NOT_ENABLED_UART);

@@ -80,6 +80,20 @@
 
         </LinearLayout>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_battery_level"
+            android:layout_margin="@dimen/find_button_margin"
+            android:id="@+id/text_battery_level"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_signal_level"
+            android:layout_margin="@dimen/find_button_margin"
+            android:id="@+id/text_signal_level"/>
+
     </LinearLayout>
 
 </LinearLayout>
