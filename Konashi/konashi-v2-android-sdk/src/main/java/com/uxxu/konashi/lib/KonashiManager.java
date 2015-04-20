@@ -563,6 +563,10 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
         int length = data.length;
 
         if(length > 0 && length <= Konashi.UART_DATA_MAX_LENGTH){
+            /**
+             * 先頭1バイト目に送信バイト数を，
+             * 2バイト目以降に送信データを配置
+             */
             byte[] val = new byte[Konashi.UART_DATA_MAX_LENGTH + 1];
             val[0] = (byte)length;
             for(int i=0; i<length; i++){
