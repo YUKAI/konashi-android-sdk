@@ -70,7 +70,7 @@ public interface KonashiApiInterface {
     // UART
     public void uartMode(int mode);
     public void uartBaudrate(int baudrate);
-    public void uartWrite(byte data);
+    public void uartWrite(byte[] data);
     
     // Hardware
     public void reset();

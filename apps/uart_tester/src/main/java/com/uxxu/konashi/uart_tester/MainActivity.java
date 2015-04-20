@@ -88,9 +88,10 @@ public class MainActivity extends KonashiActivity {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 switch(motionEvent.getAction()){
-                    case MotionEvent.ACTION_DOWN:
+                    case MotionEvent.ACTION_UP:
                         // 触った時
-                        getKonashiManager().uartWrite((byte)mSendCharctorEdit.getText().charAt(0));
+                        getKonashiManager().uartWrite((mSendCharctorEdit.getText().toString() + "=").getBytes());
+                        mSendCharctorEdit.setText("");
                         break;
                 }
                 return false;
