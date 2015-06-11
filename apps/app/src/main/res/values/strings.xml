@@ -15,4 +15,6 @@
     <string name="sw">S1:</string>
     <string name="on">ON</string>
     <string name="off">OFF</string>
+    <string name="label_battery_level">Battery level : </string>
+    <string name="label_signal_level">Singal level : </string>
 </resources>

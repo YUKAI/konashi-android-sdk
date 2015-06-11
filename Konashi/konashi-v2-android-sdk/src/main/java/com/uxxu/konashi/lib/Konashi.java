@@ -184,6 +184,10 @@ public class Konashi {
      * 通信速度: 9600bps
      */
     public static final int UART_RATE_9K6 = 0x0028;
+    /**
+     * UARTで一度に送信できるバイト数(for 2.0)
+     */
+    public static final int UART_DATA_MAX_LENGTH = 18;
 
     ///////////////////////////////////////////
     // I2C
