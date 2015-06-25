@@ -21,6 +21,8 @@ import com.uxxu.konashi.lib.ui.BleDeviceListAdapter;
 import com.uxxu.konashi.lib.ui.BleDeviceSelectionDialog;
 import com.uxxu.konashi.lib.ui.BleDeviceSelectionDialog.OnBleDeviceSelectListener;
 
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -54,7 +56,7 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
      *************************/
       
     private static final long SCAN_PERIOD = 3000;
-    private static final String KONAHSHI_DEVICE_NAME = "konashi2.0";
+    private static final String KONAHSHI_DEVICE_NAME = "konashi2";
     private static final long KONASHI_SEND_PERIOD = 10;
     
     
@@ -349,9 +351,13 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
         mActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if(mIsShowKonashiOnly==false || device.getName().startsWith(KONAHSHI_DEVICE_NAME)){
-                    mBleDeviceListAdapter.addDevice(device);
-                    mBleDeviceListAdapter.notifyDataSetChanged();
+                try{
+                    if(mIsShowKonashiOnly==false || device.getName().startsWith(KONAHSHI_DEVICE_NAME)){
+                        mBleDeviceListAdapter.addDevice(device);
+                        mBleDeviceListAdapter.notifyDataSetChanged();
+                    }
+                }catch(NullPointerException e){
+
                 }
             }
         });
@@ -441,16 +447,14 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
     private final BluetoothGattCallback mBluetoothGattCallback = new BluetoothGattCallback() {
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
-            byte value;
-
+            byte[] value;
             KonashiUtils.log("onCharacteristicChanged: " + characteristic.getUuid());
+            value = characteristic.getValue();
 
             if(characteristic.getUuid().equals(KonashiUUID.PIO_INPUT_NOTIFICATION_UUID)){
-                value = characteristic.getValue()[0];
-                onUpdatePioInput(value);
+                onUpdatePioInput(value[0]);
             }
             else if(characteristic.getUuid().equals(KonashiUUID.UART_RX_NOTIFICATION_UUID)){
-                value = characteristic.getValue()[0];
                 onRecieveUart(value);
             }
         }
@@ -816,7 +820,7 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
      * のRxからデータを受信した時
      * @param data 受信データ
      */
-    protected void onRecieveUart(byte data){
+    protected void onRecieveUart(byte[] data){
         notifyKonashiEvent(KonashiEvent.UART_RX_COMPLETE, data);
     }
     

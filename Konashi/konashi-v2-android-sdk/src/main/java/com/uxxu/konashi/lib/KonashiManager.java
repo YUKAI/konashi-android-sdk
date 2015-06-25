@@ -2,6 +2,9 @@ package com.uxxu.konashi.lib;
 
 import android.content.Context;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * konashiを管理するメインクラス
  * 
@@ -52,7 +55,6 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
     // UART
     private byte mUartSetting;
     private byte mUartBaudrate;
-    private byte mUartRxData;
     
     // Hardware
     private int mBatteryLevel;
@@ -97,7 +99,6 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
         // UART
         mUartSetting = 0;
         mUartBaudrate = 0;
-        mUartRxData = 0;
             
         // Hardware
         mBatteryLevel = 0;
@@ -823,7 +824,15 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
         
         return mRssi;
     }
-    
+
+    public static byte[] toByteArray(List<Byte> in) {
+        final int n = in.size();
+        byte ret[] = new byte[n];
+        for (int i = 0; i < n; i++) {
+            ret[i] = in.get(i);
+        }
+        return ret;
+    }
     
     ////////////////////////////////
     // Notification event handler 
@@ -847,9 +856,13 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
     }
 
     @Override
-    protected void onRecieveUart(byte data) {
-        mUartRxData = data;
-        super.onRecieveUart(data);
+    protected void onRecieveUart(byte[] data) {
+        int length = Integer.valueOf(data[0]);
+        byte[] uartData = new byte[length];
+        for(int i=0;i<length;i++){
+            uartData[i] = data[i+1];
+        }
+        super.onRecieveUart(uartData);
     }
 
     @Override

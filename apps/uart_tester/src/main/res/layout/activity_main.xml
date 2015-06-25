@@ -46,6 +46,12 @@
             android:layout_margin="@dimen/find_button_margin"
             android:text="@string/button_write_uart"/>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/text_uart_rx"
+            android:text="test"/>
+
     </LinearLayout>
 
 </LinearLayout>

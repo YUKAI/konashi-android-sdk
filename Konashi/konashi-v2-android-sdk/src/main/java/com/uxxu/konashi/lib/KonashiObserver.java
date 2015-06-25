@@ -84,7 +84,7 @@ public abstract class KonashiObserver {
     /**
      * UARTのRxからデータを受信した時
      */
-    public void onCompleteUartRx(byte data){}
+    public void onCompleteUartRx(byte[] data){}
     /**
      * konashiのバッテリーのレベルを取得できた時
      */

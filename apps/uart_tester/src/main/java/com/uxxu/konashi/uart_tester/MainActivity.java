@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.uxxu.konashi.lib.Konashi;
 import com.uxxu.konashi.lib.KonashiObserver;
+import com.uxxu.konashi.lib.KonashiUtils;
 import com.uxxu.konashi.lib.ui.KonashiActivity;
 
 
@@ -24,7 +25,8 @@ public class MainActivity extends KonashiActivity {
     private Button mCheckConnectionButton;
     private Button mResetButton;
     private Button mWriteUartButton;
-    private TextView mSendCharctorEdit;
+    private EditText mSendCharctorEdit;
+    private TextView mUartRxTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +100,8 @@ public class MainActivity extends KonashiActivity {
             }
         });
 
+        mUartRxTextView = (TextView)findViewById(R.id.text_uart_rx);
+
         // konashiのイベントハンドラを設定。定義は下の方にあります
         getKonashiManager().addObserver(mKonashiObserver);
     }
@@ -117,7 +121,12 @@ public class MainActivity extends KonashiActivity {
             // konashiのポートの定義。
             getKonashiManager().uartBaudrate(Konashi.UART_RATE_9K6);
             getKonashiManager().uartMode(Konashi.UART_ENABLE);
+
         }
 
+        @Override
+        public void onCompleteUartRx(byte[] data) {
+            mUartRxTextView.setText(new String(data));
+        }
     };
 }
