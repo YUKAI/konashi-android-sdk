@@ -850,6 +850,7 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
 
     @Override
     protected void onUpdateAnalogValue(int pin, int value) {
+        //KonashiUtils.log(String.valueOf(value));
         mAioValue[pin] = value;
                 
         super.onUpdateAnalogValue(pin, value);
