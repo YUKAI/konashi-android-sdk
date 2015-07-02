@@ -456,6 +456,7 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
             }
             else if(characteristic.getUuid().equals(KonashiUUID.UART_RX_NOTIFICATION_UUID)){
                 onRecieveUart(value);
+                //onReceiveUart(value[0]) //for konashi v1(old code)
             }
         }
 
@@ -823,6 +824,11 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
     protected void onRecieveUart(byte[] data){
         notifyKonashiEvent(KonashiEvent.UART_RX_COMPLETE, data);
     }
+
+//     for konashi v1 (old codes)
+//    protected void onRecieveUart(byte data){
+//        notifyKonashiEvent(KonashiEvent.UART_RX_COMPLETE, data);
+//    }
     
     /**
      * konashiのバッテリーのレベルを取得できた時

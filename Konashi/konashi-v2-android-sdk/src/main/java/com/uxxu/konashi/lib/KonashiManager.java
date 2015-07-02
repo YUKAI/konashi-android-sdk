@@ -580,6 +580,27 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
         }
 
     }
+
+    /**
+     * UART でデータを1バイト送信する
+     * for konashi v1(old code)
+     * @param data 送信するデータ
+     */
+//    public void uartWrite(byte data){
+//        if(!isEnableAccessKonashi()){
+//            notifyKonashiError(KonashiErrorReason.NOT_READY);
+//            return;
+//        }
+//
+//        if(mUartSetting==Konashi.UART_ENABLE){
+//            byte[] val = new byte[1];
+//            val[0] = data;
+//
+//            addWriteMessage(KonashiUUID.UART_TX_UUID, val);
+//        } else {
+//            notifyKonashiError(KonashiErrorReason.NOT_ENABLED_UART);
+//        }
+//    }
     
     
     ///////////////////////////
@@ -864,6 +885,15 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
         }
         super.onRecieveUart(uartData);
     }
+
+    /**
+     * for konashi v1(old codes)
+     * @param data
+     */
+//    @Override
+//    protected void onRecieveUart(byte data) {
+//        super.onRecieveUart(data);
+//    }
 
     @Override
     protected void onUpdateBatteryLevel(int level) {

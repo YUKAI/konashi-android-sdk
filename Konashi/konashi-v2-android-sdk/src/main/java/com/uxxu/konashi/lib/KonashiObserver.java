@@ -86,6 +86,10 @@ public abstract class KonashiObserver {
      */
     public void onCompleteUartRx(byte[] data){}
     /**
+     * for konashi v1(old code)
+     */
+    //public void onCompleteUartRx(byte data){}
+    /**
      * konashiのバッテリーのレベルを取得できた時
      */
     public void onUpdateBatteryLevel(int level){}

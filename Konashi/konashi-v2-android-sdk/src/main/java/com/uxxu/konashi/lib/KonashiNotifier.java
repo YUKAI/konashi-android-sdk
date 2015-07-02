@@ -117,6 +117,7 @@ public class KonashiNotifier {
                         break;
                     case UART_RX_COMPLETE:
                         observer.onCompleteUartRx((byte[])param0);
+                        //observer.onCompleteUartRx(Byte.valueOf(param0.toString())); //for konashi v1(old code)
                         break;
                     case UPDATE_BATTERY_LEVEL:
                         observer.onUpdateBatteryLevel(Integer.valueOf(param0.toString()));
