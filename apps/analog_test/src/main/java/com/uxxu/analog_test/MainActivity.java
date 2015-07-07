@@ -25,6 +25,7 @@ public class MainActivity extends KonashiActivity {
     private Button mResetButton;
     private Button mOutputButton;
     private TextView mReadInputText;
+    private Button mReadAioButton;
 
     private SeekBar mSeekBar;
 
@@ -104,25 +105,33 @@ public class MainActivity extends KonashiActivity {
         });
 
         mOutputButton = (Button)findViewById(R.id.button_write_led);
-        mOutputButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                switch(motionEvent.getAction()){
-                    case MotionEvent.ACTION_DOWN:
-                        // 触った時
-                        getKonashiManager().analogWrite(Konashi.AIO1, Konashi.ANALOG_REFERENCE * mPowerRate / 100);
-                        break;
-
-                    case MotionEvent.ACTION_UP:
-                        // 離した時
-                        getKonashiManager().analogWrite(Konashi.AIO1, 0);
-                        break;
-                }
-                return false;
-            }
-        });
+//        mOutputButton.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View view, MotionEvent motionEvent) {
+//                switch(motionEvent.getAction()){
+//                    case MotionEvent.ACTION_DOWN:
+//                        // 触った時
+//                        getKonashiManager().analogWrite(Konashi.AIO1, Konashi.ANALOG_REFERENCE * mPowerRate / 100);
+//                        break;
+//
+//                    case MotionEvent.ACTION_UP:
+//                        // 離した時
+//                        getKonashiManager().analogWrite(Konashi.AIO1, 0);
+//                        break;
+//                }
+//                return false;
+//            }
+//        });
 
         mReadInputText = (TextView)findViewById(R.id.text_read_input);
+
+        mReadAioButton = (Button)findViewById(R.id.button_read_aio);
+        mReadAioButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getKonashiManager().analogReadRequest(Konashi.AIO0);
+            }
+        });
 
         // konashiのイベントハンドラを設定。定義は下の方にあります
         getKonashiManager().addObserver(mKonashiObserver);
@@ -141,9 +150,6 @@ public class MainActivity extends KonashiActivity {
             // ボタンを表示する
             mContainer.setVisibility(View.VISIBLE);
             // konashiのポートの定義。AIO0にanalogRead要求送信
-
-            getKonashiManager().analogReadRequest(Konashi.AIO0);
-            //getKonashiManager().analogRead(Konashi.AIO0);
         }
 
         @Override
@@ -154,7 +160,6 @@ public class MainActivity extends KonashiActivity {
         @Override
         public void onUpdateAnalogValueAio0(int value) {
             mReadInputText.setText(getText(R.string.text_read_input) + " " + String.valueOf(value));
-            getKonashiManager().analogReadRequest(Konashi.AIO0);
         }
     };
 }
