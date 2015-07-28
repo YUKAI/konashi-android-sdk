@@ -39,15 +39,17 @@ public class MainActivity extends AppCompatActivity
                 KonashiUtils.log("onReady");
                 refreshActionBarMenu();
                 overlay.setVisibility(View.GONE);
+
                 Toast.makeText(MainActivity.this, "Connected", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onDisconncted() {
                 KonashiUtils.log("onDisconnected");
-                super.onDisconncted();
-                // TODO: fix typo
-                // TODO: Not called
+                refreshActionBarMenu();
+                overlay.setVisibility(View.VISIBLE);
+
+                Toast.makeText(MainActivity.this, "Disconnected", Toast.LENGTH_SHORT).show();
             }
         };
         mKonashiManager.addObserver(mKonashiObserver);
