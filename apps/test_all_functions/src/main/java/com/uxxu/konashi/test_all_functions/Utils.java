@@ -12,6 +12,10 @@ public class Utils {
 
     public static final int[] PIO_PINS = new int[]{Konashi.PIO0, Konashi.PIO1, Konashi.PIO2, Konashi.PIO3, Konashi.PIO4, Konashi.PIO5};
 
+    public static final int[] PWM_PINS = new int[]{Konashi.PIO0, Konashi.PIO1, Konashi.PIO2};
+
+    public static final int[] AIO_PINS = new int[]{Konashi.AIO0, Konashi.AIO1, Konashi.AIO2};
+
     public static TableRow.LayoutParams createTableRowLayoutParamwWithWeight(float weight) {
         return new TableRow.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, weight);
     }

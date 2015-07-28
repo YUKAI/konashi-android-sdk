@@ -55,7 +55,7 @@ public class PwmFragment extends MainActivity.BaseFragment {
             @Override
             public void onClick(View view) {
                 int pinNumber = Integer.valueOf(mOptionPinEditText.getText().toString());
-                if (pinNumber < 0 || Utils.PIO_PINS.length <= pinNumber) {
+                if (pinNumber < 0 || Utils.PWM_PINS.length <= pinNumber) {
                     return;
                 }
                 rows.get(pinNumber).setValues(
@@ -66,7 +66,7 @@ public class PwmFragment extends MainActivity.BaseFragment {
 
         mTableLayout = (TableLayout) view.findViewById(R.id.tableLayout);
         mTableLayout.addView(new HeaderTableRow(getActivity()));
-        for (int pinNumber : Utils.PIO_PINS) {
+        for (int pinNumber : Utils.PWM_PINS) {
             PwmTableRow row = PwmTableRow.createWithPinNumber(getActivity(), pinNumber);
             mTableLayout.addView(row);
             rows.add(row);
