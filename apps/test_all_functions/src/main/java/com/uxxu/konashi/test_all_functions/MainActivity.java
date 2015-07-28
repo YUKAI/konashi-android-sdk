@@ -20,7 +20,8 @@ public class MainActivity extends AppCompatActivity
 
     public static final String[] MENU_TITLES = {
             "HOME",
-            PioFragment.TITLE
+            PioFragment.TITLE,
+            PwmFragment.TITLE
     };
 
     private NavigationDrawerFragment mNavigationDrawerFragment;
@@ -82,6 +83,9 @@ public class MainActivity extends AppCompatActivity
                 break;
             case 1:
                 fragment = new PioFragment();
+                break;
+            case 2:
+                fragment = new PwmFragment();
                 break;
         }
         if (fragment != null) {

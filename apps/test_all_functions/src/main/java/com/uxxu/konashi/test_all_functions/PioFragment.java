@@ -22,7 +22,6 @@ public class PioFragment extends MainActivity.BaseFragment {
 
     public static final String TITLE = "PIO";
 
-    private static final int[] PIO_LIST = new int[]{Konashi.PIO0, Konashi.PIO1, Konashi.PIO2, Konashi.PIO3, Konashi.PIO4, Konashi.PIO5};
 
     private TableLayout mTableLayout;
 
@@ -37,7 +36,7 @@ public class PioFragment extends MainActivity.BaseFragment {
         View view = inflater.inflate(R.layout.fragment_pio, container, false);
         mTableLayout = (TableLayout) view.findViewById(R.id.tableLayout);
         mTableLayout.addView(new HeaderTableRow(getActivity()));
-        for (int pinNumber : PIO_LIST) {
+        for (int pinNumber : Utils.PIO_PINS) {
             mTableLayout.addView(PioTableRow.createWithPinNumber(getActivity(), pinNumber));
         }
         return view;
@@ -48,24 +47,24 @@ public class PioFragment extends MainActivity.BaseFragment {
         public HeaderTableRow(Context context) {
             super(context);
 
-            addRow("PIN");
-            addRow("Mode");
-            addRow("Output");
-            addRow("Input");
+            addRow("PIN", 1);
+            addRow("Mode", 1);
+            addRow("Output", 3);
+            addRow("Input", 3);
         }
 
-        private void addRow(String text) {
+        private void addRow(String text, float weight) {
             TextView textView = new TextView(getContext());
             textView.setText(text);
             textView.setTypeface(null, Typeface.BOLD);
             textView.setGravity(Gravity.CENTER_HORIZONTAL);
-            addView(textView, Utils.createTableRowLayoutParamwWithWeight(1));
+            addView(textView, Utils.createTableRowLayoutParamwWithWeight(weight));
         }
     }
 
     public static final class PioTableRow extends TableRow {
 
-        private final TextView mPositionTextView;
+        private final TextView mPinTextView;
         private final ToggleButton mIoToggleButton;
         private final ToggleButton mOutputToggleButton;
         private final ToggleButton mInputToggleButton;
@@ -82,9 +81,9 @@ public class PioFragment extends MainActivity.BaseFragment {
 
             setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 
-            mPositionTextView = new TextView(context);
-            mPositionTextView.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
-            addView(mPositionTextView, Utils.createTableRowLayoutParamwWithWeight(3));
+            mPinTextView = new TextView(context);
+            mPinTextView.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+            addView(mPinTextView, Utils.createTableRowLayoutParamwWithWeight(1));
 
             mIoToggleButton = new ToggleButton(context);
             mIoToggleButton.setTextOff("input");
@@ -107,7 +106,7 @@ public class PioFragment extends MainActivity.BaseFragment {
                     Konashi.getManager().pinMode(mPinNumber, mode);
                 }
             });
-            addView(mIoToggleButton, Utils.createTableRowLayoutParamwWithWeight(2));
+            addView(mIoToggleButton, Utils.createTableRowLayoutParamwWithWeight(1));
 
             mOutputToggleButton = new ToggleButton(context);
             mOutputToggleButton.setTextOff("low");
@@ -131,7 +130,7 @@ public class PioFragment extends MainActivity.BaseFragment {
 
         public void setPinNumber(int pinNumber) {
             this.mPinNumber = pinNumber;
-            mPositionTextView.setText(String.valueOf(pinNumber));
+            mPinTextView.setText(String.valueOf(pinNumber));
         }
     }
 }
