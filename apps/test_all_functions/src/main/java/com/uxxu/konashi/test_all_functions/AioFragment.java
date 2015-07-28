@@ -36,19 +36,6 @@ public final class AioFragment extends MainActivity.BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getActivity().setTitle(TITLE);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_aio, container, false);
-
-        mTableLayout = (TableLayout) view.findViewById(R.id.tableLayout);
-        mTableLayout.addView(new HeaderTableRow(getActivity()));
-        for (int pinNumber : Utils.AIO_PINS) {
-            AioTableRow row = AioTableRow.createWithPinNumber(getActivity(), pinNumber);
-            mTableLayout.addView(row);
-            rows.add(row);
-        }
 
         mAnalogReadObserver = new KonashiObserver(getActivity()) {
             @Override
@@ -66,16 +53,28 @@ public final class AioFragment extends MainActivity.BaseFragment {
                 rows.get(2).setVoltage(value / 1000.0f);
             }
         };
-
         mKonashiManager.addObserver(mAnalogReadObserver);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_aio, container, false);
+
+        mTableLayout = (TableLayout) view.findViewById(R.id.tableLayout);
+        mTableLayout.addView(new HeaderTableRow(getActivity()));
+        for (int pinNumber : Utils.AIO_PINS) {
+            AioTableRow row = AioTableRow.createWithPinNumber(getActivity(), pinNumber);
+            mTableLayout.addView(row);
+            rows.add(row);
+        }
 
         return view;
     }
 
     @Override
-    public void onDestroyView() {
+    public void onDestroy() {
         mKonashiManager.removeObserver(mAnalogReadObserver);
-        super.onDestroyView();
+        super.onDestroy();
     }
 
     public static final class HeaderTableRow extends TableRow {

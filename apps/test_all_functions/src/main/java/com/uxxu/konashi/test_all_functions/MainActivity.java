@@ -20,14 +20,6 @@ import com.uxxu.konashi.lib.KonashiUtils;
 public class MainActivity extends AppCompatActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
-    public static final String[] MENU_TITLES = {
-            "HOME",
-            PioFragment.TITLE,
-            PwmFragment.TITLE,
-            AioFragment.TITLE,
-            CommunicationFragment.TITLE
-    };
-
     private NavigationDrawerFragment mNavigationDrawerFragment;
     private View overlay;
     private Menu mMenu;
@@ -84,7 +76,7 @@ public class MainActivity extends AppCompatActivity
         Fragment fragment = null;
         switch (position) {
             case 0:
-                fragment = new BaseFragment();
+                fragment = new HomeFragment();
                 break;
             case 1:
                 fragment = new PioFragment();
@@ -100,19 +92,10 @@ public class MainActivity extends AppCompatActivity
                 break;
         }
         if (fragment != null) {
-            Bundle args = new Bundle();
-            args.putInt(BaseFragment.ARG_SECTION_NUMBER, position);
-            fragment.setArguments(args);
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.container, fragment)
                     .commit();
-        }
-    }
-
-    public void onSectionAttached(int number) {
-        if (number == 0) {
-            setTitle("HOME");
         }
     }
 
@@ -173,21 +156,14 @@ public class MainActivity extends AppCompatActivity
 
     public static class BaseFragment extends Fragment {
 
-        public static final String ARG_SECTION_NUMBER = "section_number";
-
         protected final KonashiManager mKonashiManager = Konashi.getManager();
 
         public BaseFragment() {
         }
 
-        public MainActivity getMainActivity() {
-            return (MainActivity) getActivity();
-        }
-
         @Override
         public void onAttach(Activity activity) {
             super.onAttach(activity);
-            getMainActivity().onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER));
         }
     }
 }

@@ -36,27 +36,36 @@ public final class CommunicationFragment extends MainActivity.BaseFragment {
     private Button mI2cResultReadButton;
     private Button mI2cResultClearButton;
 
+    private KonashiObserver mCommunicationObserver;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getActivity().setTitle(TITLE);
+
+        mCommunicationObserver = new KonashiObserver(getActivity()) {
+            @Override
+            public void onCompleteUartRx(byte[] data) {
+                mUartResultEditText.append(new String(data));
+            }
+        };
+        mKonashiManager.addObserver(mCommunicationObserver);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_communication, container, false);
 
-        mKonashiManager.addObserver(new KonashiObserver(getActivity()) {
-            @Override
-            public void onCompleteUartRx(byte[] data) {
-                mUartResultEditText.append(new String(data));
-            }
-        });
-
         initUartViews(view);
         initI2cViews(view);
 
         return view;
+    }
+
+    @Override
+    public void onDestroy() {
+        mKonashiManager.removeObserver(mCommunicationObserver);
+        super.onDestroy();
     }
 
     private void initUartViews(final View parent) {
