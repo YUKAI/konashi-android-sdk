@@ -18,8 +18,8 @@
         <item>115200</item>
     </integer-array>
     <string-array name="i2c_mode_labels">
-        <item>100K</item>
-        <item>400K</item>
+        <item>100kHz</item>
+        <item>400kHz</item>
     </string-array>
     <color name="frosted_grass">#ccffffff</color>
 </resources>

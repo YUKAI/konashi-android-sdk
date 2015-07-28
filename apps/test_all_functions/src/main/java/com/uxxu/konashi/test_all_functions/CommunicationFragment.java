@@ -113,7 +113,7 @@ public final class CommunicationFragment extends MainActivity.BaseFragment {
 
     private void initI2cViews(View parent) {
         mI2cBaudrateSpinner = (Spinner) parent.findViewById(R.id.i2cBaudrateSpinner);
-        mI2cBaudrateSpinner.setSelection(1);
+        mI2cBaudrateSpinner.setSelection(0);
         mI2cBaudrateSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
