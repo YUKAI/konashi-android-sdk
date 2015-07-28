@@ -22,12 +22,13 @@ public class MainActivity extends AppCompatActivity
             "HOME",
             PioFragment.TITLE,
             PwmFragment.TITLE,
-            AioFragment.TITLE
+            AioFragment.TITLE,
+            CommunicationFragment.TITLE
     };
 
     private NavigationDrawerFragment mNavigationDrawerFragment;
     private Menu mMenu;
-    private KonashiManager mKonashiManager;
+    private KonashiManager mKonashiManager = Konashi.getManager();
     private KonashiObserver mKonashiObserver;
 
     @Override
@@ -35,7 +36,6 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mKonashiManager = Konashi.getManager();
         mKonashiManager.initialize(getApplicationContext());
         mKonashiObserver = new KonashiObserver(this) {
             @Override
@@ -91,6 +91,9 @@ public class MainActivity extends AppCompatActivity
             case 3:
                 fragment = new AioFragment();
                 break;
+            case 4:
+                fragment = new CommunicationFragment();
+                break;
         }
         if (fragment != null) {
             Bundle args = new Bundle();
@@ -114,9 +117,9 @@ public class MainActivity extends AppCompatActivity
         if (actionBar == null) {
             return;
         }
-        actionBar.setDisplayHomeAsUpEnabled(false);
-        actionBar.setHomeButtonEnabled(false);
-        actionBar.setDisplayShowTitleEnabled(true);
+
+        actionBar.setDisplayShowHomeEnabled(false);
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_drawer);
     }
 
 
@@ -135,7 +138,12 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_settings:
+            case android.R.id.home:
+                if (mNavigationDrawerFragment.isDrawerOpen()) {
+                    mNavigationDrawerFragment.close();
+                } else {
+                    mNavigationDrawerFragment.open();
+                }
                 break;
             case R.id.action_find_konashi:
                 mKonashiManager.find(this);
@@ -161,6 +169,8 @@ public class MainActivity extends AppCompatActivity
     public static class BaseFragment extends Fragment {
 
         public static final String ARG_SECTION_NUMBER = "section_number";
+
+        protected final KonashiManager mKonashiManager = Konashi.getManager();
 
         public BaseFragment() {
         }

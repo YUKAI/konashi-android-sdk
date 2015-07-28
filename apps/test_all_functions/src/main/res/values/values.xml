@@ -1,0 +1,24 @@
+<resources>
+    <string-array name="uart_baudrates_labels">
+        <item>2400</item>
+        <item>9600</item>
+        <item>19200</item>
+        <item>38400</item>
+        <item>57600</item>
+        <item>76800</item>
+        <item>115200</item>
+    </string-array>
+    <integer-array name="uart_baudrates_values">
+        <item>2400</item>
+        <item>9600</item>
+        <item>19200</item>
+        <item>38400</item>
+        <item>57600</item>
+        <item>76800</item>
+        <item>115200</item>
+    </integer-array>
+    <string-array name="i2c_mode_labels">
+        <item>100K</item>
+        <item>400K</item>
+    </string-array>
+</resources>

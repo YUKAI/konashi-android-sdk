@@ -31,21 +31,18 @@
                 android:text="PIN"/>
 
             <TextView
-                android:id="@+id/textView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="3"
                 android:text="Period"/>
 
             <TextView
-                android:id="@+id/textView3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="3"
-                android:text="Duty (0-100)"/>
+                android:text="Duty"/>
 
             <TextView
-                android:id="@+id/textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -60,32 +57,32 @@
                 android:id="@+id/optionPinEditText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:inputType="numberDecimal"
-                android:text="0"
-                android:layout_weight="1"/>
+                android:text="0"/>
 
             <EditText
                 android:id="@+id/optionPeriodEditText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_weight="3"
                 android:inputType="numberDecimal"
-                android:text="10000"
-                android:layout_weight="3"/>
+                android:text="10000"/>
 
             <EditText
                 android:id="@+id/optionDutyEditText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_weight="3"
                 android:inputType="numberDecimal"
-                android:text="100"
-                android:layout_weight="3"/>
+                android:text="100"/>
 
             <Button
+                android:id="@+id/submitButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Set"
-                android:id="@+id/submitButton"
-                android:layout_weight="1"/>
+                android:layout_weight="1"
+                android:text="Set"/>
 
         </TableRow>
     </TableLayout>

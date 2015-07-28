@@ -14,14 +14,14 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.uxxu.konashi.lib.Konashi;
+import com.uxxu.konashi.lib.KonashiManager;
 
 /**
  * Created by kiryu on 7/27/15.
  */
-public class PioFragment extends MainActivity.BaseFragment {
+public final class PioFragment extends MainActivity.BaseFragment {
 
     public static final String TITLE = "PIO";
-
 
     private TableLayout mTableLayout;
 
@@ -68,6 +68,7 @@ public class PioFragment extends MainActivity.BaseFragment {
         private final ToggleButton mIoToggleButton;
         private final ToggleButton mOutputToggleButton;
         private final ToggleButton mInputToggleButton;
+        private final KonashiManager mKonashiManager = Konashi.getManager();
         private int mPinNumber;
 
         public static PioTableRow createWithPinNumber(Context context, final int pinNumber) {
@@ -103,7 +104,7 @@ public class PioFragment extends MainActivity.BaseFragment {
                             mOutputToggleButton.setEnabled(false);
                             break;
                     }
-                    Konashi.getManager().pinMode(mPinNumber, mode);
+                    mKonashiManager.pinMode(mPinNumber, mode);
                 }
             });
             addView(mIoToggleButton, Utils.createTableRowLayoutParamwWithWeight(1));
@@ -116,7 +117,7 @@ public class PioFragment extends MainActivity.BaseFragment {
             mOutputToggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    Konashi.getManager().digitalWrite(mPinNumber, b ? Konashi.HIGH : Konashi.LOW);
+                    mKonashiManager.digitalWrite(mPinNumber, b ? Konashi.HIGH : Konashi.LOW);
                 }
             });
             addView(mOutputToggleButton, Utils.createTableRowLayoutParamwWithWeight(3));

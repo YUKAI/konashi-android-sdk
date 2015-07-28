@@ -13,6 +13,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.uxxu.konashi.lib.Konashi;
+import com.uxxu.konashi.lib.KonashiManager;
 import com.uxxu.konashi.lib.KonashiObserver;
 
 import java.util.ArrayList;
@@ -21,9 +22,9 @@ import java.util.List;
 /**
  * Created by kiryu on 7/27/15.
  */
-public class AioFragment extends MainActivity.BaseFragment {
+public final class AioFragment extends MainActivity.BaseFragment {
 
-    public static final String TITLE = "AIO";
+    public static final String TITLE = "Analog I/O";
 
     private TableLayout mTableLayout;
 
@@ -43,7 +44,7 @@ public class AioFragment extends MainActivity.BaseFragment {
 
         mTableLayout = (TableLayout) view.findViewById(R.id.tableLayout);
         mTableLayout.addView(new HeaderTableRow(getActivity()));
-        for (int pinNumber : Utils.PWM_PINS) {
+        for (int pinNumber : Utils.AIO_PINS) {
             AioTableRow row = AioTableRow.createWithPinNumber(getActivity(), pinNumber);
             mTableLayout.addView(row);
             rows.add(row);
@@ -66,14 +67,14 @@ public class AioFragment extends MainActivity.BaseFragment {
             }
         };
 
-        Konashi.getManager().addObserver(mAnalogReadObserver);
+        mKonashiManager.addObserver(mAnalogReadObserver);
 
         return view;
     }
 
     @Override
     public void onDestroyView() {
-        Konashi.getManager().removeObserver(mAnalogReadObserver);
+        mKonashiManager.removeObserver(mAnalogReadObserver);
         super.onDestroyView();
     }
 
@@ -101,6 +102,7 @@ public class AioFragment extends MainActivity.BaseFragment {
         private final TextView mPinTextView;
         private final TextView mVoltageTextView;
         private final Button mReadButton;
+        private final KonashiManager mKonashiManager = Konashi.getManager();
         private int mPinNumber;
 
         public static AioTableRow createWithPinNumber(Context context, final int pinNumber) {
@@ -127,7 +129,7 @@ public class AioFragment extends MainActivity.BaseFragment {
             mReadButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Konashi.getManager().analogReadRequest(mPinNumber);
+                    mKonashiManager.analogReadRequest(mPinNumber);
                 }
             });
             addView(mReadButton, Utils.createTableRowLayoutParamwWithWeight(2));

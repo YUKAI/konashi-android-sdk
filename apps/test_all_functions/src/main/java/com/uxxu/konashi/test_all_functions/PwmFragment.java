@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * Created by kiryu on 7/27/15.
  */
-public class PwmFragment extends MainActivity.BaseFragment {
+public final class PwmFragment extends MainActivity.BaseFragment {
 
     public static final String TITLE = "PWM";
 
@@ -47,10 +47,24 @@ public class PwmFragment extends MainActivity.BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_pwm, container, false);
 
-        mOptionPinEditText = (EditText) view.findViewById(R.id.optionPinEditText);
-        mOptionPeriodEditText = (EditText) view.findViewById(R.id.optionPeriodEditText);
-        mOptionDutyEditText = (EditText) view.findViewById(R.id.optionDutyEditText);
-        mSubmitButton = (Button) view.findViewById(R.id.submitButton);
+        mTableLayout = (TableLayout) view.findViewById(R.id.tableLayout);
+        mTableLayout.addView(new HeaderTableRow(getActivity()));
+        for (int pinNumber : Utils.PWM_PINS) {
+            PwmTableRow row = PwmTableRow.createWithPinNumber(getActivity(), pinNumber);
+            mTableLayout.addView(row);
+            rows.add(row);
+        }
+
+        initOptionViews(view);
+
+        return view;
+    }
+
+    private void initOptionViews(View parent) {
+        mOptionPinEditText = (EditText) parent.findViewById(R.id.optionPinEditText);
+        mOptionPeriodEditText = (EditText) parent.findViewById(R.id.optionPeriodEditText);
+        mOptionDutyEditText = (EditText) parent.findViewById(R.id.optionDutyEditText);
+        mSubmitButton = (Button) parent.findViewById(R.id.submitButton);
         mSubmitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -63,15 +77,6 @@ public class PwmFragment extends MainActivity.BaseFragment {
                         Integer.valueOf(mOptionDutyEditText.getText().toString()));
             }
         });
-
-        mTableLayout = (TableLayout) view.findViewById(R.id.tableLayout);
-        mTableLayout.addView(new HeaderTableRow(getActivity()));
-        for (int pinNumber : Utils.PWM_PINS) {
-            PwmTableRow row = PwmTableRow.createWithPinNumber(getActivity(), pinNumber);
-            mTableLayout.addView(row);
-            rows.add(row);
-        }
-        return view;
     }
 
     public static final class HeaderTableRow extends TableRow {
@@ -98,6 +103,7 @@ public class PwmFragment extends MainActivity.BaseFragment {
         private final TextView mPinTextView;
         private final ToggleButton mPwmToggleButton;
         private final SeekBar mDutySeekBar;
+        private final KonashiManager mKonashiManager = Konashi.getManager();
         private int mPinNumber;
 
         public static PwmTableRow createWithPinNumber(Context context, final int pinNumber) {
@@ -124,10 +130,10 @@ public class PwmFragment extends MainActivity.BaseFragment {
                         @Override
                         public void run() {
                             Utils.sleep();
-                            Konashi.getManager().pwmMode(mPinNumber, pwmMode);
+                            mKonashiManager.pwmMode(mPinNumber, pwmMode);
                             if (pwmMode == Konashi.PWM_ENABLE_LED_MODE) {
                                 Utils.sleep();
-                                Konashi.getManager().pwmLedDrive(mPinNumber, mDutySeekBar.getProgress());
+                                mKonashiManager.pwmLedDrive(mPinNumber, mDutySeekBar.getProgress());
                             }
                         }
                     }).start();
@@ -147,7 +153,7 @@ public class PwmFragment extends MainActivity.BaseFragment {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            Konashi.getManager().pwmLedDrive(mPinNumber, drive);
+                            mKonashiManager.pwmLedDrive(mPinNumber, drive);
                         }
                     }).start();
                 }
@@ -169,19 +175,14 @@ public class PwmFragment extends MainActivity.BaseFragment {
         }
 
         public void setValues(final int period, final int duty) {
-            mPwmToggleButton.setChecked(true);
-            mDutySeekBar.setProgress(duty);
-
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    KonashiManager manager = Konashi.getManager();
                     Utils.sleep();
-                    manager.pwmPeriod(mPinNumber, period);
+                    mKonashiManager.pwmPeriod(mPinNumber, period);
                     Utils.sleep();
-                    manager.pwmLedDrive(mPinNumber, Konashi.PWM_ENABLE_LED_MODE);
+                    mKonashiManager.pwmDuty(mPinNumber, duty);
                     Utils.sleep();
-                    manager.pwmLedDrive(mPinNumber, duty);
                 }
             }).start();
         }
