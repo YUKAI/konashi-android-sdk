@@ -8,6 +8,8 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
 
 import com.uxxu.konashi.lib.Konashi;
 import com.uxxu.konashi.lib.KonashiManager;
@@ -27,6 +29,7 @@ public class MainActivity extends AppCompatActivity
     };
 
     private NavigationDrawerFragment mNavigationDrawerFragment;
+    private View overlay;
     private Menu mMenu;
     private KonashiManager mKonashiManager = Konashi.getManager();
     private KonashiObserver mKonashiObserver;
@@ -38,12 +41,13 @@ public class MainActivity extends AppCompatActivity
 
         mKonashiManager.initialize(getApplicationContext());
         mKonashiObserver = new KonashiObserver(this) {
+
             @Override
             public void onReady() {
                 KonashiUtils.log("onReady");
-                setTitle(mKonashiManager.getPeripheralName());
-                mMenu.findItem(R.id.action_find_konashi).setVisible(false);
-                mMenu.findItem(R.id.action_disconnect).setVisible(true);
+                refreshActionBarMenu();
+                overlay.setVisibility(View.GONE);
+                Toast.makeText(MainActivity.this, "Connected", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -58,11 +62,11 @@ public class MainActivity extends AppCompatActivity
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
-
-        // Set up the drawer.
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
+
+        overlay = findViewById(R.id.overlay);
     }
 
     @Override
@@ -151,6 +155,7 @@ public class MainActivity extends AppCompatActivity
             case R.id.action_disconnect:
                 mKonashiManager.disconnect();
                 refreshActionBarMenu();
+                overlay.setVisibility(View.VISIBLE);
                 return true;
         }
         return super.onOptionsItemSelected(item);

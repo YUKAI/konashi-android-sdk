@@ -12,6 +12,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/frosted_grass"
+        android:id="@+id/overlay"
+        android:text="No Konashi connection"
+        android:gravity="center"
+        android:textSize="40dp"
+        android:textStyle="bold"/>
+
     <fragment
         android:id="@+id/navigation_drawer"
         android:name="com.uxxu.konashi.test_all_functions.NavigationDrawerFragment"
