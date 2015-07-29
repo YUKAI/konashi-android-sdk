@@ -23,7 +23,7 @@ import android.app.Activity;
  * limitations under the License.
  *
  */
-public abstract class KonashiObserver {
+public abstract class KonashiObserver implements KonashiListener {
     /**
      * runOnUiThreadするために必要なのです。。。
      */
@@ -48,61 +48,76 @@ public abstract class KonashiObserver {
     /**
      * findWithNameで指定した名前のkonashiが見つからなかった時、もしくはまわりにBLEデバイスがなかった時に呼ばれる
      */
+    @Override
     public void onNotFoundPeripheral(){}   
     /**
      * konashiに接続した時(まだこの時はkonashiが使える状態ではありません)に呼ばれる
      */
+    @Override
     public void onConnected(){}
     /**
      * konashiとの接続を切断した時に呼ばれる
      */
+    @Override
     public void onDisconncted(){}
     /**
      * konashiに接続完了した時(この時からkonashiにアクセスできるようになります)に呼ばれる
      */
+    @Override
     public void onReady(){}
     /**
      * PIOの入力の状態が変化した時に呼ばれる
      */
+    @Override
     public void onUpdatePioInput(byte value){}
     /**
      * AIOのどれかのピンの電圧が取得できた時
      */
+    @Override
     public void onUpdateAnalogValue(int pin, int value){}
     /**
      * AIO0の電圧が取得できた時
      */
+    @Override
     public void onUpdateAnalogValueAio0(int value){}
     /**
      * AIO1の電圧が取得できた時
      */
+    @Override
     public void onUpdateAnalogValueAio1(int value){}
     /**
      * AIO2の電圧が取得できた時
      */
+    @Override
     public void onUpdateAnalogValueAio2(int value){}
     /**
      * UARTのRxからデータを受信した時
      */
+    @Override
     public void onCompleteUartRx(byte[] data){}
     /**
      * for konashi v1(old code)
      */
+    //@Override
     //public void onCompleteUartRx(byte data){}
     /**
      * konashiのバッテリーのレベルを取得できた時
      */
+    @Override
     public void onUpdateBatteryLevel(int level){}
     /**
      * konashiの電波強度を取得できた時
      */
+    @Override
     public void onUpdateSignalStrength(int rssi){}
     /**
      * BLEデバイス選択ダイアログをキャンセルした時に呼ばれる
      */
+    @Override
     public void onCancelSelectKonashi(){}
     /**
      * エラーが起きた時に呼ばれる
      */
+    @Override
     public void onError(KonashiErrorReason errorReason, String message){}
 }
