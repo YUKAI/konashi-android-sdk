@@ -16,6 +16,16 @@ public class Utils {
 
     public static final int[] AIO_PINS = new int[]{Konashi.AIO0, Konashi.AIO1, Konashi.AIO2};
 
+    public static int uartLabelToValue(String uartLabel) {
+        if (uartLabel.equals("2400")) {
+            return Konashi.UART_RATE_2K4;
+        }
+        if (uartLabel.equals("9600")) {
+            return Konashi.UART_RATE_9K6;
+        }
+        return 0;
+    }
+
     public static TableRow.LayoutParams createTableRowLayoutParamwWithWeight(float weight) {
         return new TableRow.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, weight);
     }

@@ -3,6 +3,7 @@ package com.uxxu.konashi.test_all_functions;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,9 +23,11 @@ import java.util.List;
 /**
  * Created by kiryu on 7/27/15.
  */
-public final class AioFragment extends MainActivity.BaseFragment {
+public final class AioFragment extends Fragment {
 
     public static final String TITLE = "Analog I/O";
+
+    private final KonashiManager mKonashiManager = Konashi.getManager();
 
     private TableLayout mTableLayout;
 

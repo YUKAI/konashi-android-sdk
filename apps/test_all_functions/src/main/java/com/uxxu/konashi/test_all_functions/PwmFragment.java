@@ -3,6 +3,7 @@ package com.uxxu.konashi.test_all_functions;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,9 +26,11 @@ import java.util.List;
 /**
  * Created by kiryu on 7/27/15.
  */
-public final class PwmFragment extends MainActivity.BaseFragment {
+public final class PwmFragment extends Fragment {
 
     public static final String TITLE = "PWM";
+
+    private final KonashiManager mKonashiManager = Konashi.getManager();
 
     private EditText mOptionPinEditText;
     private EditText mOptionPeriodEditText;
@@ -58,6 +61,22 @@ public final class PwmFragment extends MainActivity.BaseFragment {
         initOptionViews(view);
 
         return view;
+    }
+
+    @Override
+    public void onDestroy() {
+        if (mKonashiManager.isReady()) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    for (int pinNumber : Utils.PWM_PINS) {
+                        Utils.sleep();
+                        mKonashiManager.pwmMode(pinNumber, Konashi.PWM_DISABLE);
+                    }
+                }
+            }).start();
+        }
+        super.onDestroy();
     }
 
     private void initOptionViews(View parent) {

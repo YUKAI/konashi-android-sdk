@@ -1,6 +1,7 @@
 package com.uxxu.konashi.test_all_functions;
 
-import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.uxxu.konashi.lib.Konashi;
+import com.uxxu.konashi.lib.KonashiErrorReason;
 import com.uxxu.konashi.lib.KonashiManager;
 import com.uxxu.konashi.lib.KonashiObserver;
 import com.uxxu.konashi.lib.KonashiUtils;
@@ -51,6 +53,20 @@ public class MainActivity extends AppCompatActivity
 
                 Toast.makeText(MainActivity.this, "Disconnected", Toast.LENGTH_SHORT).show();
             }
+
+            @Override
+            public void onError(KonashiErrorReason errorReason, String message) {
+                new AlertDialog.Builder(MainActivity.this)
+                        .setTitle("Error")
+                        .setMessage(message)
+                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                            }
+                        })
+                        .show();
+            }
         };
         mKonashiManager.addObserver(mKonashiObserver);
 
@@ -66,9 +82,17 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         if (mKonashiManager != null) {
-            mKonashiManager.disconnect();
-            mKonashiManager.close();
-            mKonashiManager = null;
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    mKonashiManager.reset();
+                    Utils.sleep();
+                    mKonashiManager.disconnect();
+                    mKonashiManager.close();
+                    Utils.sleep();
+                    mKonashiManager = null;
+                }
+            }).start();
         }
         super.onDestroy();
     }
@@ -78,7 +102,7 @@ public class MainActivity extends AppCompatActivity
         Fragment fragment = null;
         switch (position) {
             case 0:
-                fragment = new HomeFragment();
+                fragment = new KonashiInfoFragment();
                 break;
             case 1:
                 fragment = new PioFragment();
@@ -153,19 +177,6 @@ public class MainActivity extends AppCompatActivity
         } else {
             mMenu.findItem(R.id.action_find_konashi).setVisible(true);
             mMenu.findItem(R.id.action_disconnect).setVisible(false);
-        }
-    }
-
-    public static class BaseFragment extends Fragment {
-
-        protected final KonashiManager mKonashiManager = Konashi.getManager();
-
-        public BaseFragment() {
-        }
-
-        @Override
-        public void onAttach(Activity activity) {
-            super.onAttach(activity);
         }
     }
 }

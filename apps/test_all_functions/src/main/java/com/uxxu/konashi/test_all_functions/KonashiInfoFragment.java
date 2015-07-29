@@ -1,6 +1,8 @@
 package com.uxxu.konashi.test_all_functions;
 
+import android.bluetooth.BluetoothAdapter;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,14 +10,18 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.uxxu.konashi.lib.Konashi;
+import com.uxxu.konashi.lib.KonashiManager;
 import com.uxxu.konashi.lib.KonashiObserver;
 
 /**
  * Created by kiryu on 7/27/15.
  */
-public final class HomeFragment extends MainActivity.BaseFragment {
+public final class KonashiInfoFragment extends Fragment {
 
-    public static final String TITLE = "HOME";
+    public static final String TITLE = "Konashi Info";
+
+    private final KonashiManager mKonashiManager = Konashi.getManager();
 
     private TextView mNameTextView;
 
@@ -98,10 +104,16 @@ public final class HomeFragment extends MainActivity.BaseFragment {
     }
 
     private void reload() {
+        if (!mKonashiManager.isReady()) {
+            return;
+        }
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mNameTextView.setText(mKonashiManager.getPeripheralName());
+                mNameTextView.setText(String.format(
+                        "%s\n%s",
+                        mKonashiManager.getPeripheralName(),
+                        BluetoothAdapter.getDefaultAdapter().getAddress()));
             }
         });
 

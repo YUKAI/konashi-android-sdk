@@ -3,6 +3,7 @@ package com.uxxu.konashi.test_all_functions;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +20,9 @@ import com.uxxu.konashi.lib.KonashiManager;
 /**
  * Created by kiryu on 7/27/15.
  */
-public final class PioFragment extends MainActivity.BaseFragment {
+public final class PioFragment extends Fragment {
+
+    private final KonashiManager mKonashiManager = Konashi.getManager();
 
     public static final String TITLE = "PIO";
 
@@ -40,6 +43,21 @@ public final class PioFragment extends MainActivity.BaseFragment {
             mTableLayout.addView(PioTableRow.createWithPinNumber(getActivity(), pinNumber));
         }
         return view;
+    }
+
+    @Override
+    public void onDestroy() {
+        if (mKonashiManager.isReady()) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    for (int pinNumber : Utils.PIO_PINS) {
+                        mKonashiManager.pinMode(pinNumber, Konashi.INPUT);
+                    }
+                }
+            }).start();
+        }
+        super.onDestroy();
     }
 
     public static final class HeaderTableRow extends TableRow {

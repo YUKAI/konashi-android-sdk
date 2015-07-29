@@ -1,6 +1,7 @@
 package com.uxxu.konashi.test_all_functions;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,14 +13,17 @@ import android.widget.Spinner;
 import android.widget.ToggleButton;
 
 import com.uxxu.konashi.lib.Konashi;
+import com.uxxu.konashi.lib.KonashiManager;
 import com.uxxu.konashi.lib.KonashiObserver;
 
 /**
  * Created by kiryu on 7/27/15.
  */
-public final class CommunicationFragment extends MainActivity.BaseFragment {
+public final class CommunicationFragment extends Fragment {
 
     public static final String TITLE = "Communication (UART, I2C)";
+
+    private final KonashiManager mKonashiManager = Konashi.getManager();
 
     private ToggleButton mUartToggleButton;
     private Spinner mUartBaudrateSpinner;
@@ -180,13 +184,17 @@ public final class CommunicationFragment extends MainActivity.BaseFragment {
     }
 
     private void resetUart() {
+        if (!mKonashiManager.isReady()) {
+            return;
+        }
         if (mUartToggleButton.isChecked()) {
             mKonashiManager.uartMode(Konashi.UART_ENABLE);
             Utils.sleep();
             int i = mUartBaudrateSpinner.getSelectedItemPosition();
-            int[] values = getResources().getIntArray(R.array.uart_baudrates_values);
-            int value = values[i];
-            mKonashiManager.uartBaudrate(value);
+            String[] labels = getResources().getStringArray(R.array.uart_baudrates_labels);
+            String label = labels[i];
+
+            mKonashiManager.uartBaudrate(Utils.uartLabelToValue(label));
 
             mUartBaudrateSpinner.setEnabled(true);
             mUartDataEditText.setEnabled(true);
@@ -203,6 +211,9 @@ public final class CommunicationFragment extends MainActivity.BaseFragment {
     }
 
     private void resetI2c() {
+        if (!mKonashiManager.isReady()) {
+            return;
+        }
         if (mI2cToggleButton.isChecked()) {
             int i = mI2cBaudrateSpinner.getSelectedItemPosition();
             if (i == 0) {
