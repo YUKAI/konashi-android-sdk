@@ -8,14 +8,16 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.SeekBar;
+import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.ToggleButton;
 
 import com.uxxu.konashi.lib.Konashi;
 import com.uxxu.konashi.lib.KonashiManager;
@@ -32,13 +34,12 @@ public final class PwmFragment extends Fragment {
 
     private final KonashiManager mKonashiManager = Konashi.getManager();
 
-    private EditText mOptionPinEditText;
+    private Spinner mOptionPinSpinner;
     private EditText mOptionPeriodEditText;
     private EditText mOptionDutyEditText;
-    private Button mSubmitButton;
-
+    private Button mOptionSubmitButton;
     private TableLayout mTableLayout;
-    private List<PwmTableRow> rows = new ArrayList<>();
+    private List<PwmTableRow> mRows = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,7 +56,7 @@ public final class PwmFragment extends Fragment {
         for (int pinNumber : Utils.PWM_PINS) {
             PwmTableRow row = PwmTableRow.createWithPinNumber(getActivity(), pinNumber);
             mTableLayout.addView(row);
-            rows.add(row);
+            mRows.add(row);
         }
 
         initOptionViews(view);
@@ -79,18 +80,26 @@ public final class PwmFragment extends Fragment {
     }
 
     private void initOptionViews(View parent) {
-        mOptionPinEditText = (EditText) parent.findViewById(R.id.optionPinEditText);
+        mOptionPinSpinner = (Spinner) parent.findViewById(R.id.optionPinSpinner);
+        List<String> pinLabels = new ArrayList<>();
+        for (int pin : Utils.PWM_PINS) {
+            pinLabels.add(String.valueOf(pin));
+        }
+        mOptionPinSpinner.setAdapter(new ArrayAdapter<>(
+                getActivity(),
+                android.R.layout.simple_spinner_dropdown_item,
+                pinLabels));
         mOptionPeriodEditText = (EditText) parent.findViewById(R.id.optionPeriodEditText);
         mOptionDutyEditText = (EditText) parent.findViewById(R.id.optionDutyEditText);
-        mSubmitButton = (Button) parent.findViewById(R.id.submitButton);
-        mSubmitButton.setOnClickListener(new View.OnClickListener() {
+        mOptionSubmitButton = (Button) parent.findViewById(R.id.optionSubmitButton);
+        mOptionSubmitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int pinNumber = Integer.valueOf(mOptionPinEditText.getText().toString());
+                int pinNumber = Integer.valueOf((String) mOptionPinSpinner.getSelectedItem());
                 if (pinNumber < 0 || Utils.PWM_PINS.length <= pinNumber) {
                     return;
                 }
-                rows.get(pinNumber).setValues(
+                mRows.get(pinNumber).setValues(
                         Integer.valueOf(mOptionPeriodEditText.getText().toString()),
                         Integer.valueOf(mOptionDutyEditText.getText().toString()));
             }
@@ -119,7 +128,7 @@ public final class PwmFragment extends Fragment {
     public static final class PwmTableRow extends TableRow {
 
         private final TextView mPinTextView;
-        private final ToggleButton mPwmToggleButton;
+        private final Switch mPwmSwitch;
         private final SeekBar mDutySeekBar;
         private final KonashiManager mKonashiManager = Konashi.getManager();
         private int mPinNumber;
@@ -134,13 +143,14 @@ public final class PwmFragment extends Fragment {
             super(context);
 
             setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+            setPadding(0, 20, 0, 20);
 
             mPinTextView = new TextView(context);
             mPinTextView.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
             addView(mPinTextView, Utils.createTableRowLayoutParamwWithWeight(1));
 
-            mPwmToggleButton = new ToggleButton(context);
-            mPwmToggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            mPwmSwitch = new Switch(context);
+            mPwmSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     final int pwmMode = b ? Konashi.PWM_ENABLE_LED_MODE : Konashi.PWM_DISABLE;
@@ -156,7 +166,7 @@ public final class PwmFragment extends Fragment {
                     mDutySeekBar.setEnabled(b);
                 }
             });
-            addView(mPwmToggleButton, Utils.createTableRowLayoutParamwWithWeight(1));
+            addView(mPwmSwitch, Utils.createTableRowLayoutParamwWithWeight(1));
 
             mDutySeekBar = new SeekBar(context);
             mDutySeekBar.setMax(100);

@@ -30,11 +30,10 @@ public final class PioFragment extends Fragment {
     public static final String TITLE = "PIO";
 
     private final KonashiManager mKonashiManager = Konashi.getManager();
+    private KonashiObserver mInputObserver;
 
     private TableLayout mTableLayout;
-    private List<PioTableRow> rows = new ArrayList<>();
-
-    private KonashiObserver mInputObserver;
+    private List<PioTableRow> mRows = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,7 +43,7 @@ public final class PioFragment extends Fragment {
         mInputObserver = new KonashiObserver(getActivity()) {
             @Override
             public void onUpdatePioInput(byte value) {
-                rows.get(0).setInputValue(value);
+                mRows.get(0).setInputValue(value);
             }
         };
         mKonashiManager.addObserver(mInputObserver);
@@ -58,7 +57,7 @@ public final class PioFragment extends Fragment {
         for (int pinNumber : Utils.PIO_PINS) {
             PioTableRow row = PioTableRow.createWithPinNumber(getActivity(), pinNumber);
             mTableLayout.addView(row);
-            rows.add(row);
+            mRows.add(row);
         }
         return view;
     }

@@ -28,12 +28,10 @@ public final class AioFragment extends Fragment {
     public static final String TITLE = "Analog I/O";
 
     private final KonashiManager mKonashiManager = Konashi.getManager();
+    private KonashiObserver mAnalogReadObserver;
 
     private TableLayout mTableLayout;
-
-    private List<AioTableRow> rows = new ArrayList<>();
-
-    private KonashiObserver mAnalogReadObserver;
+    private List<AioTableRow> mRows = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -43,17 +41,17 @@ public final class AioFragment extends Fragment {
         mAnalogReadObserver = new KonashiObserver(getActivity()) {
             @Override
             public void onUpdateAnalogValueAio0(int value) {
-                rows.get(0).setVoltage(value / 1000.0f);
+                mRows.get(0).setVoltage(value / 1000.0f);
             }
 
             @Override
             public void onUpdateAnalogValueAio1(int value) {
-                rows.get(1).setVoltage(value / 1000.0f);
+                mRows.get(1).setVoltage(value / 1000.0f);
             }
 
             @Override
             public void onUpdateAnalogValueAio2(int value) {
-                rows.get(2).setVoltage(value / 1000.0f);
+                mRows.get(2).setVoltage(value / 1000.0f);
             }
         };
         mKonashiManager.addObserver(mAnalogReadObserver);
@@ -68,7 +66,7 @@ public final class AioFragment extends Fragment {
         for (int pinNumber : Utils.AIO_PINS) {
             AioTableRow row = AioTableRow.createWithPinNumber(getActivity(), pinNumber);
             mTableLayout.addView(row);
-            rows.add(row);
+            mRows.add(row);
         }
 
         return view;

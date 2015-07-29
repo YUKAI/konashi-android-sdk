@@ -21,18 +21,14 @@ public final class KonashiInfoFragment extends Fragment {
     public static final String TITLE = "Konashi Info";
 
     private final KonashiManager mKonashiManager = Konashi.getManager();
+    private KonashiObserver mInformationObserver;
 
     private TextView mNameTextView;
-
     private TextView mRssiTextView;
     private ProgressBar mRssiProgressBar;
-
     private TextView mBatteryTextView;
     private ProgressBar mBatteryProgressBar;
-
     private Button mReloadButton;
-
-    private KonashiObserver mInformationObserver;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

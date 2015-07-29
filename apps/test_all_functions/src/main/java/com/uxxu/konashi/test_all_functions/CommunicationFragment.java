@@ -10,7 +10,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.ToggleButton;
+import android.widget.Switch;
 
 import com.uxxu.konashi.lib.Konashi;
 import com.uxxu.konashi.lib.KonashiManager;
@@ -24,23 +24,22 @@ public final class CommunicationFragment extends Fragment {
     public static final String TITLE = "Communication (UART, I2C)";
 
     private final KonashiManager mKonashiManager = Konashi.getManager();
+    private KonashiObserver mCommunicationObserver;
 
-    private ToggleButton mUartToggleButton;
+    private Switch mUartSwitch;
     private Spinner mUartBaudrateSpinner;
     private EditText mUartDataEditText;
     private Button mUartDataSendButton;
     private EditText mUartResultEditText;
     private Button mUartResultClearButton;
 
-    private ToggleButton mI2cToggleButton;
+    private Switch mI2cSwitch;
     private Spinner mI2cBaudrateSpinner;
     private EditText mI2cDataEditText;
     private Button mI2cDataSendButton;
     private EditText mI2cResultEditText;
     private Button mI2cResultReadButton;
     private Button mI2cResultClearButton;
-
-    private KonashiObserver mCommunicationObserver;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -86,8 +85,8 @@ public final class CommunicationFragment extends Fragment {
             }
         });
 
-        mUartToggleButton = (ToggleButton) parent.findViewById(R.id.uartToggleButton);
-        mUartToggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        mUartSwitch = (Switch) parent.findViewById(R.id.uartSwitch);
+        mUartSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 resetUart();
@@ -129,8 +128,8 @@ public final class CommunicationFragment extends Fragment {
             }
         });
 
-        mI2cToggleButton = (ToggleButton) parent.findViewById(R.id.i2cToggleButton);
-        mI2cToggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        mI2cSwitch = (Switch) parent.findViewById(R.id.i2cSwitch);
+        mI2cSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 resetI2c();
@@ -181,7 +180,7 @@ public final class CommunicationFragment extends Fragment {
         if (!mKonashiManager.isReady()) {
             return;
         }
-        if (mUartToggleButton.isChecked()) {
+        if (mUartSwitch.isChecked()) {
             mKonashiManager.uartMode(Konashi.UART_ENABLE);
             int i = mUartBaudrateSpinner.getSelectedItemPosition();
             String[] labels = getResources().getStringArray(R.array.uart_baudrates_labels);
@@ -192,14 +191,12 @@ public final class CommunicationFragment extends Fragment {
             mUartBaudrateSpinner.setEnabled(true);
             mUartDataEditText.setEnabled(true);
             mUartDataSendButton.setEnabled(true);
-            mUartResultClearButton.setEnabled(true);
         } else {
             mKonashiManager.uartMode(Konashi.UART_DISABLE);
 
             mUartBaudrateSpinner.setEnabled(false);
             mUartDataEditText.setEnabled(false);
             mUartDataSendButton.setEnabled(false);
-            mUartResultClearButton.setEnabled(false);
         }
     }
 
@@ -207,7 +204,7 @@ public final class CommunicationFragment extends Fragment {
         if (!mKonashiManager.isReady()) {
             return;
         }
-        if (mI2cToggleButton.isChecked()) {
+        if (mI2cSwitch.isChecked()) {
             int i = mI2cBaudrateSpinner.getSelectedItemPosition();
             if (i == 0) {
                 mKonashiManager.i2cMode(Konashi.I2C_ENABLE_100K);
@@ -219,7 +216,6 @@ public final class CommunicationFragment extends Fragment {
             mI2cDataEditText.setEnabled(true);
             mI2cDataSendButton.setEnabled(true);
             mI2cResultReadButton.setEnabled(true);
-            mI2cResultClearButton.setEnabled(true);
         } else {
             mKonashiManager.i2cMode(Konashi.I2C_DISABLE);
 
@@ -227,7 +223,6 @@ public final class CommunicationFragment extends Fragment {
             mI2cDataEditText.setEnabled(false);
             mI2cDataSendButton.setEnabled(false);
             mI2cResultReadButton.setEnabled(false);
-            mI2cResultClearButton.setEnabled(false);
         }
     }
 }

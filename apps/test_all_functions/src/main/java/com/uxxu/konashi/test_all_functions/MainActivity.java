@@ -1,6 +1,7 @@
 package com.uxxu.konashi.test_all_functions;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.uxxu.konashi.lib.Konashi;
@@ -22,11 +24,12 @@ import com.uxxu.konashi.lib.KonashiUtils;
 public class MainActivity extends AppCompatActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
-    private NavigationDrawerFragment mNavigationDrawerFragment;
-    private View overlay;
-    private Menu mMenu;
     private KonashiManager mKonashiManager = Konashi.getManager();
     private KonashiObserver mKonashiObserver;
+
+    private NavigationDrawerFragment mNavigationDrawerFragment;
+    private View mOverlay;
+    private Menu mMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +43,7 @@ public class MainActivity extends AppCompatActivity
             public void onReady() {
                 KonashiUtils.log("onReady");
                 refreshActionBarMenu();
-                overlay.setVisibility(View.GONE);
+                mOverlay.setVisibility(View.GONE);
 
                 Toast.makeText(MainActivity.this, "Connected", Toast.LENGTH_SHORT).show();
             }
@@ -49,7 +52,7 @@ public class MainActivity extends AppCompatActivity
             public void onDisconncted() {
                 KonashiUtils.log("onDisconnected");
                 refreshActionBarMenu();
-                overlay.setVisibility(View.VISIBLE);
+                mOverlay.setVisibility(View.VISIBLE);
 
                 Toast.makeText(MainActivity.this, "Disconnected", Toast.LENGTH_SHORT).show();
             }
@@ -76,7 +79,7 @@ public class MainActivity extends AppCompatActivity
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
-        overlay = findViewById(R.id.overlay);
+        mOverlay = findViewById(R.id.overlay);
     }
 
     @Override
@@ -97,6 +100,11 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
+        View focusedView = this.getCurrentFocus();
+        if (focusedView != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(focusedView.getWindowToken(), 0);
+        }
         Fragment fragment = null;
         switch (position) {
             case 0:
@@ -162,7 +170,7 @@ public class MainActivity extends AppCompatActivity
             case R.id.action_disconnect:
                 mKonashiManager.disconnect();
                 refreshActionBarMenu();
-                overlay.setVisibility(View.VISIBLE);
+                mOverlay.setVisibility(View.VISIBLE);
                 return true;
         }
         return super.onOptionsItemSelected(item);
