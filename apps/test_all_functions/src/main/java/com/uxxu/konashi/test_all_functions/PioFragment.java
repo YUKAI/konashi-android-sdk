@@ -8,6 +8,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -16,22 +17,37 @@ import android.widget.ToggleButton;
 
 import com.uxxu.konashi.lib.Konashi;
 import com.uxxu.konashi.lib.KonashiManager;
+import com.uxxu.konashi.lib.KonashiObserver;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by kiryu on 7/27/15.
  */
 public final class PioFragment extends Fragment {
 
-    private final KonashiManager mKonashiManager = Konashi.getManager();
-
     public static final String TITLE = "PIO";
 
+    private final KonashiManager mKonashiManager = Konashi.getManager();
+
     private TableLayout mTableLayout;
+    private List<PioTableRow> rows = new ArrayList<>();
+
+    private KonashiObserver mInputObserver;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getActivity().setTitle(TITLE);
+
+        mInputObserver = new KonashiObserver(getActivity()) {
+            @Override
+            public void onUpdatePioInput(byte value) {
+                rows.get(0).setInputValue(value);
+            }
+        };
+        mKonashiManager.addObserver(mInputObserver);
     }
 
     @Override
@@ -40,7 +56,9 @@ public final class PioFragment extends Fragment {
         mTableLayout = (TableLayout) view.findViewById(R.id.tableLayout);
         mTableLayout.addView(new HeaderTableRow(getActivity()));
         for (int pinNumber : Utils.PIO_PINS) {
-            mTableLayout.addView(PioTableRow.createWithPinNumber(getActivity(), pinNumber));
+            PioTableRow row = PioTableRow.createWithPinNumber(getActivity(), pinNumber);
+            mTableLayout.addView(row);
+            rows.add(row);
         }
         return view;
     }
@@ -57,6 +75,7 @@ public final class PioFragment extends Fragment {
                 }
             }).start();
         }
+        mKonashiManager.removeObserver(mInputObserver);
         super.onDestroy();
     }
 
@@ -66,9 +85,10 @@ public final class PioFragment extends Fragment {
             super(context);
 
             addRow("PIN", 1);
-            addRow("Mode", 1);
-            addRow("Output", 3);
-            addRow("Input", 3);
+            addRow("Mode", 2);
+            addRow("Output", 2);
+            addRow("Input", 1);
+            addRow("Pullup", 1);
         }
 
         private void addRow(String text, float weight) {
@@ -85,7 +105,8 @@ public final class PioFragment extends Fragment {
         private final TextView mPinTextView;
         private final ToggleButton mIoToggleButton;
         private final ToggleButton mOutputToggleButton;
-        private final ToggleButton mInputToggleButton;
+        private final TextView mInputTextView;
+        private final CheckBox mPullupCheckBox;
         private final KonashiManager mKonashiManager = Konashi.getManager();
         private int mPinNumber;
 
@@ -105,8 +126,8 @@ public final class PioFragment extends Fragment {
             addView(mPinTextView, Utils.createTableRowLayoutParamwWithWeight(1));
 
             mIoToggleButton = new ToggleButton(context);
-            mIoToggleButton.setTextOff("input");
-            mIoToggleButton.setTextOn("output");
+            mIoToggleButton.setTextOff("INPUT");
+            mIoToggleButton.setTextOn("OUTPUT");
             mIoToggleButton.setText(mIoToggleButton.getTextOff());
             mIoToggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
@@ -114,22 +135,22 @@ public final class PioFragment extends Fragment {
                     int mode = b ? Konashi.OUTPUT : Konashi.INPUT;
                     switch (mode) {
                         case Konashi.OUTPUT:
-                            mInputToggleButton.setEnabled(false);
                             mOutputToggleButton.setEnabled(true);
+                            mInputTextView.setEnabled(false);
                             break;
                         case Konashi.INPUT:
-                            mInputToggleButton.setEnabled(true);
                             mOutputToggleButton.setEnabled(false);
+                            mInputTextView.setEnabled(true);
                             break;
                     }
                     mKonashiManager.pinMode(mPinNumber, mode);
                 }
             });
-            addView(mIoToggleButton, Utils.createTableRowLayoutParamwWithWeight(1));
+            addView(mIoToggleButton, Utils.createTableRowLayoutParamwWithWeight(2));
 
             mOutputToggleButton = new ToggleButton(context);
-            mOutputToggleButton.setTextOff("low");
-            mOutputToggleButton.setTextOn("high");
+            mOutputToggleButton.setTextOff("LOW");
+            mOutputToggleButton.setTextOn("HIGH");
             mOutputToggleButton.setText(mOutputToggleButton.getTextOff());
             mOutputToggleButton.setEnabled(false);
             mOutputToggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -138,18 +159,30 @@ public final class PioFragment extends Fragment {
                     mKonashiManager.digitalWrite(mPinNumber, b ? Konashi.HIGH : Konashi.LOW);
                 }
             });
-            addView(mOutputToggleButton, Utils.createTableRowLayoutParamwWithWeight(3));
+            addView(mOutputToggleButton, Utils.createTableRowLayoutParamwWithWeight(2));
 
-            mInputToggleButton = new ToggleButton(context);
-            mInputToggleButton.setTextOff("low");
-            mInputToggleButton.setTextOn("high");
-            mInputToggleButton.setText(mInputToggleButton.getTextOff());
-            addView(mInputToggleButton, Utils.createTableRowLayoutParamwWithWeight(3));
+            mInputTextView = new TextView(context);
+            mInputTextView.setText("LOW");
+            mInputTextView.setGravity(Gravity.CENTER);
+            addView(mInputTextView, Utils.createTableRowLayoutParamwWithWeight(1));
+
+            mPullupCheckBox = new CheckBox(context);
+            mPullupCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    mKonashiManager.pinPullup(mPinNumber, b ? Konashi.PULLUP : Konashi.NO_PULLS);
+                }
+            });
+            addView(mPullupCheckBox, Utils.createTableRowLayoutParamwWithWeight(1));
         }
 
         public void setPinNumber(int pinNumber) {
             this.mPinNumber = pinNumber;
             mPinTextView.setText(String.valueOf(pinNumber));
+        }
+
+        public void setInputValue(int value) {
+            mInputTextView.setText(value == Konashi.HIGH ? "HIGH" : "LOW");
         }
     }
 }
