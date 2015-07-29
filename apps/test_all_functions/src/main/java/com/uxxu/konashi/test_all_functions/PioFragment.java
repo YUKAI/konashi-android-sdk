@@ -167,6 +167,7 @@ public final class PioFragment extends Fragment {
             addView(mInputTextView, Utils.createTableRowLayoutParamwWithWeight(1));
 
             mPullupCheckBox = new CheckBox(context);
+            mPullupCheckBox.setGravity(Gravity.CENTER);
             mPullupCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {

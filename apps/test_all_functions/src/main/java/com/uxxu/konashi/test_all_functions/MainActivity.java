@@ -86,10 +86,8 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void run() {
                     mKonashiManager.reset();
-                    Utils.sleep();
                     mKonashiManager.disconnect();
                     mKonashiManager.close();
-                    Utils.sleep();
                     mKonashiManager = null;
                 }
             }).start();

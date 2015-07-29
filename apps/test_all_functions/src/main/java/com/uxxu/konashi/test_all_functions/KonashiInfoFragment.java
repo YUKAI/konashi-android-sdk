@@ -1,6 +1,5 @@
 package com.uxxu.konashi.test_all_functions;
 
-import android.bluetooth.BluetoothAdapter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -110,19 +109,14 @@ public final class KonashiInfoFragment extends Fragment {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mNameTextView.setText(String.format(
-                        "%s\n%s",
-                        mKonashiManager.getPeripheralName(),
-                        BluetoothAdapter.getDefaultAdapter().getAddress()));
+                mNameTextView.setText(mKonashiManager.getPeripheralName());
             }
         });
 
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Utils.sleep();
                 mKonashiManager.batteryLevelReadRequest();
-                Utils.sleep();
                 mKonashiManager.signalStrengthReadRequest();
             }
         }).start();

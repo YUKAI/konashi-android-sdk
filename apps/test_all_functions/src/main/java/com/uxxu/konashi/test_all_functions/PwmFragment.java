@@ -70,7 +70,6 @@ public final class PwmFragment extends Fragment {
                 @Override
                 public void run() {
                     for (int pinNumber : Utils.PWM_PINS) {
-                        Utils.sleep();
                         mKonashiManager.pwmMode(pinNumber, Konashi.PWM_DISABLE);
                     }
                 }
@@ -148,10 +147,8 @@ public final class PwmFragment extends Fragment {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            Utils.sleep();
                             mKonashiManager.pwmMode(mPinNumber, pwmMode);
                             if (pwmMode == Konashi.PWM_ENABLE_LED_MODE) {
-                                Utils.sleep();
                                 mKonashiManager.pwmLedDrive(mPinNumber, mDutySeekBar.getProgress());
                             }
                         }
@@ -197,11 +194,9 @@ public final class PwmFragment extends Fragment {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    Utils.sleep();
                     mKonashiManager.pwmPeriod(mPinNumber, period);
-                    Utils.sleep();
+                    Utils.sleepShort();
                     mKonashiManager.pwmDuty(mPinNumber, duty);
-                    Utils.sleep();
                 }
             }).start();
         }

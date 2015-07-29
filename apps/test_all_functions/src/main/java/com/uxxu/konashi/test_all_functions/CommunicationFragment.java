@@ -143,9 +143,7 @@ public final class CommunicationFragment extends Fragment {
         mI2cDataSendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Utils.sleep();
                 mKonashiManager.i2cStartCondition();
-                Utils.sleep();
                 String text = mI2cDataEditText.getText().toString().trim();
                 if (Konashi.I2C_DATA_MAX_LENGTH < text.length()) {
                     text = text.substring(0, Konashi.I2C_DATA_MAX_LENGTH);
@@ -154,9 +152,7 @@ public final class CommunicationFragment extends Fragment {
                         text.length(),
                         text.getBytes(),
                         (byte) 0x1F);
-                Utils.sleep();
                 mKonashiManager.i2cStopCondition();
-                Utils.sleep();
             }
         });
 
@@ -167,9 +163,7 @@ public final class CommunicationFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 mKonashiManager.i2cStartCondition();
-                Utils.sleep();
                 mKonashiManager.i2cReadRequest(Konashi.I2C_DATA_MAX_LENGTH, (byte) 0x1F);
-                Utils.sleep();
                 mKonashiManager.i2cStopCondition();
             }
         });
@@ -189,7 +183,6 @@ public final class CommunicationFragment extends Fragment {
         }
         if (mUartToggleButton.isChecked()) {
             mKonashiManager.uartMode(Konashi.UART_ENABLE);
-            Utils.sleep();
             int i = mUartBaudrateSpinner.getSelectedItemPosition();
             String[] labels = getResources().getStringArray(R.array.uart_baudrates_labels);
             String label = labels[i];

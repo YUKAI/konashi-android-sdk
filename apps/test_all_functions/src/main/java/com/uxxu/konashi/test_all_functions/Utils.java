@@ -30,7 +30,7 @@ public class Utils {
         return new TableRow.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, weight);
     }
 
-    public static void sleep() {
+    public static void sleepShort() {
         sleep(100);
     }
 
