@@ -118,6 +118,30 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
     ///////////////////////////
 
     /**
+     * konashiのイベントのリスナーを追加する
+     * @param listener 追加するリスナー
+     */
+    public void addListener(KonashiListener listener){
+        mNotifier.addListener(listener);
+    }
+
+    /**
+     * 指定したリスナーを削除する
+     * @param listener 削除するリスナー
+     */
+    public void removeListener(KonashiListener listener){
+        mNotifier.removeListener(listener);
+    }
+
+    /**
+     * すべてのリスナーを削除する
+     */
+    public void removeAllListeners() {
+        mNotifier.removeAllListeners();
+    }
+
+
+    /**
      * konashiのイベントのオブザーバを追加する
      * @param observer 追加するオブザーバ
      */
