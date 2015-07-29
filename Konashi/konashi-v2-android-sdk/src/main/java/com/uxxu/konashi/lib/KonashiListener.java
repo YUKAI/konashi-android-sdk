@@ -3,8 +3,8 @@ package com.uxxu.konashi.lib;
 /**
  * konashiのイベントをキャッチするためのインタフェース
  *
- * @author monakaz, YUKAI Engineering
- * http://konashi.ux-xu.com
+ * @author izumin5210
+ * http://izumin.info
  * ========================================================================
  * Copyright 2015 Yukai Engineering Inc.
  *
