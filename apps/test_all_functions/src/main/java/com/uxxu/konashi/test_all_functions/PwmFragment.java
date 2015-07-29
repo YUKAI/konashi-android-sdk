@@ -89,8 +89,12 @@ public final class PwmFragment extends Fragment {
                 getActivity(),
                 android.R.layout.simple_spinner_dropdown_item,
                 pinLabels));
+        mOptionPinSpinner.setSelection(0);
+
         mOptionPeriodEditText = (EditText) parent.findViewById(R.id.optionPeriodEditText);
+
         mOptionDutyEditText = (EditText) parent.findViewById(R.id.optionDutyEditText);
+
         mOptionSubmitButton = (Button) parent.findViewById(R.id.optionSubmitButton);
         mOptionSubmitButton.setOnClickListener(new View.OnClickListener() {
             @Override

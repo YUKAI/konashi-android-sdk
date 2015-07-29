@@ -9,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -101,6 +103,7 @@ public final class AioFragment extends Fragment {
 
         private final TextView mPinTextView;
         private final TextView mVoltageTextView;
+        private final ProgressBar mVoltageProgressBar;
         private final Button mReadButton;
         private final KonashiManager mKonashiManager = Konashi.getManager();
         private int mPinNumber;
@@ -120,9 +123,15 @@ public final class AioFragment extends Fragment {
             mPinTextView.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
             addView(mPinTextView, Utils.createTableRowLayoutParamwWithWeight(1));
 
+            LinearLayout voltageWrapper = new LinearLayout(context);
+            voltageWrapper.setOrientation(LinearLayout.VERTICAL);
             mVoltageTextView = new TextView(context);
             mVoltageTextView.setGravity(Gravity.CENTER_HORIZONTAL);
-            addView(mVoltageTextView, Utils.createTableRowLayoutParamwWithWeight(5));
+            voltageWrapper.addView(mVoltageTextView);
+            mVoltageProgressBar = new ProgressBar(context, null, android.R.attr.progressBarStyleHorizontal);
+            mVoltageProgressBar.setMax(100);
+            voltageWrapper.addView(mVoltageProgressBar);
+            addView(voltageWrapper, Utils.createTableRowLayoutParamwWithWeight(5));
 
             mReadButton = new Button(context);
             mReadButton.setText("Read");
@@ -142,6 +151,7 @@ public final class AioFragment extends Fragment {
 
         public void setVoltage(float value) {
             mVoltageTextView.setText(String.format("%.3f V", value));
+            mVoltageProgressBar.setProgress(Math.min(100, Math.round(value / 1.3f * 100f)));
         }
     }
 }
