@@ -1,7 +1,6 @@
 package com.uxxu.konashi.test_all_functions;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.Gravity;
@@ -64,7 +63,10 @@ public final class AioFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_aio, container, false);
 
         mTableLayout = (TableLayout) view.findViewById(R.id.tableLayout);
-        mTableLayout.addView(new HeaderTableRow(getActivity()));
+        mTableLayout.addView(new Utils.HeaderTableRowBuilder(getActivity())
+                .column("PIN", 1)
+                .column("Voltage", 5)
+                .column("Read", 2).build());
         for (int pinNumber : Utils.AIO_PINS) {
             AioTableRow row = AioTableRow.createWithPinNumber(getActivity(), pinNumber);
             mTableLayout.addView(row);
@@ -78,25 +80,6 @@ public final class AioFragment extends Fragment {
     public void onDestroy() {
         mKonashiManager.removeObserver(mAnalogReadObserver);
         super.onDestroy();
-    }
-
-    public static final class HeaderTableRow extends TableRow {
-
-        public HeaderTableRow(Context context) {
-            super(context);
-
-            addRow("PIN", 1);
-            addRow("Voltage", 5);
-            addRow("Read", 2);
-        }
-
-        private void addRow(String text, float weight) {
-            TextView textView = new TextView(getContext());
-            textView.setText(text);
-            textView.setTypeface(null, Typeface.BOLD);
-            textView.setGravity(Gravity.CENTER_HORIZONTAL);
-            addView(textView, Utils.createTableRowLayoutParamwWithWeight(weight));
-        }
     }
 
     public static final class AioTableRow extends TableRow {
@@ -121,7 +104,7 @@ public final class AioFragment extends Fragment {
 
             mPinTextView = new TextView(context);
             mPinTextView.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
-            addView(mPinTextView, Utils.createTableRowLayoutParamwWithWeight(1));
+            addView(mPinTextView, Utils.createTableRowLayoutParamsWithWeight(1));
 
             LinearLayout voltageWrapper = new LinearLayout(context);
             voltageWrapper.setOrientation(LinearLayout.VERTICAL);
@@ -131,7 +114,7 @@ public final class AioFragment extends Fragment {
             mVoltageProgressBar = new ProgressBar(context, null, android.R.attr.progressBarStyleHorizontal);
             mVoltageProgressBar.setMax(100);
             voltageWrapper.addView(mVoltageProgressBar);
-            addView(voltageWrapper, Utils.createTableRowLayoutParamwWithWeight(5));
+            addView(voltageWrapper, Utils.createTableRowLayoutParamsWithWeight(5));
 
             mReadButton = new Button(context);
             mReadButton.setText("Read");
@@ -141,7 +124,7 @@ public final class AioFragment extends Fragment {
                     mKonashiManager.analogReadRequest(mPinNumber);
                 }
             });
-            addView(mReadButton, Utils.createTableRowLayoutParamwWithWeight(2));
+            addView(mReadButton, Utils.createTableRowLayoutParamsWithWeight(2));
         }
 
         public void setPinNumber(int pinNumber) {

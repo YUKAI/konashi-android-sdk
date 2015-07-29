@@ -1,7 +1,6 @@
 package com.uxxu.konashi.test_all_functions;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.Gravity;
@@ -53,7 +52,13 @@ public final class PioFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_pio, container, false);
         mTableLayout = (TableLayout) view.findViewById(R.id.tableLayout);
-        mTableLayout.addView(new HeaderTableRow(getActivity()));
+        mTableLayout.addView(new Utils.HeaderTableRowBuilder(getActivity())
+                .column("PIN", 1)
+                .column("Mode", 2)
+                .column("Output", 2)
+                .column("Input", 1)
+                .column("Pullup", 1)
+                .build());
         for (int pinNumber : Utils.PIO_PINS) {
             PioTableRow row = PioTableRow.createWithPinNumber(getActivity(), pinNumber);
             mTableLayout.addView(row);
@@ -76,27 +81,6 @@ public final class PioFragment extends Fragment {
         }
         mKonashiManager.removeObserver(mInputObserver);
         super.onDestroy();
-    }
-
-    public static final class HeaderTableRow extends TableRow {
-
-        public HeaderTableRow(Context context) {
-            super(context);
-
-            addRow("PIN", 1);
-            addRow("Mode", 2);
-            addRow("Output", 2);
-            addRow("Input", 1);
-            addRow("Pullup", 1);
-        }
-
-        private void addRow(String text, float weight) {
-            TextView textView = new TextView(getContext());
-            textView.setText(text);
-            textView.setTypeface(null, Typeface.BOLD);
-            textView.setGravity(Gravity.CENTER_HORIZONTAL);
-            addView(textView, Utils.createTableRowLayoutParamwWithWeight(weight));
-        }
     }
 
     public static final class PioTableRow extends TableRow {
@@ -122,7 +106,7 @@ public final class PioFragment extends Fragment {
 
             mPinTextView = new TextView(context);
             mPinTextView.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
-            addView(mPinTextView, Utils.createTableRowLayoutParamwWithWeight(1));
+            addView(mPinTextView, Utils.createTableRowLayoutParamsWithWeight(1));
 
             mIoToggleButton = new ToggleButton(context);
             mIoToggleButton.setTextOff("INPUT");
@@ -145,7 +129,7 @@ public final class PioFragment extends Fragment {
                     mKonashiManager.pinMode(mPinNumber, mode);
                 }
             });
-            addView(mIoToggleButton, Utils.createTableRowLayoutParamwWithWeight(2));
+            addView(mIoToggleButton, Utils.createTableRowLayoutParamsWithWeight(2));
 
             mOutputToggleButton = new ToggleButton(context);
             mOutputToggleButton.setTextOff("LOW");
@@ -158,12 +142,12 @@ public final class PioFragment extends Fragment {
                     mKonashiManager.digitalWrite(mPinNumber, b ? Konashi.HIGH : Konashi.LOW);
                 }
             });
-            addView(mOutputToggleButton, Utils.createTableRowLayoutParamwWithWeight(2));
+            addView(mOutputToggleButton, Utils.createTableRowLayoutParamsWithWeight(2));
 
             mInputTextView = new TextView(context);
             mInputTextView.setText("LOW");
             mInputTextView.setGravity(Gravity.CENTER);
-            addView(mInputTextView, Utils.createTableRowLayoutParamwWithWeight(1));
+            addView(mInputTextView, Utils.createTableRowLayoutParamsWithWeight(1));
 
             mPullupCheckBox = new CheckBox(context);
             mPullupCheckBox.setGravity(Gravity.CENTER);
@@ -173,7 +157,7 @@ public final class PioFragment extends Fragment {
                     mKonashiManager.pinPullup(mPinNumber, b ? Konashi.PULLUP : Konashi.NO_PULLS);
                 }
             });
-            addView(mPullupCheckBox, Utils.createTableRowLayoutParamwWithWeight(1));
+            addView(mPullupCheckBox, Utils.createTableRowLayoutParamsWithWeight(1));
         }
 
         public void setPinNumber(int pinNumber) {

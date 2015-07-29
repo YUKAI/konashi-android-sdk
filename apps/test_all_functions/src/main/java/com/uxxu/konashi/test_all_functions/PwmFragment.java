@@ -1,7 +1,6 @@
 package com.uxxu.konashi.test_all_functions;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.Gravity;
@@ -52,7 +51,11 @@ public final class PwmFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_pwm, container, false);
 
         mTableLayout = (TableLayout) view.findViewById(R.id.tableLayout);
-        mTableLayout.addView(new HeaderTableRow(getActivity()));
+        mTableLayout.addView(new Utils.HeaderTableRowBuilder(getActivity())
+                .column("PIN", 1)
+                .column("PWN", 1)
+                .column("Duty", 6)
+                .build());
         for (int pinNumber : Utils.PWM_PINS) {
             PwmTableRow row = PwmTableRow.createWithPinNumber(getActivity(), pinNumber);
             mTableLayout.addView(row);
@@ -110,25 +113,6 @@ public final class PwmFragment extends Fragment {
         });
     }
 
-    public static final class HeaderTableRow extends TableRow {
-
-        public HeaderTableRow(Context context) {
-            super(context);
-
-            addRow("PIN", 1);
-            addRow("PWN", 1);
-            addRow("Duty", 6);
-        }
-
-        private void addRow(String text, float weight) {
-            TextView textView = new TextView(getContext());
-            textView.setText(text);
-            textView.setTypeface(null, Typeface.BOLD);
-            textView.setGravity(Gravity.CENTER_HORIZONTAL);
-            addView(textView, Utils.createTableRowLayoutParamwWithWeight(weight));
-        }
-    }
-
     public static final class PwmTableRow extends TableRow {
 
         private final TextView mPinTextView;
@@ -151,7 +135,7 @@ public final class PwmFragment extends Fragment {
 
             mPinTextView = new TextView(context);
             mPinTextView.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
-            addView(mPinTextView, Utils.createTableRowLayoutParamwWithWeight(1));
+            addView(mPinTextView, Utils.createTableRowLayoutParamsWithWeight(1));
 
             mPwmSwitch = new Switch(context);
             mPwmSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -170,7 +154,7 @@ public final class PwmFragment extends Fragment {
                     mDutySeekBar.setEnabled(b);
                 }
             });
-            addView(mPwmSwitch, Utils.createTableRowLayoutParamwWithWeight(1));
+            addView(mPwmSwitch, Utils.createTableRowLayoutParamsWithWeight(1));
 
             mDutySeekBar = new SeekBar(context);
             mDutySeekBar.setMax(100);
@@ -196,7 +180,7 @@ public final class PwmFragment extends Fragment {
                 public void onStopTrackingTouch(final SeekBar seekBar) {
                 }
             });
-            addView(mDutySeekBar, Utils.createTableRowLayoutParamwWithWeight(6));
+            addView(mDutySeekBar, Utils.createTableRowLayoutParamsWithWeight(6));
         }
 
         public void setPinNumber(int pinNumber) {
