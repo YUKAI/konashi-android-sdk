@@ -77,7 +77,10 @@ public class KonashiNotifier {
     /**
      * オブザーバを追加する
      * @param observer 追加するオブザーバ
+     * @deprecated This method deprecated in 0.5.0.
+     * Use {@link #addListener(KonashiListener)} instead.
      */
+    @Deprecated
     public void addObserver(KonashiObserver observer){
         addListener(observer);
     }
@@ -85,14 +88,20 @@ public class KonashiNotifier {
     /**
      * オブザーバを削除する
      * @param observer 削除するオブザーバ
+     * @deprecated This method deprecated in 0.5.0.
+     * Use {@link #removeListener(KonashiListener)} instead.
      */
+    @Deprecated
     public void removeObserver(KonashiObserver observer){
         removeListener(observer);
     }
     
     /**
      * オブザーバをすべて削除する
+     * @deprecated This method deprecated in 0.5.0.
+     * Use {@link #removeAllListeners()} instead.
      */
+    @Deprecated
     public void removeAllObservers(){
         removeAllListeners();
     }

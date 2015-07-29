@@ -4,6 +4,8 @@ import android.app.Activity;
 
 /**
  * konashiのイベントをキャッチするためのオブザーバクラス
+ * @deprecated This class deprecated in 0.5.0.
+ * Use {@link KonashiListener} instead.
  * 
  * @author monakaz, YUKAI Engineering
  * http://konashi.ux-xu.com
@@ -23,6 +25,7 @@ import android.app.Activity;
  * limitations under the License.
  *
  */
+@Deprecated
 public abstract class KonashiObserver implements KonashiListener {
     /**
      * runOnUiThreadするために必要なのです。。。
