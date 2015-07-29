@@ -1,12 +1,12 @@
 package com.uxxu.konashi.test_all_functions;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,6 +37,18 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         mKonashiManager.initialize(getApplicationContext());
+        mNavigationDrawerFragment = (NavigationDrawerFragment)
+                getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+        mNavigationDrawerFragment.setUp(
+                R.id.navigation_drawer,
+                (DrawerLayout) findViewById(R.id.drawer_layout));
+
+        mOverlay = findViewById(R.id.overlay);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         mKonashiObserver = new KonashiObserver(this) {
 
             @Override
@@ -72,14 +84,13 @@ public class MainActivity extends AppCompatActivity
             }
         };
         mKonashiManager.addObserver(mKonashiObserver);
+        mOverlay.setVisibility(mKonashiManager.isReady() ? View.GONE : View.VISIBLE);
+    }
 
-        mNavigationDrawerFragment = (NavigationDrawerFragment)
-                getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
-        mNavigationDrawerFragment.setUp(
-                R.id.navigation_drawer,
-                (DrawerLayout) findViewById(R.id.drawer_layout));
-
-        mOverlay = findViewById(R.id.overlay);
+    @Override
+    protected void onPause() {
+        mKonashiManager.removeObserver(mKonashiObserver);
+        super.onPause();
     }
 
     @Override
@@ -96,6 +107,29 @@ public class MainActivity extends AppCompatActivity
             }).start();
         }
         super.onDestroy();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mNavigationDrawerFragment.isDrawerOpen()) {
+            mNavigationDrawerFragment.close();
+            return;
+        }
+        new AlertDialog.Builder(this)
+                .setMessage("Are you sure you want to exit?")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        finish();
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                })
+                .show();
     }
 
     @Override
