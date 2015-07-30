@@ -69,7 +69,7 @@ public final class KonashiInfoFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
+        View view = inflater.inflate(R.layout.fragment_konashi_info, container, false);
 
         mNameTextView = (TextView) view.findViewById(R.id.nameTextView);
 
