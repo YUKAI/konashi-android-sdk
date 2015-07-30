@@ -171,7 +171,7 @@ public final class CommunicationFragment extends Fragment {
         mI2cResultClearButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mI2cResultEditText.setText("");
+//                mI2cResultEditText.setText(""); TODO: uncomment here
             }
         });
     }
