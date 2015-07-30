@@ -650,19 +650,27 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
     /*********************************
      * FIFO send buffer
      *********************************/
-    
+
     protected void addWriteMessage(UUID uuid, byte[] value){
-        mKonashiMessageList.add(new KonashiWriteMessage(uuid, value));
+        addWriteMessage(new KonashiWriteMessage(uuid, value));
     }
-    
+
+    protected void addWriteMessage(KonashiWriteMessage message){
+        mKonashiMessageList.add(message);
+    }
+
     protected void addReadMessage(UUID characteristicUuid){
         addReadMessage(KonashiUUID.KONASHI_SERVICE_UUID, characteristicUuid);
     }
     
     protected void addReadMessage(UUID serviceUuid, UUID characteristicUuid){
-        mKonashiMessageList.add(new KonashiReadMessage(serviceUuid, characteristicUuid));
+        addReadMessage(new KonashiReadMessage(serviceUuid, characteristicUuid));
     }
-    
+
+    protected void addReadMessage(KonashiReadMessage message) {
+        mKonashiMessageList.add(message);
+    }
+
     private KonashiMessage getFirstMessage(){
         if(mKonashiMessageList.size()>0){
             KonashiMessage message = mKonashiMessageList.get(0);
