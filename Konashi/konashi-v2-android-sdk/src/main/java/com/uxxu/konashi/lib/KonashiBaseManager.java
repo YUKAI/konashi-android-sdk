@@ -328,8 +328,15 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
         
         mBluetoothGatt.readRemoteRssi();
     }
-        
-    
+
+    /**
+     * Konashiへのアクセスが可能かどうか
+     * @return
+     */
+    public boolean isEnableAccessKonashi(){
+        return mIsSupportBle && mIsInitialized && mStatus.equals(BleStatus.READY);
+    }
+
     /****************************
      * BLE Override methods
      ****************************/
@@ -395,11 +402,7 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
     private boolean isSupportBle(Context context){
         return context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE);
     }
-    
-    protected boolean isEnableAccessKonashi(){
-        return mIsSupportBle && mIsInitialized && mStatus.equals(BleStatus.READY);
-    }
-    
+
     private void stopFindHandler(){
         mFindHandler.removeCallbacks(mFindRunnable);
     }
