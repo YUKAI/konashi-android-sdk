@@ -328,8 +328,15 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
         
         mBluetoothGatt.readRemoteRssi();
     }
-        
-    
+
+    /**
+     * Konashiへのアクセスが可能かどうか
+     * @return
+     */
+    public boolean isEnableAccessKonashi(){
+        return mIsSupportBle && mIsInitialized && mStatus.equals(BleStatus.READY);
+    }
+
     /****************************
      * BLE Override methods
      ****************************/
@@ -395,43 +402,17 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
     private boolean isSupportBle(Context context){
         return context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE);
     }
-    
-    protected boolean isEnableAccessKonashi(){
-        return mIsSupportBle && mIsInitialized && mStatus.equals(BleStatus.READY);
-    }
-    
+
     private void stopFindHandler(){
         mFindHandler.removeCallbacks(mFindRunnable);
     }
     
     private void setStatus(BleStatus status) {
         mStatus = status;
-        
-        if(status==BleStatus.DISCONNECTED){
-            KonashiUtils.log("konashi_status: DISCONNECTED");
-        } else if(status==BleStatus.SCANNING){
-            KonashiUtils.log("konashi_status: SCANNING");
-        } else if(status==BleStatus.SCAN_END){
-            KonashiUtils.log("konashi_status: SCAN_END");
-        } else if(status==BleStatus.DEVICE_FOUND){
-            KonashiUtils.log("konashi_status: DEVICE_FOUND");
-        } else if(status==BleStatus.CONNECTED){
-            KonashiUtils.log("konashi_status: CONNECTED");
-        } else if(status==BleStatus.SERVICE_NOT_FOUND){
-            KonashiUtils.log("konashi_status: SERVICE_NOT_FOUND");
-        } else if(status==BleStatus.SERVICE_FOUND){
-            KonashiUtils.log("konashi_status: SERVICE_FOUND");
-        } else if(status==BleStatus.CHARACTERISTICS_NOT_FOUND){
-            KonashiUtils.log("konashi_status: CHARACTERISTICS_NOT_FOUND");
-        } else if(status==BleStatus.CHARACTERISTICS_FOUND){
-            KonashiUtils.log("konashi_status: CHARACTERISTICS_FOUND");
-        } else if(status==BleStatus.READY){
-            KonashiUtils.log("konashi_status: READY");
+        KonashiUtils.log("konashi_status: " + mStatus.name());
+
+        if (status == BleStatus.READY) {
             notifyKonashiEvent(KonashiEvent.READY);
-        } else if(status==BleStatus.CLOSED){
-            KonashiUtils.log("konashi_status: CLOSED");
-        } else {
-            KonashiUtils.log("konashi_status: UNKNOWN");
         }
     }
     
