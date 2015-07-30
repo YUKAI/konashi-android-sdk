@@ -95,7 +95,7 @@ public class KonashiNotifier {
                         observer.onConnected();
                         break;
                     case DISCONNECTED:
-                        observer.onDisconncted();
+                        observer.onDisconnected();
                         break;
                     case READY:
                         observer.onReady();
