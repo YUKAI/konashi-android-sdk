@@ -17,6 +17,9 @@ import android.os.Handler;
 import android.os.Message;
 import android.widget.Toast;
 
+import com.uxxu.konashi.lib.entities.KonashiMessage;
+import com.uxxu.konashi.lib.entities.KonashiReadMessage;
+import com.uxxu.konashi.lib.entities.KonashiWriteMessage;
 import com.uxxu.konashi.lib.ui.BleDeviceListAdapter;
 import com.uxxu.konashi.lib.ui.BleDeviceSelectionDialog;
 import com.uxxu.konashi.lib.ui.BleDeviceSelectionDialog.OnBleDeviceSelectListener;
@@ -95,24 +98,7 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
     // FIFO buffer
     private Timer mFifoTimer;
     private ArrayList<KonashiMessage> mKonashiMessageList;
-    private class KonashiMessage{
-        public UUID characteristicUuid;
-    }
-    private class KonashiWriteMessage extends KonashiMessage{
-        public byte[] data;
-        public KonashiWriteMessage(UUID characteristicUuid, byte[] data){
-            this.characteristicUuid = characteristicUuid;
-            this.data = data;
-        }
-    }
-    private class KonashiReadMessage extends KonashiMessage{
-        public UUID serviceUuid;
-        public KonashiReadMessage(UUID serviceUuid, UUID characteristicUuid){
-            this.serviceUuid = serviceUuid;
-            this.characteristicUuid = characteristicUuid;
-        }
-    }
-    
+
     // BLE members
     private BleStatus mStatus = BleStatus.DISCONNECTED;
     private BluetoothAdapter mBluetoothAdapter;
@@ -140,7 +126,7 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
     
     public KonashiBaseManager(){
         mNotifier = new KonashiNotifier();
-        mKonashiMessageList = new ArrayList<KonashiMessage>();
+        mKonashiMessageList = new ArrayList<>();
     }
     
     /**
@@ -703,11 +689,11 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
                             if(message.getClass() == (Class<?>)KonashiWriteMessage.class){
                                 // Write
                                 KonashiWriteMessage m = (KonashiWriteMessage)message;
-                                writeValue(m.characteristicUuid, m.data);
+                                writeValue(m.getCharacteristicUuid(), m.getData());
                             } else {
                                 // Read
                                 KonashiReadMessage m = (KonashiReadMessage)message;
-                                readValue(m.serviceUuid, m.characteristicUuid);
+                                readValue(m.getServiceUuid(), m.getCharacteristicUuid());
                             }
                         }
                     }
