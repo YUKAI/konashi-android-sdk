@@ -62,7 +62,7 @@ public abstract class KonashiObserver implements KonashiListener {
      * konashiとの接続を切断した時に呼ばれる
      */
     @Override
-    public void onDisconncted(){}
+    public void onDisconnected(){}
     /**
      * konashiに接続完了した時(この時からkonashiにアクセスできるようになります)に呼ばれる
      */

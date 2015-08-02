@@ -153,7 +153,7 @@ public class KonashiNotifier {
                 listener.onConnected();
                 break;
             case DISCONNECTED:
-                listener.onDisconncted();
+                listener.onDisconnected();
                 break;
             case READY:
                 listener.onReady();
