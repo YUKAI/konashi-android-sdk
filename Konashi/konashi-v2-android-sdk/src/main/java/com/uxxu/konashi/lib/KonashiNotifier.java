@@ -112,7 +112,7 @@ public class KonashiNotifier {
                     }
                 });
             } else {
-                notifyKonashiEvent(event, param0, listener);
+                notifyKonashiEvent(event, param0, param1, listener);
             }
         }
     }
