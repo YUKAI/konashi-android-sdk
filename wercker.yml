@@ -11,7 +11,7 @@ build:
     - android-sdk-update:
         filter: sysimg-21
     - setup-android-emulator:
-        filter: android-21
+        target: android-21
     - script:
         name: run gradle connectedAndroidTest
         code: |
