@@ -9,7 +9,7 @@ build:
           echo $ANDROID_BUILD_TOOLS
           echo $ANDROID_UPDATE_FILTER
     - android-sdk-update:
-        filter: sysimg-21
+        filter: platform-tools,extra-android-m2repository,extra-android-support
     - setup-android-emulator:
         target: android-22
     - script:
