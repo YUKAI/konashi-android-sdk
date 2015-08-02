@@ -148,7 +148,7 @@ public class MainActivity extends KonashiActivity {
         public void onConnected() {}
 
         @Override
-        public void onDisconncted() {}
+        public void onDisconnected() {}
 
         @Override
         public void onReady(){
