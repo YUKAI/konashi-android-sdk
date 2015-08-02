@@ -104,7 +104,7 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
         mBatteryLevel = 0;
         mRssi = 0;
     }
-    
+
     @Override
     public void initialize(Context context) {
         super.initialize(context);
@@ -636,7 +636,7 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * I2Cが有効なモードに設定しているか
      * @return 有効なモードに設定されているならtrue
      */
-    private boolean isEnableI2c(){
+    public boolean isEnableI2c(){
         return (mI2cSetting==Konashi.I2C_ENABLE || mI2cSetting==Konashi.I2C_ENABLE_100K || mI2cSetting==Konashi.I2C_ENABLE_400K);
     }
     
