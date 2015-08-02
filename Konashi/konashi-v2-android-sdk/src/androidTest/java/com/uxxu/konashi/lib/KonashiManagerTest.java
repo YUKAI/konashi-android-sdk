@@ -301,7 +301,7 @@ public class KonashiManagerTest {
                 Mockito.verify(getManager(), Mockito.times(1))
                         .addWriteMessage(org.mockito.Matchers.any(KonashiWriteMessage.class));
                 assertThat(KonashiUUID.I2C_READ_PARAM_UUID, is(msgCaptor.getValue().getCharacteristicUuid()));
-                assertThat(new byte[] {0x13, 0x3f, 0x01}, is(msgCaptor.getValue().getData()));
+                assertThat(new byte[] {0x13, 0x3f}, is(msgCaptor.getValue().getData()));
             }
         }
 
