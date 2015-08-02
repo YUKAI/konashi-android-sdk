@@ -33,7 +33,7 @@ public interface KonashiListener {
     /**
      * konashiとの接続を切断した時に呼ばれる
      */
-    void onDisconncted();
+    void onDisconnected();
     /**
      * konashiに接続完了した時(この時からkonashiにアクセスできるようになります)に呼ばれる
      */
