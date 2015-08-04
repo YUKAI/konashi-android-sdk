@@ -10,7 +10,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.uxxu.konashi.lib.Konashi;
-import com.uxxu.konashi.lib.KonashiObserver;
+import com.uxxu.konashi.lib.KonashiErrorReason;
+import com.uxxu.konashi.lib.KonashiListener;
 import com.uxxu.konashi.lib.ui.KonashiActivity;
 
 
@@ -98,7 +99,7 @@ public class MainActivity extends KonashiActivity {
         setButtonAction(R.id.led5_button, Konashi.LED5);
 
         // konashiのイベントハンドラを設定。定義は下の方にあります
-        getKonashiManager().addObserver(mKonashiObserver);
+        getKonashiManager().addListener(mKonashiListener);
     }
 
     /**
@@ -130,15 +131,29 @@ public class MainActivity extends KonashiActivity {
     /**
      * konashiのイベントハンドラ
      */
-    private final KonashiObserver mKonashiObserver = new KonashiObserver(MainActivity.this) {
+    private final KonashiListener mKonashiListener= new KonashiListener() {
+        @Override
+        public void onNotFoundPeripheral() {}
+
+        @Override
+        public void onConnected() {}
+
+        @Override
+        public void onDisconnected() {}
+
         @Override
         public void onReady(){
             Log.d(TAG, "onKonashiReady");
 
-            // findボタンのテキストをdisconnectに
-            mFindButton.setText(getText(R.string.disconnect_button));
-            // ボタンを表示する
-            mContainer.setVisibility(View.VISIBLE);
+            self.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    // findボタンのテキストをdisconnectに
+                    mFindButton.setText(getText(R.string.disconnect_button));
+                    // ボタンを表示する
+                    mContainer.setVisibility(View.VISIBLE);
+                }
+            });
 
             // konashiのポートの定義。LED2〜5を出力に設定。
             getKonashiManager().pinMode(Konashi.LED2, Konashi.OUTPUT);
@@ -157,9 +172,11 @@ public class MainActivity extends KonashiActivity {
         public void onUpdatePioInput(byte value){
             Log.d(TAG, "onUpdatePioInput: " + value);
 
+            final String swText;
+
             // スイッチの状態を見て、テキストを変え，各ピンをプルアップし，出力する．
             if(getKonashiManager().digitalRead(Konashi.S1)==Konashi.HIGH){
-                mSwTextView.setText(getString(R.string.on));
+                swText = getString(R.string.on);
 
                 if(!mIsStatePullUp){
                     getKonashiManager().pinPullup(Konashi.LED2, Konashi.PULLUP);
@@ -187,20 +204,58 @@ public class MainActivity extends KonashiActivity {
                     mIsStatePullUp = false;
                 }
             } else {
-                mSwTextView.setText(getString(R.string.off));
+                swText = getString(R.string.off);
             }
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mSwTextView.setText(swText);
+                }
+            });
         }
 
         @Override
-        public void onUpdateBatteryLevel(int level) {
-            mBatteryLevelText.setText(getString(R.string.label_battery_level) + String.valueOf(level));
+        public void onUpdateAnalogValue(int pin, int value) {}
+
+        @Override
+        public void onUpdateAnalogValueAio0(int value) {}
+
+        @Override
+        public void onUpdateAnalogValueAio1(int value) {}
+
+        @Override
+        public void onUpdateAnalogValueAio2(int value) {}
+
+        @Override
+        public void onCompleteUartRx(byte[] data) {}
+
+        @Override
+        public void onUpdateBatteryLevel(final int level) {
+            self.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mBatteryLevelText.setText(getString(R.string.label_battery_level) + String.valueOf(level));
+                }
+            });
             getKonashiManager().batteryLevelReadRequest();
         }
 
         @Override
-        public void onUpdateSignalStrength(int rssi) {
-            mSignalLevelText.setText(getString(R.string.label_signal_level) + String.valueOf(rssi));
+        public void onUpdateSignalStrength(final int rssi) {
+            self.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mSignalLevelText.setText(getString(R.string.label_signal_level) + String.valueOf(rssi));
+                }
+            });
             getKonashiManager().signalStrengthReadRequest();
         }
+
+        @Override
+        public void onCancelSelectKonashi() {}
+
+        @Override
+        public void onError(KonashiErrorReason errorReason, String message) {}
     };
 }

@@ -118,9 +118,40 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
     ///////////////////////////
 
     /**
+     * konashiのイベントのリスナーを追加する
+     * @param listener 追加するリスナー
+     */
+    @Override
+    public void addListener(KonashiListener listener){
+        mNotifier.addListener(listener);
+    }
+
+    /**
+     * 指定したリスナーを削除する
+     * @param listener 削除するリスナー
+     */
+    @Override
+    public void removeListener(KonashiListener listener){
+        mNotifier.removeListener(listener);
+    }
+
+    /**
+     * すべてのリスナーを削除する
+     */
+    @Override
+    public void removeAllListeners() {
+        mNotifier.removeAllListeners();
+    }
+
+
+    /**
      * konashiのイベントのオブザーバを追加する
      * @param observer 追加するオブザーバ
+     * @deprecated This method deprecated in 0.5.0.
+     * Use {@link #addListener(KonashiListener)} instead.
      */
+    @Deprecated
+    @Override
     public void addObserver(KonashiObserver observer){
         mNotifier.addObserver(observer);
     }
@@ -128,14 +159,22 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
     /**
      * 指定したオブザーバを削除する
      * @param observer 削除するオブザーバ
+     * @deprecated This method deprecated in 0.5.0.
+     * Use {@link #removeListener(KonashiListener)} instead.
      */
+    @Deprecated
+    @Override
     public void removeObserver(KonashiObserver observer){
         mNotifier.removeObserver(observer);
     }
     
     /**
      * すべてのオブザーバを削除する
+     * @deprecated This method deprecated in 0.5.0.
+     * Use {@link #removeAllListeners()} instead.
      */
+    @Deprecated
+    @Override
     public void removeAllObservers(){
         mNotifier.removeAllObservers();
     }
@@ -510,6 +549,7 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * UART の有効/無効を設定する
      * @param mode 設定するUARTのモード。Konashi.UART_DISABLE, Konashi.UART_ENABLE を指定
      */
+    @Override
     public void uartMode(int mode){
         if(!isEnableAccessKonashi()){
             notifyKonashiError(KonashiErrorReason.NOT_READY);
@@ -532,6 +572,7 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * UART の通信速度を設定する
      * @param baudrate UARTの通信速度。Konashi.UART_RATE_2K4 か Konashi.UART_RATE_9K6 を指定
      */
+    @Override
     public void uartBaudrate(int baudrate){
         if(!isEnableAccessKonashi()){
             notifyKonashiError(KonashiErrorReason.NOT_READY);
@@ -555,6 +596,7 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * UART でデータを送信する
      * @param data 送信するデータ
      */
+    @Override
     public void uartWrite(byte[] data){
         if(!isEnableAccessKonashi()){
             notifyKonashiError(KonashiErrorReason.NOT_READY);
@@ -586,6 +628,7 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * for konashi v1(old code)
      * @param data 送信するデータ
      */
+//    @Override
 //    public void uartWrite(byte data){
 //        if(!isEnableAccessKonashi()){
 //            notifyKonashiError(KonashiErrorReason.NOT_READY);
@@ -611,7 +654,7 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * I2Cのコンディションを発行する
      * @param condition コンディション。Konashi.I2C_START_CONDITION, Konashi.I2C_RESTART_CONDITION, Konashi.I2C_STOP_CONDITION を指定できる。
      */
-    private void i2cSendCondition(int condition) {       
+    private void i2cSendCondition(int condition) {
         if(!isEnableAccessKonashi()){
             notifyKonashiError(KonashiErrorReason.NOT_READY);
             return;

@@ -1,16 +1,12 @@
 package com.uxxu.konashi.lib;
 
-import android.app.Activity;
-
 /**
- * konashiのイベントをキャッチするためのオブザーバクラス
- * @deprecated This class deprecated in 0.5.0.
- * Use {@link KonashiListener} instead.
- * 
- * @author monakaz, YUKAI Engineering
- * http://konashi.ux-xu.com
+ * konashiのイベントをキャッチするためのインタフェース
+ *
+ * @author izumin5210
+ * http://izumin.info
  * ========================================================================
- * Copyright 2014 Yukai Engineering Inc.
+ * Copyright 2015 Yukai Engineering Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,102 +21,65 @@ import android.app.Activity;
  * limitations under the License.
  *
  */
-@Deprecated
-public abstract class KonashiObserver implements KonashiListener {
-    /**
-     * runOnUiThreadするために必要なのです。。。
-     */
-    private Activity mActivity;
-    
-    /**
-     * コンストラクタ
-     * @param activity Activity
-     */
-    public KonashiObserver(Activity activity){
-        mActivity = activity;
-    }
-    
-    /**
-     * Activityを取得する
-     * @return Activity
-     */
-    public Activity getActivity(){
-        return mActivity;
-    }
-    
+public interface KonashiListener {
     /**
      * findWithNameで指定した名前のkonashiが見つからなかった時、もしくはまわりにBLEデバイスがなかった時に呼ばれる
      */
-    @Override
-    public void onNotFoundPeripheral(){}   
+    void onNotFoundPeripheral();
     /**
      * konashiに接続した時(まだこの時はkonashiが使える状態ではありません)に呼ばれる
      */
-    @Override
-    public void onConnected(){}
+    void onConnected();
     /**
      * konashiとの接続を切断した時に呼ばれる
      */
-    @Override
-    public void onDisconnected(){}
+    void onDisconnected();
     /**
      * konashiに接続完了した時(この時からkonashiにアクセスできるようになります)に呼ばれる
      */
-    @Override
-    public void onReady(){}
+    void onReady();
     /**
      * PIOの入力の状態が変化した時に呼ばれる
      */
-    @Override
-    public void onUpdatePioInput(byte value){}
+    void onUpdatePioInput(byte value);
     /**
      * AIOのどれかのピンの電圧が取得できた時
      */
-    @Override
-    public void onUpdateAnalogValue(int pin, int value){}
+    void onUpdateAnalogValue(int pin, int value);
     /**
      * AIO0の電圧が取得できた時
      */
-    @Override
-    public void onUpdateAnalogValueAio0(int value){}
+    void onUpdateAnalogValueAio0(int value);
     /**
      * AIO1の電圧が取得できた時
      */
-    @Override
-    public void onUpdateAnalogValueAio1(int value){}
+    void onUpdateAnalogValueAio1(int value);
     /**
      * AIO2の電圧が取得できた時
      */
-    @Override
-    public void onUpdateAnalogValueAio2(int value){}
+    void onUpdateAnalogValueAio2(int value);
     /**
      * UARTのRxからデータを受信した時
      */
-    @Override
-    public void onCompleteUartRx(byte[] data){}
+    void onCompleteUartRx(byte[] data);
     /**
      * for konashi v1(old code)
      */
-    //@Override
-    //public void onCompleteUartRx(byte data){}
+    //void onCompleteUartRx(byte data);
     /**
      * konashiのバッテリーのレベルを取得できた時
      */
-    @Override
-    public void onUpdateBatteryLevel(int level){}
+    void onUpdateBatteryLevel(int level);
     /**
      * konashiの電波強度を取得できた時
      */
-    @Override
-    public void onUpdateSignalStrength(int rssi){}
+    void onUpdateSignalStrength(int rssi);
     /**
      * BLEデバイス選択ダイアログをキャンセルした時に呼ばれる
      */
-    @Override
-    public void onCancelSelectKonashi(){}
+    void onCancelSelectKonashi();
     /**
      * エラーが起きた時に呼ばれる
      */
-    @Override
-    public void onError(KonashiErrorReason errorReason, String message){}
+    void onError(KonashiErrorReason errorReason, String message);
 }
