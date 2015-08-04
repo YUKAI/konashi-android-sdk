@@ -1,5 +1,6 @@
 package com.uxxu.konashi.lib;
 
+import android.bluetooth.BluetoothGattCharacteristic;
 import android.util.Log;
 
 /**
@@ -47,5 +48,32 @@ public class KonashiUtils {
             StackTraceElement[] ste = Thread.currentThread().getStackTrace();
             Log.d(TAG, "[" + ste[LOG_STACK_LEVEL].getFileName() + ":" + ste[LOG_STACK_LEVEL].getMethodName() + "(" + ste[LOG_STACK_LEVEL].getLineNumber() + ")] " + text);
         }
+    }
+
+    /**
+     * characteristicからAnalogReadの値を取得する
+     * @param pin AIOのPIN番号
+     * @param characteristic 返ってきたcharacteristic
+     * @return AnalogRead値
+     */
+    public static int getAnalogValue(int pin, BluetoothGattCharacteristic characteristic) {
+        byte[] value = characteristic.getValue();
+        switch (pin) {
+            case Konashi.AIO0:
+            case Konashi.AIO1:
+            case Konashi.AIO2:
+                return (value[0] << 8 & 0xff00) | (value[1] & 0xff);
+            default:
+                throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * characteristicからAnalogReadの値を取得する
+     * @param characteristic 返ってきたcharacteristic
+     * @return BatteryLevel値
+     */
+    public static int getBatteryLevel(BluetoothGattCharacteristic characteristic) {
+        return characteristic.getValue()[0] & 0xff;
     }
 }
