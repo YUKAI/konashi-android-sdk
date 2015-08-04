@@ -414,45 +414,21 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
     private final BluetoothGattCallback mBluetoothGattCallback = new BluetoothGattCallback() {
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
-            byte[] value;
             KonashiUtils.log("onCharacteristicChanged: " + characteristic.getUuid());
-            value = characteristic.getValue();
 
-            if(characteristic.getUuid().equals(KonashiUUID.PIO_INPUT_NOTIFICATION_UUID)){
-                onUpdatePioInput(value[0]);
-            }
-            else if(characteristic.getUuid().equals(KonashiUUID.UART_RX_NOTIFICATION_UUID)){
-                onRecieveUart(value);
-                //onReceiveUart(value[0]) //for konashi v1(old code)
-            }
+            KonashiCharacteristicHandler
+                    .valueOf(characteristic.getUuid())
+                    .handle(characteristic, mNotifier);
         }
 
         @Override
         public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
-            int value;
-            UUID uuid;
-            
             KonashiUtils.log("onCharacteristicRead: " + characteristic.getUuid());
             
-            if(status==BluetoothGatt.GATT_SUCCESS){
-                uuid = characteristic.getUuid();
-                
-                if(uuid.equals(KonashiUUID.ANALOG_READ0_UUID)){
-                    value = (characteristic.getValue()[0]<<8 & 0xFF00) + (characteristic.getValue()[1] & 0xFF);
-                    onUpdateAnalogValue(Konashi.AIO0, value);
-                }
-                else if(uuid.equals(KonashiUUID.ANALOG_READ1_UUID)){
-                    value = (characteristic.getValue()[0]<<8 & 0xFF) | (characteristic.getValue()[1] & 0xFF);
-                    onUpdateAnalogValue(Konashi.AIO1, value);
-                }
-                else if(uuid.equals(KonashiUUID.ANALOG_READ2_UUID)){
-                    value = (characteristic.getValue()[0]<<8 & 0xFF) | (characteristic.getValue()[1] & 0xFF);
-                    onUpdateAnalogValue(Konashi.AIO2, value);
-                }
-                else if(uuid.equals(KonashiUUID.BATTERY_LEVEL_UUID)){
-                    value = characteristic.getValue()[0] & 0xFF;
-                    onUpdateBatteryLevel(value);
-                }
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                KonashiCharacteristicHandler
+                        .valueOf(characteristic.getUuid())
+                        .handle(characteristic, mNotifier);
             } else {
                 KonashiUtils.log("onCharacteristicRead GATT_FAILURE");
             }
