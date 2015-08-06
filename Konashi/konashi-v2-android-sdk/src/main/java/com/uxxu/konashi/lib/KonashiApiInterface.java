@@ -3,6 +3,8 @@ package com.uxxu.konashi.lib;
 import android.app.Activity;
 import android.content.Context;
 
+import com.uxxu.konashi.lib.listeners.KonashiListener;
+
 /**
  * konashi APIのインタフェース
  * 
@@ -26,6 +28,9 @@ import android.content.Context;
  */
 public interface KonashiApiInterface {
     // Observer
+    public void addListener(KonashiListener observer);
+    public void removeListener(KonashiListener observer);
+    public void removeAllListeners();
     public void addObserver(KonashiObserver observer);
     public void removeObserver(KonashiObserver observer);
     public void removeAllObservers();

@@ -9,7 +9,8 @@ import android.widget.SeekBar;
 import android.widget.Toast;
 
 import com.uxxu.konashi.lib.Konashi;
-import com.uxxu.konashi.lib.KonashiObserver;
+import com.uxxu.konashi.lib.KonashiErrorReason;
+import com.uxxu.konashi.lib.listeners.KonashiListener;
 import com.uxxu.konashi.lib.ui.KonashiActivity;
 
 
@@ -99,21 +100,35 @@ public class MainActivity extends KonashiActivity {
 
 
         // konashiのイベントハンドラを設定。定義は下の方にあります
-        getKonashiManager().addObserver(mKonashiObserver);
+        getKonashiManager().addListener(mKonashiListener);
     }
 
     /**
      * konashiのイベントハンドラ
      */
-    private final KonashiObserver mKonashiObserver = new KonashiObserver(MainActivity.this) {
+    private final KonashiListener mKonashiListener = new KonashiListener() {
+        @Override
+        public void onNotFoundPeripheral() {}
+
+        @Override
+        public void onConnected() {}
+
+        @Override
+        public void onDisconnected() {}
+
         @Override
         public void onReady(){
             Log.d(TAG, "onKonashiReady");
 
-            // findボタンのテキストをdisconnectに
-            mFindButton.setText(getText(R.string.disconnect_button));
-            // ボタンを表示する
-            mContainer.setVisibility(View.VISIBLE);
+            self.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    // findボタンのテキストをdisconnectに
+                    mFindButton.setText(getText(R.string.disconnect_button));
+                    // ボタンを表示する
+                    mContainer.setVisibility(View.VISIBLE);
+                }
+            });
 
             // konashiのポートの定義。LED2をPWMに設定。
             getKonashiManager().pwmMode(Konashi.LED2, Konashi.PWM_ENABLE);
@@ -126,5 +141,32 @@ public class MainActivity extends KonashiActivity {
         public void onUpdatePioInput(byte value){
             Log.d(TAG, "onUpdatePioInput: " + value);
         }
+
+        @Override
+        public void onUpdateAnalogValue(int pin, int value) {}
+
+        @Override
+        public void onUpdateAnalogValueAio0(int value) {}
+
+        @Override
+        public void onUpdateAnalogValueAio1(int value) {}
+
+        @Override
+        public void onUpdateAnalogValueAio2(int value) {}
+
+        @Override
+        public void onCompleteUartRx(byte[] data) {}
+
+        @Override
+        public void onUpdateBatteryLevel(int level) {}
+
+        @Override
+        public void onUpdateSignalStrength(int rssi) {}
+
+        @Override
+        public void onCancelSelectKonashi() {}
+
+        @Override
+        public void onError(KonashiErrorReason errorReason, String message) {}
     };
 }
