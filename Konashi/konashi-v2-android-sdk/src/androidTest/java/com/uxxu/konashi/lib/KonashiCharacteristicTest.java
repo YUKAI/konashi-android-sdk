@@ -17,8 +17,8 @@ import java.util.UUID;
  * Created by izumin on 8/4/15.
  */
 @RunWith(AndroidJUnit4.class)
-public class KonashiCharacteristicHandlerTest {
-    public static final String TAG = KonashiCharacteristicHandlerTest.class.getSimpleName();
+public class KonashiCharacteristicTest {
+    public static final String TAG = KonashiCharacteristicTest.class.getSimpleName();
 
     @Spy private KonashiNotifier mNotifier;
     @Mock private KonashiListener mListener;
@@ -33,7 +33,7 @@ public class KonashiCharacteristicHandlerTest {
     @Test
     public void testHandleAnalogRead0() {
         Mockito.when(mCharacteristic.getValue()).thenReturn(new byte[] {0x03, 0x48});
-        KonashiCharacteristicHandler
+        KonashiCharacteristic
                 .valueOf(KonashiUUID.ANALOG_READ0_UUID)
                 .handle(mCharacteristic, mNotifier);
         Mockito.verify(mListener, Mockito.times(1)).onUpdateAnalogValueAio0(840);
@@ -42,7 +42,7 @@ public class KonashiCharacteristicHandlerTest {
     @Test
     public void testHandleAnalogRead1() {
         Mockito.when(mCharacteristic.getValue()).thenReturn(new byte[] {0x03, 0x48});
-        KonashiCharacteristicHandler
+        KonashiCharacteristic
                 .valueOf(KonashiUUID.ANALOG_READ1_UUID)
                 .handle(mCharacteristic, mNotifier);
         Mockito.verify(mListener, Mockito.times(1)).onUpdateAnalogValueAio1(840);
@@ -51,7 +51,7 @@ public class KonashiCharacteristicHandlerTest {
     @Test
     public void testHandleAnalogRead2() {
         Mockito.when(mCharacteristic.getValue()).thenReturn(new byte[] {0x03, 0x48});
-        KonashiCharacteristicHandler
+        KonashiCharacteristic
                 .valueOf(KonashiUUID.ANALOG_READ2_UUID)
                 .handle(mCharacteristic, mNotifier);
         Mockito.verify(mListener, Mockito.times(1)).onUpdateAnalogValueAio2(840);
@@ -60,7 +60,7 @@ public class KonashiCharacteristicHandlerTest {
     @Test
     public void testHandleBatteryLevel() {
         Mockito.when(mCharacteristic.getValue()).thenReturn(new byte[] {0x48});
-        KonashiCharacteristicHandler
+        KonashiCharacteristic
                 .valueOf(KonashiUUID.BATTERY_LEVEL_UUID)
                 .handle(mCharacteristic, mNotifier);
         Mockito.verify(mListener, Mockito.times(1)).onUpdateBatteryLevel(72);
@@ -69,7 +69,7 @@ public class KonashiCharacteristicHandlerTest {
     @Test
     public void testHandlePioNotification() {
         Mockito.when(mCharacteristic.getValue()).thenReturn(new byte[] {0x13});
-        KonashiCharacteristicHandler
+        KonashiCharacteristic
                 .valueOf(KonashiUUID.PIO_INPUT_NOTIFICATION_UUID)
                 .handle(mCharacteristic, mNotifier);
         Mockito.verify(mListener, Mockito.times(1)).onUpdatePioInput((byte) 0x13);
@@ -78,7 +78,7 @@ public class KonashiCharacteristicHandlerTest {
     @Test
     public void testHandleUartRxNotification() {
         Mockito.when(mCharacteristic.getValue()).thenReturn("test".getBytes());
-        KonashiCharacteristicHandler
+        KonashiCharacteristic
                 .valueOf(KonashiUUID.UART_RX_NOTIFICATION_UUID)
                 .handle(mCharacteristic, mNotifier);
         Mockito.verify(mListener, Mockito.times(1)).onCompleteUartRx(new byte[] {0x74, 0x65, 0x73, 0x74});
@@ -86,7 +86,7 @@ public class KonashiCharacteristicHandlerTest {
 
     @Test
     public void testHandleUnknownCharacteristic() {
-        KonashiCharacteristicHandler.valueOf(UUID.randomUUID()).handle(mCharacteristic, mNotifier);
+        KonashiCharacteristic.valueOf(UUID.randomUUID()).handle(mCharacteristic, mNotifier);
         Mockito.verifyNoMoreInteractions(mListener);
     }
 }

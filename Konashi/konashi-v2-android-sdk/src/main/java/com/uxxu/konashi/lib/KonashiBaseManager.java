@@ -24,8 +24,6 @@ import com.uxxu.konashi.lib.ui.BleDeviceListAdapter;
 import com.uxxu.konashi.lib.ui.BleDeviceSelectionDialog;
 import com.uxxu.konashi.lib.ui.BleDeviceSelectionDialog.OnBleDeviceSelectListener;
 
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -416,7 +414,7 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
         public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
             KonashiUtils.log("onCharacteristicChanged: " + characteristic.getUuid());
 
-            KonashiCharacteristicHandler
+            KonashiCharacteristic
                     .valueOf(characteristic.getUuid())
                     .handle(characteristic, mNotifier);
         }
@@ -426,7 +424,7 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
             KonashiUtils.log("onCharacteristicRead: " + characteristic.getUuid());
             
             if (status == BluetoothGatt.GATT_SUCCESS) {
-                KonashiCharacteristicHandler
+                KonashiCharacteristic
                         .valueOf(characteristic.getUuid())
                         .handle(characteristic, mNotifier);
             } else {

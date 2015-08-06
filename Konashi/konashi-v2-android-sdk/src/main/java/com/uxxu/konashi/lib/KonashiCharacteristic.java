@@ -7,7 +7,7 @@ import java.util.UUID;
 /**
  * Created by izumin on 8/4/15.
  */
-public enum KonashiCharacteristicHandler {
+public enum KonashiCharacteristic {
     ANALOG_READ0(KonashiUUID.ANALOG_READ0_UUID, KonashiEvent.UPDATE_ANALOG_VALUE_AIO0) {
         @Override
         public void handle(BluetoothGattCharacteristic characteristic, KonashiNotifier notifier) {
@@ -58,13 +58,13 @@ public enum KonashiCharacteristicHandler {
     private UUID mUuid;
     private KonashiEvent mEvent;
 
-    KonashiCharacteristicHandler(UUID uuid, KonashiEvent event) {
+    KonashiCharacteristic(UUID uuid, KonashiEvent event) {
         mUuid = uuid;
         mEvent = event;
     }
 
-    public static KonashiCharacteristicHandler valueOf(UUID uuid) {
-        for (KonashiCharacteristicHandler handler : values()) {
+    public static KonashiCharacteristic valueOf(UUID uuid) {
+        for (KonashiCharacteristic handler : values()) {
             if (handler.getUuid() == uuid) {
                 return handler;
             }
