@@ -14,21 +14,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.Message;
 import android.widget.Toast;
 
-import com.uxxu.konashi.lib.entities.KonashiMessage;
 import com.uxxu.konashi.lib.entities.KonashiReadMessage;
 import com.uxxu.konashi.lib.entities.KonashiWriteMessage;
 import com.uxxu.konashi.lib.ui.BleDeviceListAdapter;
 import com.uxxu.konashi.lib.ui.BleDeviceSelectionDialog;
 import com.uxxu.konashi.lib.ui.BleDeviceSelectionDialog.OnBleDeviceSelectListener;
 
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.UUID;
 
 /**
@@ -96,8 +91,7 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
      *****************************/
     
     // FIFO buffer
-    private Timer mFifoTimer;
-    private ArrayList<KonashiMessage> mKonashiMessageList;
+    private KonashiMessageHandler mKonashiMessageHandler;
 
     // BLE members
     private BleStatus mStatus = BleStatus.DISCONNECTED;
@@ -118,7 +112,7 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
     // UI members
     private Activity mActivity;
     private BleDeviceSelectionDialog mDialog;
-    
+
     
     /////////////////////////////////////////////////////////////
     // Public methods
@@ -126,7 +120,6 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
     
     public KonashiBaseManager(){
         mNotifier = new KonashiNotifier();
-        mKonashiMessageList = new ArrayList<>();
     }
     
     /**
@@ -232,8 +225,7 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
         if(mKonashiName==null){
             mDialog.show(activity);
         }
-        
-        startFifoTimer();
+
     }
     
     /**
@@ -245,11 +237,9 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
             mBluetoothGatt = null;
             setStatus(BleStatus.DISCONNECTED);
         }
-        
-        stopFifoTimer();
-        
-        // reset members
-        mKonashiMessageList.clear();
+
+        mKonashiMessageHandler.stop();
+        mKonashiMessageHandler = null;
     }
     
     /**
@@ -264,10 +254,7 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
         if(!mStatus.equals(BleStatus.DISCONNECTED)){
             disconnect();
         }
-        
-        // remove all messages
-        mKonashiMessageList.clear();
-        
+
         // remove all observers
         mNotifier.removeAllObservers();
         
@@ -409,6 +396,10 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
     
     private void connect(BluetoothDevice device){
         mBluetoothGatt = device.connectGatt(mActivity.getApplicationContext(), false, mBluetoothGattCallback);
+        HandlerThread thread = new HandlerThread(device.getName());
+        thread.start();
+        mKonashiMessageHandler = new KonashiMessageHandler(thread);
+        mKonashiMessageHandler.setBluetoothGatt(mBluetoothGatt);
     }
     
     private final BluetoothGattCallback mBluetoothGattCallback = new BluetoothGattCallback() {
@@ -637,7 +628,7 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
     }
 
     protected void addWriteMessage(KonashiWriteMessage message){
-        mKonashiMessageList.add(message);
+        mKonashiMessageHandler.sendMessage(message.getMessage(mKonashiMessageHandler));
     }
 
     protected void addReadMessage(UUID characteristicUuid){
@@ -649,81 +640,9 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
     }
 
     protected void addReadMessage(KonashiReadMessage message) {
-        mKonashiMessageList.add(message);
+        mKonashiMessageHandler.sendMessage(message.getMessage(mKonashiMessageHandler));
     }
 
-    private KonashiMessage getFirstMessage(){
-        if(mKonashiMessageList.size()>0){
-            KonashiMessage message = mKonashiMessageList.get(0);
-            mKonashiMessageList.remove(0);
-            return message;
-        } else {
-            return null;
-        }
-    }
-    
-    private void startFifoTimer(){
-        stopFifoTimer();
-        
-        mFifoTimer = new Timer(true);
-        final Handler handler = new Handler();
-        mFifoTimer.schedule(new TimerTask(){
-            @Override
-            public void run() {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        KonashiMessage message = getFirstMessage();
-                        if(message!=null){
-                            if(message.getClass() == (Class<?>)KonashiWriteMessage.class){
-                                // Write
-                                KonashiWriteMessage m = (KonashiWriteMessage)message;
-                                writeValue(m.getCharacteristicUuid(), m.getData());
-                            } else {
-                                // Read
-                                KonashiReadMessage m = (KonashiReadMessage)message;
-                                readValue(m.getServiceUuid(), m.getCharacteristicUuid());
-                            }
-                        }
-                    }
-                });
-            }
-        }, KONASHI_SEND_PERIOD, KONASHI_SEND_PERIOD);
-    }
-    
-    private void stopFifoTimer(){
-        if(mFifoTimer!=null){
-            mFifoTimer.cancel();
-            mFifoTimer = null;
-        }
-    }
-    
-    /*********************************
-     * Write/Read on BLE
-     *********************************/
-    
-    private void writeValue(UUID uuid, byte[] value){
-        if (mBluetoothGatt != null) {
-            BluetoothGattService service = mBluetoothGatt.getService(KonashiUUID.KONASHI_SERVICE_UUID);
-            BluetoothGattCharacteristic characteristic = service.getCharacteristic(uuid);
-            if(characteristic!=null){
-                characteristic.setValue(value);
-                mBluetoothGatt.writeCharacteristic(characteristic);
-            }
-        }
-    }
-    
-    private void readValue(UUID serviceUuid, UUID characteristicUuid){
-        if (mBluetoothGatt != null) {
-            BluetoothGattService service = mBluetoothGatt.getService(serviceUuid);
-            BluetoothGattCharacteristic characteristic = service.getCharacteristic(characteristicUuid);
-            if(characteristic!=null){
-                mBluetoothGatt.readCharacteristic(characteristic);
-            }
-        }
-    }
-    
-    
     /******************************
      * Konashi observer methods
      ******************************/
