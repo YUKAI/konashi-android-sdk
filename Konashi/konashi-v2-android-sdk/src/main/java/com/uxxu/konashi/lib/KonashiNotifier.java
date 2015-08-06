@@ -138,48 +138,7 @@ public class KonashiNotifier {
     }
 
     private void notifyKonashiEvent(KonashiEvent event, Object param0, Object param1, KonashiBaseListener listener) {
-        switch(event){
-            case PERIPHERAL_NOT_FOUND:
-                listener.onNotFoundPeripheral();
-                break;
-            case CONNECTED:
-                listener.onConnected();
-                break;
-            case DISCONNECTED:
-                listener.onDisconnected();
-                break;
-            case READY:
-                listener.onReady();
-                break;
-            case UPDATE_PIO_INPUT:
-                listener.onUpdatePioInput(Byte.valueOf(param0.toString()));
-                break;
-            case UPDATE_ANALOG_VALUE:
-                listener.onUpdateAnalogValue(Integer.valueOf(param0.toString()), Integer.valueOf(param1.toString()));
-                break;
-            case UPDATE_ANALOG_VALUE_AIO0:
-                listener.onUpdateAnalogValueAio0(Integer.valueOf(param0.toString()));
-                break;
-            case UPDATE_ANALOG_VALUE_AIO1:
-                listener.onUpdateAnalogValueAio1(Integer.valueOf(param0.toString()));
-                break;
-            case UPDATE_ANALOG_VALUE_AIO2:
-                listener.onUpdateAnalogValueAio2(Integer.valueOf(param0.toString()));
-                break;
-            case UART_RX_COMPLETE:
-                listener.onCompleteUartRx((byte[]) param0);
-                //observer.onCompleteUartRx(Byte.valueOf(param0.toString())); //for konashi v1(old code)
-                break;
-            case UPDATE_BATTERY_LEVEL:
-                listener.onUpdateBatteryLevel(Integer.valueOf(param0.toString()));
-                break;
-            case UPDATE_SIGNAL_STRENGTH:
-                listener.onUpdateSignalStrength(Integer.valueOf(param0.toString()));
-                break;
-            case CANCEL_SELECT_KONASHI:
-                listener.onCancelSelectKonashi();
-                break;
-        }
+        event.notify(param0, param1, listener);
     }
 
     private void notifyKonashiError(KonashiErrorReason errorReason, String cause, KonashiBaseListener listener) {
