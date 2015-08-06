@@ -24,13 +24,12 @@ import com.uxxu.konashi.lib.events.KonashiAnalogEvent;
 import com.uxxu.konashi.lib.events.KonashiConnectionEvent;
 import com.uxxu.konashi.lib.events.KonashiDeviceInfoEvent;
 import com.uxxu.konashi.lib.events.KonashiDigitalEvent;
+import com.uxxu.konashi.lib.events.KonashiEvent;
 import com.uxxu.konashi.lib.events.KonashiUartEvent;
 import com.uxxu.konashi.lib.ui.BleDeviceListAdapter;
 import com.uxxu.konashi.lib.ui.BleDeviceSelectionDialog;
 import com.uxxu.konashi.lib.ui.BleDeviceSelectionDialog.OnBleDeviceSelectListener;
 
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;

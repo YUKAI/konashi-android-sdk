@@ -1,10 +1,9 @@
 package com.uxxu.konashi.lib;
 
+import com.uxxu.konashi.lib.events.KonashiEvent;
 import com.uxxu.konashi.lib.listeners.KonashiBaseListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * konashiのイベントをKonashiObserverに伝えるクラス

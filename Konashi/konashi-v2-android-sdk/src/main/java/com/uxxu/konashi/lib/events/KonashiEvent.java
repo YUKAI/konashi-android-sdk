@@ -1,4 +1,4 @@
-package com.uxxu.konashi.lib;
+package com.uxxu.konashi.lib.events;
 
 import com.uxxu.konashi.lib.listeners.KonashiBaseListener;
 
