@@ -2,6 +2,8 @@ package com.uxxu.konashi.lib;
 
 import android.app.Activity;
 
+import com.uxxu.konashi.lib.listeners.KonashiListener;
+
 /**
  * konashiのイベントをキャッチするためのオブザーバクラス
  * @deprecated This class deprecated in 0.5.0.

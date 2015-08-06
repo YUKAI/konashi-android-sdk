@@ -7,6 +7,7 @@ import com.uxxu.konashi.lib.events.KonashiConnectionEvent;
 import com.uxxu.konashi.lib.events.KonashiDeviceInfoEvent;
 import com.uxxu.konashi.lib.events.KonashiDigitalEvent;
 import com.uxxu.konashi.lib.events.KonashiUartEvent;
+import com.uxxu.konashi.lib.listeners.KonashiListener;
 
 import org.junit.Before;
 import org.junit.Test;

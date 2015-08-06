@@ -1,7 +1,6 @@
 package com.uxxu.konashi.lib.events;
 
 import com.uxxu.konashi.lib.KonashiEvent;
-import com.uxxu.konashi.lib.KonashiListener;
 import com.uxxu.konashi.lib.listeners.KonashiAnalogListener;
 import com.uxxu.konashi.lib.listeners.KonashiBaseListener;
 

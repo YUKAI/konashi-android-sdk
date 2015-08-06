@@ -10,7 +10,7 @@ import android.widget.Toast;
 
 import com.uxxu.konashi.lib.Konashi;
 import com.uxxu.konashi.lib.KonashiErrorReason;
-import com.uxxu.konashi.lib.KonashiListener;
+import com.uxxu.konashi.lib.listeners.KonashiListener;
 import com.uxxu.konashi.lib.ui.KonashiActivity;
 
 

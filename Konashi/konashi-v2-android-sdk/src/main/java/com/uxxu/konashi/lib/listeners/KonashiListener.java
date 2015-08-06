@@ -1,4 +1,4 @@
-package com.uxxu.konashi.lib;
+package com.uxxu.konashi.lib.listeners;
 
 import com.uxxu.konashi.lib.listeners.KonashiAnalogListener;
 import com.uxxu.konashi.lib.listeners.KonashiConnectionListener;
