@@ -1,8 +1,9 @@
 package com.uxxu.konashi.lib;
 
+import com.uxxu.konashi.lib.events.KonashiEvent;
+import com.uxxu.konashi.lib.listeners.KonashiBaseListener;
+
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * konashiのイベントをKonashiObserverに伝えるクラス
@@ -29,7 +30,7 @@ public class KonashiNotifier {
     /**
      * オブザーバたち
      */
-    private ArrayList<KonashiListener> mListeners = null;
+    private ArrayList<KonashiBaseListener> mListeners = null;
 
     /**
      * コンストラクタ
@@ -42,7 +43,7 @@ public class KonashiNotifier {
      * リスナーを追加する
      * @param listener 追加するリスナー
      */
-    public void addListener(KonashiListener listener){
+    public void addListener(KonashiBaseListener listener){
         if(!mListeners.contains(listener)){
             mListeners.add(listener);
         }
@@ -52,7 +53,7 @@ public class KonashiNotifier {
      * リスナーを削除する
      * @param listener 削除するリスナー
      */
-    public void removeListener(KonashiListener listener){
+    public void removeListener(KonashiBaseListener listener){
         if(mListeners.contains(listener)){
             mListeners.remove(listener);
         }
@@ -69,7 +70,7 @@ public class KonashiNotifier {
      * オブザーバを追加する
      * @param observer 追加するオブザーバ
      * @deprecated This method deprecated in 0.5.0.
-     * Use {@link #addListener(KonashiListener)} instead.
+     * Use {@link #addListener(KonashiBaseListener)} instead.
      */
     @Deprecated
     public void addObserver(KonashiObserver observer){
@@ -80,7 +81,7 @@ public class KonashiNotifier {
      * オブザーバを削除する
      * @param observer 削除するオブザーバ
      * @deprecated This method deprecated in 0.5.0.
-     * Use {@link #removeListener(KonashiListener)} instead.
+     * Use {@link #removeListener(KonashiBaseListener)} instead.
      */
     @Deprecated
     public void removeObserver(KonashiObserver observer){
@@ -102,7 +103,7 @@ public class KonashiNotifier {
      * @param event イベント名(KonashiEventだよっ）
      */
     public void notifyKonashiEvent(final KonashiEvent event, final Object param0, final Object param1){
-        for(final KonashiListener listener : mListeners){
+        for(final KonashiBaseListener listener : mListeners){
             final KonashiObserver observer = (listener instanceof KonashiObserver) ? (KonashiObserver) listener : null;
             if(observer != null && !observer.getActivity().isDestroyed()) {
                 observer.getActivity().runOnUiThread(new Runnable() {
@@ -120,7 +121,7 @@ public class KonashiNotifier {
     public void notifyKonashiError(final KonashiErrorReason errorReason){
         // 呼び出し元のメソッド名
         final String cause = errorReason.name() + " on " + new Throwable().getStackTrace()[2].getMethodName() + "()";
-        for(final KonashiListener listener : mListeners){
+        for(final KonashiBaseListener listener : mListeners){
             final KonashiObserver observer = (listener instanceof KonashiObserver) ? (KonashiObserver) listener : null;
             if(observer != null && !observer.getActivity().isDestroyed()) {
                 observer.getActivity().runOnUiThread(new Runnable() {
@@ -135,52 +136,11 @@ public class KonashiNotifier {
         }
     }
 
-    private void notifyKonashiEvent(KonashiEvent event, Object param0, Object param1, KonashiListener listener) {
-        switch(event){
-            case PERIPHERAL_NOT_FOUND:
-                listener.onNotFoundPeripheral();
-                break;
-            case CONNECTED:
-                listener.onConnected();
-                break;
-            case DISCONNECTED:
-                listener.onDisconnected();
-                break;
-            case READY:
-                listener.onReady();
-                break;
-            case UPDATE_PIO_INPUT:
-                listener.onUpdatePioInput(Byte.valueOf(param0.toString()));
-                break;
-            case UPDATE_ANALOG_VALUE:
-                listener.onUpdateAnalogValue(Integer.valueOf(param0.toString()), Integer.valueOf(param1.toString()));
-                break;
-            case UPDATE_ANALOG_VALUE_AIO0:
-                listener.onUpdateAnalogValueAio0(Integer.valueOf(param0.toString()));
-                break;
-            case UPDATE_ANALOG_VALUE_AIO1:
-                listener.onUpdateAnalogValueAio1(Integer.valueOf(param0.toString()));
-                break;
-            case UPDATE_ANALOG_VALUE_AIO2:
-                listener.onUpdateAnalogValueAio2(Integer.valueOf(param0.toString()));
-                break;
-            case UART_RX_COMPLETE:
-                listener.onCompleteUartRx((byte[]) param0);
-                //observer.onCompleteUartRx(Byte.valueOf(param0.toString())); //for konashi v1(old code)
-                break;
-            case UPDATE_BATTERY_LEVEL:
-                listener.onUpdateBatteryLevel(Integer.valueOf(param0.toString()));
-                break;
-            case UPDATE_SIGNAL_STRENGTH:
-                listener.onUpdateSignalStrength(Integer.valueOf(param0.toString()));
-                break;
-            case CANCEL_SELECT_KONASHI:
-                listener.onCancelSelectKonashi();
-                break;
-        }
+    private void notifyKonashiEvent(KonashiEvent event, Object param0, Object param1, KonashiBaseListener listener) {
+        event.notify(param0, param1, listener);
     }
 
-    private void notifyKonashiError(KonashiErrorReason errorReason, String cause, KonashiListener listener) {
+    private void notifyKonashiError(KonashiErrorReason errorReason, String cause, KonashiBaseListener listener) {
         listener.onError(errorReason, cause);
     }
 }

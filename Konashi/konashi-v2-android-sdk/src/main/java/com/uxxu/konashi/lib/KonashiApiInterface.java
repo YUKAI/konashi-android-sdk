@@ -3,6 +3,8 @@ package com.uxxu.konashi.lib;
 import android.app.Activity;
 import android.content.Context;
 
+import com.uxxu.konashi.lib.listeners.KonashiListener;
+
 /**
  * konashi APIのインタフェース
  * 

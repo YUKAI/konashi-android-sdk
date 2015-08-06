@@ -2,6 +2,13 @@ package com.uxxu.konashi.lib;
 
 import android.support.test.runner.AndroidJUnit4;
 
+import com.uxxu.konashi.lib.events.KonashiAnalogEvent;
+import com.uxxu.konashi.lib.events.KonashiConnectionEvent;
+import com.uxxu.konashi.lib.events.KonashiDeviceInfoEvent;
+import com.uxxu.konashi.lib.events.KonashiDigitalEvent;
+import com.uxxu.konashi.lib.events.KonashiUartEvent;
+import com.uxxu.konashi.lib.listeners.KonashiListener;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
@@ -39,80 +46,80 @@ public class KonashiNotifierTest {
     public static class NotifyKonashiEventTest extends BaseTest {
         @Test
         public void callOnNotFoundPeripheral() {
-            getNotifier().notifyKonashiEvent(KonashiEvent.PERIPHERAL_NOT_FOUND, null, null);
+            getNotifier().notifyKonashiEvent(KonashiConnectionEvent.PERIPHERAL_NOT_FOUND, null, null);
             Mockito.verify(getListner(), Mockito.times(1)).onNotFoundPeripheral();
         }
 
         @Test
         public void callOnConnected() {
-            getNotifier().notifyKonashiEvent(KonashiEvent.CONNECTED, null, null);
+            getNotifier().notifyKonashiEvent(KonashiConnectionEvent.CONNECTED, null, null);
             Mockito.verify(getListner(), Mockito.times(1)).onConnected();
         }
 
         @Test
         public void callOnDisconnected() {
-            getNotifier().notifyKonashiEvent(KonashiEvent.DISCONNECTED, null, null);
+            getNotifier().notifyKonashiEvent(KonashiConnectionEvent.DISCONNECTED, null, null);
             Mockito.verify(getListner(), Mockito.times(1)).onDisconnected();
         }
 
         @Test
         public void callOnReady() {
-            getNotifier().notifyKonashiEvent(KonashiEvent.READY, null, null);
+            getNotifier().notifyKonashiEvent(KonashiConnectionEvent.READY, null, null);
             Mockito.verify(getListner(), Mockito.times(1)).onReady();
         }
 
         @Test
         public void callOnUpdatePioInput() {
-            getNotifier().notifyKonashiEvent(KonashiEvent.UPDATE_PIO_INPUT, 0x01, null);
+            getNotifier().notifyKonashiEvent(KonashiDigitalEvent.UPDATE_PIO_INPUT, 0x01, null);
             Mockito.verify(getListner(), Mockito.times(1)).onUpdatePioInput((byte) 0x01);
         }
 
         @Test
         public void callOnUpdateAnalogValue() {
-            getNotifier().notifyKonashiEvent(KonashiEvent.UPDATE_ANALOG_VALUE, 0x01, 0xff);
+            getNotifier().notifyKonashiEvent(KonashiAnalogEvent.UPDATE_ANALOG_VALUE, 0x01, 0xff);
             Mockito.verify(getListner(), Mockito.times(1)).onUpdateAnalogValue(1, 255);
         }
 
         @Test
         public void callOnUpdateAnalogValueAio0() {
-            getNotifier().notifyKonashiEvent(KonashiEvent.UPDATE_ANALOG_VALUE_AIO0, 0xff, null);
+            getNotifier().notifyKonashiEvent(KonashiAnalogEvent.UPDATE_ANALOG_VALUE_AIO0, 0xff, null);
             Mockito.verify(getListner(), Mockito.times(1)).onUpdateAnalogValueAio0(255);
         }
 
         @Test
         public void callOnUpdateAnalogValueAio1() {
-            getNotifier().notifyKonashiEvent(KonashiEvent.UPDATE_ANALOG_VALUE_AIO1, 0xff, null);
+            getNotifier().notifyKonashiEvent(KonashiAnalogEvent.UPDATE_ANALOG_VALUE_AIO1, 0xff, null);
             Mockito.verify(getListner(), Mockito.times(1)).onUpdateAnalogValueAio1(255);
         }
 
         @Test
         public void callOnUpdateAnalogValueAio2() {
-            getNotifier().notifyKonashiEvent(KonashiEvent.UPDATE_ANALOG_VALUE_AIO2, 0xff, null);
+            getNotifier().notifyKonashiEvent(KonashiAnalogEvent.UPDATE_ANALOG_VALUE_AIO2, 0xff, null);
             Mockito.verify(getListner(), Mockito.times(1)).onUpdateAnalogValueAio2(255);
         }
 
         @Test
         public void callOnCompleteUartRx() {
             byte[] data = "test".getBytes();
-            getNotifier().notifyKonashiEvent(KonashiEvent.UART_RX_COMPLETE, data, null);
+            getNotifier().notifyKonashiEvent(KonashiUartEvent.UART_RX_COMPLETE, data, null);
             Mockito.verify(getListner(), Mockito.times(1)).onCompleteUartRx(data);
         }
 
         @Test
         public void callOnUpdateBatteryLevel() {
-            getNotifier().notifyKonashiEvent(KonashiEvent.UPDATE_BATTERY_LEVEL, 50, null);
+            getNotifier().notifyKonashiEvent(KonashiDeviceInfoEvent.UPDATE_BATTERY_LEVEL, 50, null);
             Mockito.verify(getListner(), Mockito.times(1)).onUpdateBatteryLevel(50);
         }
 
         @Test
         public void callOnUpdateSignalStrength() {
-            getNotifier().notifyKonashiEvent(KonashiEvent.UPDATE_SIGNAL_STRENGTH, 25, null);
+            getNotifier().notifyKonashiEvent(KonashiDeviceInfoEvent.UPDATE_SIGNAL_STRENGTH, 25, null);
             Mockito.verify(getListner(), Mockito.times(1)).onUpdateSignalStrength(25);
         }
 
         @Test
         public void callOnCancelSelectKonashi() {
-            getNotifier().notifyKonashiEvent(KonashiEvent.CANCEL_SELECT_KONASHI, null, null);
+            getNotifier().notifyKonashiEvent(KonashiConnectionEvent.CANCEL_SELECT_KONASHI, null, null);
             Mockito.verify(getListner(), Mockito.times(1)).onCancelSelectKonashi();
         }
     }

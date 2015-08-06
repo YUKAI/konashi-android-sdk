@@ -2,7 +2,8 @@ package com.uxxu.konashi.lib;
 
 import android.content.Context;
 
-import java.util.ArrayList;
+import com.uxxu.konashi.lib.listeners.KonashiListener;
+
 import java.util.List;
 
 /**
