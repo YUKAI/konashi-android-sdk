@@ -1,5 +1,7 @@
 package com.uxxu.konashi.lib;
 
+import com.uxxu.konashi.lib.listeners.KonashiBaseListener;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +31,7 @@ public class KonashiNotifier {
     /**
      * オブザーバたち
      */
-    private ArrayList<KonashiListener> mListeners = null;
+    private ArrayList<KonashiBaseListener> mListeners = null;
 
     /**
      * コンストラクタ
@@ -42,7 +44,7 @@ public class KonashiNotifier {
      * リスナーを追加する
      * @param listener 追加するリスナー
      */
-    public void addListener(KonashiListener listener){
+    public void addListener(KonashiBaseListener listener){
         if(!mListeners.contains(listener)){
             mListeners.add(listener);
         }
@@ -52,7 +54,7 @@ public class KonashiNotifier {
      * リスナーを削除する
      * @param listener 削除するリスナー
      */
-    public void removeListener(KonashiListener listener){
+    public void removeListener(KonashiBaseListener listener){
         if(mListeners.contains(listener)){
             mListeners.remove(listener);
         }
@@ -69,7 +71,7 @@ public class KonashiNotifier {
      * オブザーバを追加する
      * @param observer 追加するオブザーバ
      * @deprecated This method deprecated in 0.5.0.
-     * Use {@link #addListener(KonashiListener)} instead.
+     * Use {@link #addListener(KonashiBaseListener)} instead.
      */
     @Deprecated
     public void addObserver(KonashiObserver observer){
@@ -80,7 +82,7 @@ public class KonashiNotifier {
      * オブザーバを削除する
      * @param observer 削除するオブザーバ
      * @deprecated This method deprecated in 0.5.0.
-     * Use {@link #removeListener(KonashiListener)} instead.
+     * Use {@link #removeListener(KonashiBaseListener)} instead.
      */
     @Deprecated
     public void removeObserver(KonashiObserver observer){
@@ -102,7 +104,7 @@ public class KonashiNotifier {
      * @param event イベント名(KonashiEventだよっ）
      */
     public void notifyKonashiEvent(final KonashiEvent event, final Object param0, final Object param1){
-        for(final KonashiListener listener : mListeners){
+        for(final KonashiBaseListener listener : mListeners){
             final KonashiObserver observer = (listener instanceof KonashiObserver) ? (KonashiObserver) listener : null;
             if(observer != null && !observer.getActivity().isDestroyed()) {
                 observer.getActivity().runOnUiThread(new Runnable() {
@@ -120,7 +122,7 @@ public class KonashiNotifier {
     public void notifyKonashiError(final KonashiErrorReason errorReason){
         // 呼び出し元のメソッド名
         final String cause = errorReason.name() + " on " + new Throwable().getStackTrace()[2].getMethodName() + "()";
-        for(final KonashiListener listener : mListeners){
+        for(final KonashiBaseListener listener : mListeners){
             final KonashiObserver observer = (listener instanceof KonashiObserver) ? (KonashiObserver) listener : null;
             if(observer != null && !observer.getActivity().isDestroyed()) {
                 observer.getActivity().runOnUiThread(new Runnable() {
@@ -135,7 +137,7 @@ public class KonashiNotifier {
         }
     }
 
-    private void notifyKonashiEvent(KonashiEvent event, Object param0, Object param1, KonashiListener listener) {
+    private void notifyKonashiEvent(KonashiEvent event, Object param0, Object param1, KonashiBaseListener listener) {
         switch(event){
             case PERIPHERAL_NOT_FOUND:
                 listener.onNotFoundPeripheral();
@@ -180,7 +182,7 @@ public class KonashiNotifier {
         }
     }
 
-    private void notifyKonashiError(KonashiErrorReason errorReason, String cause, KonashiListener listener) {
+    private void notifyKonashiError(KonashiErrorReason errorReason, String cause, KonashiBaseListener listener) {
         listener.onError(errorReason, cause);
     }
 }
