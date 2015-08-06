@@ -20,6 +20,11 @@ import android.widget.Toast;
 import com.uxxu.konashi.lib.entities.KonashiMessage;
 import com.uxxu.konashi.lib.entities.KonashiReadMessage;
 import com.uxxu.konashi.lib.entities.KonashiWriteMessage;
+import com.uxxu.konashi.lib.events.KonashiAnalogEvent;
+import com.uxxu.konashi.lib.events.KonashiConnectionEvent;
+import com.uxxu.konashi.lib.events.KonashiDeviceInfoEvent;
+import com.uxxu.konashi.lib.events.KonashiDigitalEvent;
+import com.uxxu.konashi.lib.events.KonashiUartEvent;
 import com.uxxu.konashi.lib.ui.BleDeviceListAdapter;
 import com.uxxu.konashi.lib.ui.BleDeviceSelectionDialog;
 import com.uxxu.konashi.lib.ui.BleDeviceSelectionDialog.OnBleDeviceSelectListener;
@@ -159,12 +164,12 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
                     
                     if(mKonashiName!=null){
                         // called findWithName. dispatch PERIPHERAL_NOT_FOUND event
-                        notifyKonashiEvent(KonashiEvent.PERIPHERAL_NOT_FOUND);
+                        notifyKonashiEvent(KonashiConnectionEvent.PERIPHERAL_NOT_FOUND);
                     } else {
                         mDialog.finishFinding();
                         
                         if(mBleDeviceListAdapter.getCount()==0){
-                            notifyKonashiEvent(KonashiEvent.PERIPHERAL_NOT_FOUND);
+                            notifyKonashiEvent(KonashiConnectionEvent.PERIPHERAL_NOT_FOUND);
                         }
                     }
                 }
@@ -371,7 +376,7 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
 
     @Override
     public void onCancelSelectingBleDevice() {
-        notifyKonashiEvent(KonashiEvent.CANCEL_SELECT_KONASHI);
+        notifyKonashiEvent(KonashiConnectionEvent.CANCEL_SELECT_KONASHI);
 
         if(mStatus.equals(BleStatus.SCANNING)){
             stopFindHandler();
@@ -398,7 +403,7 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
         KonashiUtils.log("konashi_status: " + mStatus.name());
 
         if (status == BleStatus.READY) {
-            notifyKonashiEvent(KonashiEvent.READY);
+            notifyKonashiEvent(KonashiConnectionEvent.READY);
         }
     }
     
@@ -471,14 +476,14 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
             if(newState == BluetoothProfile.STATE_CONNECTED){
                 setStatus(BleStatus.CONNECTED);
                 
-                notifyKonashiEvent(KonashiEvent.CONNECTED);
+                notifyKonashiEvent(KonashiConnectionEvent.CONNECTED);
                 
                 gatt.discoverServices();
             }
             else if(newState == BluetoothProfile.STATE_DISCONNECTED){
                 setStatus(BleStatus.DISCONNECTED);
                 
-                notifyKonashiEvent(KonashiEvent.DISCONNECTED);
+                notifyKonashiEvent(KonashiConnectionEvent.DISCONNECTED);
                 
                 mBluetoothGatt = null;
             }
@@ -773,7 +778,7 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
      * @param value PIO8bitで表現
      */
     protected void onUpdatePioInput(byte value){
-        notifyKonashiEvent(KonashiEvent.UPDATE_PIO_INPUT, value);
+        notifyKonashiEvent(KonashiDigitalEvent.UPDATE_PIO_INPUT, value);
     }
     
     /**
@@ -782,14 +787,14 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
      * @param value アナログ値
      */
     protected void onUpdateAnalogValue(int pin, int value){
-        notifyKonashiEvent(KonashiEvent.UPDATE_ANALOG_VALUE, pin, value);
+        notifyKonashiEvent(KonashiAnalogEvent.UPDATE_ANALOG_VALUE, pin, value);
         
         if(pin==Konashi.AIO0)
-            notifyKonashiEvent(KonashiEvent.UPDATE_ANALOG_VALUE_AIO0, value);
+            notifyKonashiEvent(KonashiAnalogEvent.UPDATE_ANALOG_VALUE_AIO0, value);
         else if(pin==Konashi.AIO1)
-            notifyKonashiEvent(KonashiEvent.UPDATE_ANALOG_VALUE_AIO1, value);
+            notifyKonashiEvent(KonashiAnalogEvent.UPDATE_ANALOG_VALUE_AIO1, value);
         else
-            notifyKonashiEvent(KonashiEvent.UPDATE_ANALOG_VALUE_AIO2, value);
+            notifyKonashiEvent(KonashiAnalogEvent.UPDATE_ANALOG_VALUE_AIO2, value);
     }
     
     /**
@@ -797,7 +802,7 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
      * @param data 受信データ
      */
     protected void onRecieveUart(byte[] data){
-        notifyKonashiEvent(KonashiEvent.UART_RX_COMPLETE, data);
+        notifyKonashiEvent(KonashiUartEvent.UART_RX_COMPLETE, data);
     }
 
 //     for konashi v1 (old codes)
@@ -810,7 +815,7 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
      * @param level バッテリー(%)
      */
     protected void onUpdateBatteryLevel(int level){
-        notifyKonashiEvent(KonashiEvent.UPDATE_BATTERY_LEVEL, level);
+        notifyKonashiEvent(KonashiDeviceInfoEvent.UPDATE_BATTERY_LEVEL, level);
     }
     
     /**
@@ -818,6 +823,6 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
      * @param rssi 電波強度(db) 距離が近いと-40db, 距離が遠いと-90db程度になる
      */
     protected void onUpdateSignalSrength(int rssi){
-        notifyKonashiEvent(KonashiEvent.UPDATE_SIGNAL_STRENGTH, rssi);
+        notifyKonashiEvent(KonashiDeviceInfoEvent.UPDATE_SIGNAL_STRENGTH, rssi);
     }
 }
