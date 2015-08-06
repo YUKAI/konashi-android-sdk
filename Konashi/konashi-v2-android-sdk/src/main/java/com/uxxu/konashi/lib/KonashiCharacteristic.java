@@ -72,7 +72,7 @@ public enum KonashiCharacteristic {
 
     public static KonashiCharacteristic valueOf(UUID uuid) {
         for (KonashiCharacteristic handler : values()) {
-            if (handler.getUuid() == uuid) {
+            if (handler.getUuid().equals(uuid)) {
                 return handler;
             }
         }
