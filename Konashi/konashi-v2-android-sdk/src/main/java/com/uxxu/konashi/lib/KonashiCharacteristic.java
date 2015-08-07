@@ -7,7 +7,6 @@ import com.uxxu.konashi.lib.events.KonashiDeviceInfoEvent;
 import com.uxxu.konashi.lib.events.KonashiDigitalEvent;
 import com.uxxu.konashi.lib.events.KonashiEvent;
 import com.uxxu.konashi.lib.events.KonashiUartEvent;
-import com.uxxu.konashi.lib.listeners.KonashiDeviceInfoListener;
 
 import java.util.UUID;
 
@@ -71,9 +70,11 @@ public enum KonashiCharacteristic {
     }
 
     public static KonashiCharacteristic valueOf(UUID uuid) {
-        for (KonashiCharacteristic handler : values()) {
-            if (handler.getUuid().equals(uuid)) {
-                return handler;
+        if (uuid != null) {
+            for (KonashiCharacteristic handler : values()) {
+                if (uuid.equals(handler.getUuid())) {
+                    return handler;
+                }
             }
         }
         return UNKNOWN;
