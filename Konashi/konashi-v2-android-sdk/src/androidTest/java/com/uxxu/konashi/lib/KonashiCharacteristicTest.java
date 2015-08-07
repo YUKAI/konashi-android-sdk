@@ -3,6 +3,8 @@ package com.uxxu.konashi.lib;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.support.test.runner.AndroidJUnit4;
 
+import com.uxxu.konashi.lib.listeners.KonashiListener;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
