@@ -1,5 +1,10 @@
 package com.uxxu.konashi.lib.entities;
 
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.annotation.NonNull;
+
 import java.util.UUID;
 
 /**
@@ -22,15 +27,31 @@ import java.util.UUID;
  * limitations under the License.
  *
  */
-public class KonashiMessage {
+abstract public class KonashiMessage {
     public static final String TAG = KonashiMessage.class.getSimpleName();
+
+    private static final String KEY_CHARACTERISTIC_UUID = "characteristic uuid";
+
     private UUID mCharacteristicUuid;
 
-    protected KonashiMessage(UUID characteristicUuid) {
+    protected KonashiMessage(@NonNull UUID characteristicUuid) {
         mCharacteristicUuid = characteristicUuid;
     }
 
+    protected KonashiMessage(Bundle bundle) {
+        mCharacteristicUuid = (UUID) bundle.getSerializable(KEY_CHARACTERISTIC_UUID);
+    }
+
+    @NonNull
     public UUID getCharacteristicUuid() {
         return mCharacteristicUuid;
     }
+
+    public Bundle getBundle() {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(KEY_CHARACTERISTIC_UUID, mCharacteristicUuid);
+        return bundle;
+    }
+
+    abstract public Message getMessage(Handler handler);
 }

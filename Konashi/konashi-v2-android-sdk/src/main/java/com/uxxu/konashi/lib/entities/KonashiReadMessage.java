@@ -1,5 +1,12 @@
 package com.uxxu.konashi.lib.entities;
 
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.annotation.NonNull;
+
+import com.uxxu.konashi.lib.KonashiMessageHandler;
+
 import java.util.UUID;
 
 /**
@@ -25,14 +32,36 @@ import java.util.UUID;
 public class KonashiReadMessage extends KonashiMessage {
     public static final String TAG = KonashiReadMessage.class.getSimpleName();
 
+    private static final String KEY_SERVICE_UUID = "service uuid";
+
     private UUID mServiceUuid;
 
-    public KonashiReadMessage(UUID serviceUuid, UUID characteristicUuid){
+    public KonashiReadMessage(@NonNull UUID serviceUuid, @NonNull UUID characteristicUuid){
         super(characteristicUuid);
         mServiceUuid = serviceUuid;
     }
 
+    public KonashiReadMessage(Bundle bundle) {
+        super(bundle);
+        mServiceUuid = (UUID) bundle.getSerializable(KEY_SERVICE_UUID);
+    }
+
+    @NonNull
     public UUID getServiceUuid() {
         return mServiceUuid;
+    }
+
+    @Override
+    public Bundle getBundle() {
+        Bundle bundle = super.getBundle();
+        bundle.putSerializable(KEY_SERVICE_UUID, mServiceUuid);
+        return bundle;
+    }
+
+    @Override
+    public Message getMessage(Handler handler) {
+        Message msg = handler.obtainMessage(KonashiMessageHandler.MESSAGE_READ);
+        msg.setData(getBundle());
+        return msg;
     }
 }
