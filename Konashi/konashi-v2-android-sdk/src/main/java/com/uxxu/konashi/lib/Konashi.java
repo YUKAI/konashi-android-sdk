@@ -185,6 +185,26 @@ public class Konashi {
      */
     public static final int UART_RATE_9K6 = 0x0028;
     /**
+     * 通信速度: 19200bps
+     */
+    public static final int UART_RATE_19K2 = 0x0050;
+    /**
+     * 通信速度: 38400bps
+     */
+    public static final int UART_RATE_38K4 = 0x00a0;
+    /**
+     * 通信速度: 57600bps
+     */
+    public static final int UART_RATE_57K6 = 0x00f0;
+    /**
+     * 通信速度: 76800bps
+     */
+    public static final int UART_RATE_76K8 = 0x0140;
+    /**
+     * 通信速度: 115200bps
+     */
+    public static final int UART_RATE_115K2 = 0x01e0;
+    /**
      * UARTで一度に送信できるバイト数(for 2.0)
      */
     public static final int UART_DATA_MAX_LENGTH = 18;
