@@ -51,6 +51,11 @@ public final class CommunicationFragment extends Fragment {
             public void onCompleteUartRx(byte[] data) {
                 mUartResultEditText.append(new String(data));
             }
+
+            @Override
+            public void onReadI2c(byte[] data, byte address) {
+                mI2cResultEditText.append(new String(data));
+            }
         };
         mKonashiManager.addObserver(mCommunicationObserver);
     }
