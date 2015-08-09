@@ -3,6 +3,8 @@ package com.uxxu.konashi.lib;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.util.Log;
 
+import java.util.Arrays;
+
 /**
  * konashiライブラリの便利ツール。ライブラリ外から使うことはたぶんないかな！
  * 
@@ -75,5 +77,29 @@ public class KonashiUtils {
      */
     public static int getBatteryLevel(BluetoothGattCharacteristic characteristic) {
         return characteristic.getValue()[0] & 0xff;
+    }
+
+    /**
+     * characteristicからPwmのPeriodを取得する
+     * @param characteristic 返ってきたcharacteristic
+     * @return Period値
+     */
+    public static int getPwmPeriod(BluetoothGattCharacteristic characteristic) {
+        byte[] bytes = characteristic.getValue();
+        bytes = Arrays.copyOfRange(bytes, 1, bytes.length);
+        int value = 0;
+        for (byte b : bytes) {
+            value = (value << 8) | (b & 0xff);
+        }
+        return value;
+    }
+
+    /**
+     * characteristicからPwmのDutyを取得する
+     * @param characteristic 返ってきたcharacteristic
+     * @return Duty値
+     */
+    public static int getPwmDuty(BluetoothGattCharacteristic characteristic) {
+        return getPwmPeriod(characteristic);
     }
 }

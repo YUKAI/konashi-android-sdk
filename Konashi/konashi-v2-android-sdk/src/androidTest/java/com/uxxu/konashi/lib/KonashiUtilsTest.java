@@ -66,4 +66,18 @@ public class KonashiUtilsTest {
         Mockito.when(mCharacteristic.getValue()).thenReturn(values);
         assertThat(KonashiUtils.getBatteryLevel(mCharacteristic), is(85));
     }
+
+    @Test
+    public void testGetPwmPeriod() {
+        byte[] values = new byte[]{0x01, 0x00, 0x00, 0x27, 0x10};
+        Mockito.when(mCharacteristic.getValue()).thenReturn(values);
+        assertThat(KonashiUtils.getPwmPeriod(mCharacteristic), is(10000));
+    }
+
+    @Test
+    public void testGetPwmDuty() {
+        byte[] values = new byte[]{0x01, 0x00, 0x00, 0x27, 0x10};
+        Mockito.when(mCharacteristic.getValue()).thenReturn(values);
+        assertThat(KonashiUtils.getPwmDuty(mCharacteristic), is(10000));
+    }
 }
