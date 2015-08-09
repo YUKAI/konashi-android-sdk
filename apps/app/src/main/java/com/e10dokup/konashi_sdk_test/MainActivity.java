@@ -133,6 +133,21 @@ public class MainActivity extends KonashiActivity {
      */
     private final KonashiListener mKonashiListener= new KonashiListener() {
         @Override
+        public void onUpdatePwmMode(int modes) {
+
+        }
+
+        @Override
+        public void onUpdatePwmPeriod(int pin, int period) {
+
+        }
+
+        @Override
+        public void onUpdatePwmDuty(int pin, int duty) {
+
+        }
+
+        @Override
         public void onNotFoundPeripheral() {}
 
         @Override
@@ -166,6 +181,16 @@ public class MainActivity extends KonashiActivity {
 
             getKonashiManager().batteryLevelReadRequest();
             getKonashiManager().signalStrengthReadRequest();
+        }
+
+        @Override
+        public void onUpdatePioSetting(int modes) {
+
+        }
+
+        @Override
+        public void onUpdatePioPullup(int pullups) {
+
         }
 
         @Override
@@ -250,6 +275,41 @@ public class MainActivity extends KonashiActivity {
                 }
             });
             getKonashiManager().signalStrengthReadRequest();
+        }
+
+        @Override
+        public void onUpdateI2cMode(int mode) {
+
+        }
+
+        @Override
+        public void onSendI2cCondition(int condition) {
+
+        }
+
+        @Override
+        public void onWriteI2c(byte[] data, byte address) {
+
+        }
+
+        @Override
+        public void onReadI2c(byte[] data, byte address) {
+
+        }
+
+        @Override
+        public void onUpdateUartMode(int mode) {
+
+        }
+
+        @Override
+        public void onUpdateUartBaudrate(int baudrate) {
+
+        }
+
+        @Override
+        public void onWriteUart(byte[] data) {
+
         }
 
         @Override
