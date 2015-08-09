@@ -149,7 +149,7 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * konashiのイベントのオブザーバを追加する
      * @param observer 追加するオブザーバ
      * @deprecated This method deprecated in 0.5.0.
-     * Use {@link #addListener(KonashiListener)} instead.
+     * Use {@link #addListener(KonashiBaseListener)} instead.
      */
     @Deprecated
     @Override
@@ -161,7 +161,7 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * 指定したオブザーバを削除する
      * @param observer 削除するオブザーバ
      * @deprecated This method deprecated in 0.5.0.
-     * Use {@link #removeListener(KonashiListener)} instead.
+     * Use {@link #removeListener(KonashiBaseListener)} instead.
      */
     @Deprecated
     @Override
