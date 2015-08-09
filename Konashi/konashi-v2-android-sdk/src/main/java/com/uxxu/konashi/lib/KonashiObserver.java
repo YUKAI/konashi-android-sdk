@@ -105,6 +105,12 @@ public abstract class KonashiObserver implements KonashiListener {
     public void onUpdatePwmPeriod(int pin, int period) {}
     @Override
     public void onUpdatePwmDuty(int pin, int duty) {}
+    @Override
+    public void onUpdateUartMode(int mode) {}
+    @Override
+    public void onUpdateUartBaudrate(int baudrate) {}
+    @Override
+    public void onWriteUart(byte[] data) {}
 
     /**
      * UARTのRxからデータを受信した時
