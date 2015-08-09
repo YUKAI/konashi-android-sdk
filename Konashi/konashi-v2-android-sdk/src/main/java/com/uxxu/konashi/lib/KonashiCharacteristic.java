@@ -89,6 +89,26 @@ public enum KonashiCharacteristic {
 
     /* ==== UART ================================================================ */
 
+    UART_MODE(KonashiUUID.UART_CONFIG_UUID, KonashiUartEvent.UPDATE_UART_MODE) {
+        @Override
+        public void handle(BluetoothGattCharacteristic characteristic, KonashiNotifier notifier) {
+            notifyKonashiEvent(notifier, characteristic.getValue()[0], null);
+        }
+    },
+    UART_BAUDRATE(KonashiUUID.UART_BAUDRATE_UUID, KonashiUartEvent.UPDATE_UART_BAUDRATE) {
+        @Override
+        public void handle(BluetoothGattCharacteristic characteristic, KonashiNotifier notifier) {
+            int baudrate = KonashiUtils.getUartBaudrate(characteristic);
+            notifyKonashiEvent(notifier, baudrate, null);
+        }
+    },
+    UART_WRITE(KonashiUUID.UART_TX_UUID, KonashiUartEvent.WRITE_UART) {
+        @Override
+        public void handle(BluetoothGattCharacteristic characteristic, KonashiNotifier notifier) {
+            byte[] bytes = KonashiUtils.getUartWriteBytes(characteristic);
+            notifyKonashiEvent(notifier, bytes, null);
+        }
+    },
     UART_RX(KonashiUUID.UART_RX_NOTIFICATION_UUID, KonashiUartEvent.UART_RX_COMPLETE) {
         @Override
         public void handle(BluetoothGattCharacteristic characteristic, KonashiNotifier notifier) {

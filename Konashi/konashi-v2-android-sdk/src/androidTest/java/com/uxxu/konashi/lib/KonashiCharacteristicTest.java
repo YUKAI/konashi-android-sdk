@@ -140,6 +140,33 @@ public class KonashiCharacteristicTest {
     @RunWith(AndroidJUnit4.class)
     public static class UartCharacteristicTest extends BaseTest {
         @Test
+        public void testHandleUartMode() {
+            Mockito.when(getCharacteristic().getValue()).thenReturn(new byte[]{0x01});
+            KonashiCharacteristic
+                    .valueOf(KonashiUUID.UART_CONFIG_UUID)
+                    .handle(getCharacteristic(), getNotifier());
+            Mockito.verify(getListener(), Mockito.times(1)).onUpdateUartMode(1);
+        }
+
+        @Test
+        public void testHandleUartBaudrate() {
+            Mockito.when(getCharacteristic().getValue()).thenReturn(new byte[]{Konashi.UART_RATE_9K6});
+            KonashiCharacteristic
+                    .valueOf(KonashiUUID.UART_BAUDRATE_UUID)
+                    .handle(getCharacteristic(), getNotifier());
+            Mockito.verify(getListener(), Mockito.times(1)).onUpdateUartBaudrate(Konashi.UART_RATE_9K6);
+        }
+
+        @Test
+        public void testHandleWriteUart() {
+            Mockito.when(getCharacteristic().getValue()).thenReturn(new byte[] {0x04, 0x74, 0x65, 0x73, 0x74});
+            KonashiCharacteristic
+                    .valueOf(KonashiUUID.UART_TX_UUID)
+                    .handle(getCharacteristic(), getNotifier());
+            Mockito.verify(getListener(), Mockito.times(1)).onWriteUart(new byte[] {0x74, 0x65, 0x73, 0x74});
+        }
+
+        @Test
         public void testHandleUartRxNotification() {
             Mockito.when(getCharacteristic().getValue()).thenReturn("test".getBytes());
             KonashiCharacteristic
