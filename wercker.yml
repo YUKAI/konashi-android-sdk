@@ -21,6 +21,5 @@ build:
         name: inspect build result
         code: |
           pwd
-          cd Konashi
-          ls -la ./konashi-v2-android-sdk/build/outputs/
-          cp -r ./konashi-v2-android-sdk/build/outputs/* ${WERCKER_REPORT_ARTIFACTS_DIR}
+          ls -la ./konashi-android-sdk/build/outputs/
+          cp -r ./konashi-android-sdk/build/outputs/* ${WERCKER_REPORT_ARTIFACTS_DIR}
