@@ -87,11 +87,7 @@ public class KonashiUtils {
     public static int getPwmPeriod(BluetoothGattCharacteristic characteristic) {
         byte[] bytes = characteristic.getValue();
         bytes = Arrays.copyOfRange(bytes, 1, bytes.length);
-        int value = 0;
-        for (byte b : bytes) {
-            value = (value << 8) | (b & 0xff);
-        }
-        return value;
+        return bytes2int(bytes);
     }
 
     /**
@@ -100,6 +96,35 @@ public class KonashiUtils {
      * @return Duty値
      */
     public static int getPwmDuty(BluetoothGattCharacteristic characteristic) {
-        return getPwmPeriod(characteristic);
+        byte[] bytes = characteristic.getValue();
+        bytes = Arrays.copyOfRange(bytes, 1, bytes.length);
+        return bytes2int(bytes);
+    }
+
+    /**
+     * characteristicからUARTのbaudrateを取得する
+     * @param characteristic 返ってきたcharacteristic
+     * @return baudrate
+     */
+    public static int getUartBaudrate(BluetoothGattCharacteristic characteristic) {
+        return bytes2int(characteristic.getValue());
+    }
+
+    /**
+     * characteristicからUARTの送信データを取得する
+     * @param characteristic 返ってきたcharacteristic
+     * @return 送信したバイト列
+     */
+    public static byte[] getUartWriteBytes(BluetoothGattCharacteristic characteristic) {
+        byte[] bytes = characteristic.getValue();
+        return Arrays.copyOfRange(bytes, 1, bytes[0] + 1);
+    }
+
+    private static int bytes2int(byte[] bytes) {
+        int value = 0;
+        for (byte b : bytes) {
+            value = (value << 8) | (b & 0xff);
+        }
+        return value;
     }
 }
