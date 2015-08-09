@@ -108,6 +108,36 @@ public class KonashiCharacteristicTest {
     }
 
     @RunWith(AndroidJUnit4.class)
+    public static class PwmCharacteristicTset extends BaseTest {
+        @Test
+        public void testHandlePwmMode() {
+            Mockito.when(getCharacteristic().getValue()).thenReturn(new byte[]{0x04});
+            KonashiCharacteristic
+                    .valueOf(KonashiUUID.PWM_CONFIG_UUID)
+                    .handle(getCharacteristic(), getNotifier());
+            Mockito.verify(getListener(), Mockito.times(1)).onUpdatePwmMode(4);
+        }
+
+        @Test
+        public void testHandlePwmPeriod() {
+            Mockito.when(getCharacteristic().getValue()).thenReturn(new byte[]{0x02, 0x00, 0x00, 0x27, 0x10});
+            KonashiCharacteristic
+                    .valueOf(KonashiUUID.PWM_PARAM_UUID)
+                    .handle(getCharacteristic(), getNotifier());
+            Mockito.verify(getListener(), Mockito.times(1)).onUpdatePwmPeriod(2, 10000);
+        }
+
+        @Test
+        public void testHandlePwmDuty() {
+            Mockito.when(getCharacteristic().getValue()).thenReturn(new byte[]{0x02, 0x00, 0x00, 0x27, 0x10});
+            KonashiCharacteristic
+                    .valueOf(KonashiUUID.PWM_DUTY_UUID)
+                    .handle(getCharacteristic(), getNotifier());
+            Mockito.verify(getListener(), Mockito.times(1)).onUpdatePwmDuty(2, 10000);
+        }
+    }
+
+    @RunWith(AndroidJUnit4.class)
     public static class UartCharacteristicTest extends BaseTest {
         @Test
         public void testHandleUartRxNotification() {

@@ -1,11 +1,13 @@
 package com.uxxu.konashi.lib;
 
 import android.bluetooth.BluetoothGattCharacteristic;
+import android.util.Log;
 
 import com.uxxu.konashi.lib.events.KonashiAnalogEvent;
 import com.uxxu.konashi.lib.events.KonashiDeviceInfoEvent;
 import com.uxxu.konashi.lib.events.KonashiDigitalEvent;
 import com.uxxu.konashi.lib.events.KonashiEvent;
+import com.uxxu.konashi.lib.events.KonashiPwmEvent;
 import com.uxxu.konashi.lib.events.KonashiUartEvent;
 
 import java.util.UUID;
@@ -57,6 +59,31 @@ public enum KonashiCharacteristic {
         @Override
         public void handle(BluetoothGattCharacteristic characteristic, KonashiNotifier notifier) {
             notifyKonashiEvent(notifier, characteristic.getValue()[0], null);
+        }
+    },
+
+    /* ==== PWM ================================================================ */
+
+    PWM_MODE(KonashiUUID.PWM_CONFIG_UUID, KonashiPwmEvent.UPDATE_PWM_CONFIG) {
+        @Override
+        public void handle(BluetoothGattCharacteristic characteristic, KonashiNotifier notifier) {
+            notifyKonashiEvent(notifier, characteristic.getValue()[0], null);
+        }
+    },
+    PWM_PERIOD(KonashiUUID.PWM_PARAM_UUID, KonashiPwmEvent.UPDATE_PWM_PARAM) {
+        @Override
+        public void handle(BluetoothGattCharacteristic characteristic, KonashiNotifier notifier) {
+            int pin = characteristic.getValue()[0];
+            int period = KonashiUtils.getPwmPeriod(characteristic);
+            notifyKonashiEvent(notifier, pin, period);
+        }
+    },
+    PWM_DUTY(KonashiUUID.PWM_DUTY_UUID, KonashiPwmEvent.UPDATE_PWM_DUTY) {
+        @Override
+        public void handle(BluetoothGattCharacteristic characteristic, KonashiNotifier notifier) {
+            int pin = characteristic.getValue()[0];
+            int duty = KonashiUtils.getPwmDuty(characteristic);
+            notifyKonashiEvent(notifier, pin, duty);
         }
     },
 
