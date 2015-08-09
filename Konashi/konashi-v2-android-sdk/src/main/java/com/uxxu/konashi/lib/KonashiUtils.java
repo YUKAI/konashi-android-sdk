@@ -120,6 +120,25 @@ public class KonashiUtils {
         return Arrays.copyOfRange(bytes, 1, bytes[0] + 1);
     }
 
+    /**
+     * characteristicからI2Cの送信アドレスを取得する
+     * @param characteristic 返ってきたcharacteristic
+     * @return 送信先アドレス
+     */
+    public static byte getI2cWriteAddress(BluetoothGattCharacteristic characteristic) {
+        return (byte) ((characteristic.getValue()[1] >> 1) & 0x7F);
+    }
+
+    /**
+     * characteristicからI2Cの送信データを取得する
+     * @param characteristic 返ってきたcharacteristic
+     * @return 送信したバイト列
+     */
+    public static byte[] getI2cWriteData(BluetoothGattCharacteristic characteristic) {
+        byte[] bytes = characteristic.getValue();
+        return Arrays.copyOfRange(bytes, 2, bytes[0] + 1);
+    }
+
     private static int bytes2int(byte[] bytes) {
         int value = 0;
         for (byte b : bytes) {

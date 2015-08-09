@@ -93,4 +93,18 @@ public class KonashiUtilsTest {
         Mockito.when(mCharacteristic.getValue()).thenReturn(values);
         assertThat(KonashiUtils.getUartWriteBytes(mCharacteristic), is(new byte[]{0x74, 0x65, 0x73, 0x74}));
     }
+
+    @Test
+    public void testGetI2cWriteAddress() {
+        byte[] values = new byte[] {5, 0x3e, 0x74, 0x65, 0x73, 0x74};
+        Mockito.when(mCharacteristic.getValue()).thenReturn(values);
+        assertThat(KonashiUtils.getI2cWriteAddress(mCharacteristic), is((byte) 0x1f));
+    }
+
+    @Test
+    public void testGetI2cWriteData() {
+        byte[] values = new byte[] {5, 0x3e, 0x74, 0x65, 0x73, 0x74};
+        Mockito.when(mCharacteristic.getValue()).thenReturn(values);
+        assertThat(KonashiUtils.getI2cWriteData(mCharacteristic), is(new byte[]{0x74, 0x65, 0x73, 0x74}));
+    }
 }
