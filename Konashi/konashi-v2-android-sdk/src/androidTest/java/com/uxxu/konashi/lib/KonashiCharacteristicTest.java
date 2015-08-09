@@ -6,6 +6,7 @@ import android.support.test.runner.AndroidJUnit4;
 import com.uxxu.konashi.lib.listeners.KonashiListener;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
@@ -159,11 +160,11 @@ public class KonashiCharacteristicTest {
 
         @Test
         public void testHandleWriteUart() {
-            Mockito.when(getCharacteristic().getValue()).thenReturn(new byte[] {0x04, 0x74, 0x65, 0x73, 0x74});
+            Mockito.when(getCharacteristic().getValue()).thenReturn(new byte[]{0x04, 0x74, 0x65, 0x73, 0x74});
             KonashiCharacteristic
                     .valueOf(KonashiUUID.UART_TX_UUID)
                     .handle(getCharacteristic(), getNotifier());
-            Mockito.verify(getListener(), Mockito.times(1)).onWriteUart(new byte[] {0x74, 0x65, 0x73, 0x74});
+            Mockito.verify(getListener(), Mockito.times(1)).onWriteUart(new byte[]{0x74, 0x65, 0x73, 0x74});
         }
 
         @Test
@@ -173,6 +174,42 @@ public class KonashiCharacteristicTest {
                     .valueOf(KonashiUUID.UART_RX_NOTIFICATION_UUID)
                     .handle(getCharacteristic(), getNotifier());
             Mockito.verify(getListener(), Mockito.times(1)).onCompleteUartRx(new byte[]{0x74, 0x65, 0x73, 0x74});
+        }
+    }
+
+    @RunWith(AndroidJUnit4.class)
+    public static class I2cCharacteristicTest extends BaseTest {
+        @Test
+        public void testHandleI2cMode() {
+            Mockito.when(getCharacteristic().getValue()).thenReturn(new byte[]{0x02});
+            KonashiCharacteristic
+                    .valueOf(KonashiUUID.I2C_CONFIG_UUID)
+                    .handle(getCharacteristic(), getNotifier());
+            Mockito.verify(getListener(), Mockito.times(1)).onUpdateI2cMode(2);
+        }
+
+        @Test
+        public void testHandleSendI2cCondition() {
+            Mockito.when(getCharacteristic().getValue()).thenReturn(new byte[]{0x02});
+            KonashiCharacteristic
+                    .valueOf(KonashiUUID.I2C_START_STOP_UUID)
+                    .handle(getCharacteristic(), getNotifier());
+            Mockito.verify(getListener(), Mockito.times(1)).onSendI2cCondition(2);
+        }
+
+        @Test
+        public void testHandleWriteI2c() {
+            Mockito.when(getCharacteristic().getValue()).thenReturn(new byte[]{0x05, 0x3e, 0x74, 0x65, 0x73, 0x74});
+            KonashiCharacteristic
+                    .valueOf(KonashiUUID.I2C_WRITE_UUID)
+                    .handle(getCharacteristic(), getNotifier());
+            Mockito.verify(getListener(), Mockito.times(1)).onWriteI2c(new byte[]{0x74, 0x65, 0x73, 0x74}, (byte) 0x1f);
+        }
+
+        @Ignore("Not yet implemented...")
+        @Test
+        public void testHandleReadI2c() {
+            // TODO: Not yet implemented...
         }
     }
 

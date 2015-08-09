@@ -7,6 +7,7 @@ import com.uxxu.konashi.lib.events.KonashiAnalogEvent;
 import com.uxxu.konashi.lib.events.KonashiDeviceInfoEvent;
 import com.uxxu.konashi.lib.events.KonashiDigitalEvent;
 import com.uxxu.konashi.lib.events.KonashiEvent;
+import com.uxxu.konashi.lib.events.KonashiI2cEvent;
 import com.uxxu.konashi.lib.events.KonashiPwmEvent;
 import com.uxxu.konashi.lib.events.KonashiUartEvent;
 
@@ -113,6 +114,35 @@ public enum KonashiCharacteristic {
         @Override
         public void handle(BluetoothGattCharacteristic characteristic, KonashiNotifier notifier) {
             notifyKonashiEvent(notifier, characteristic.getValue(), null);
+        }
+    },
+
+    /* ==== I2C ================================================================ */
+
+    I2C_MODE(KonashiUUID.I2C_CONFIG_UUID, KonashiI2cEvent.UPDATE_I2C_MODE) {
+        @Override
+        public void handle(BluetoothGattCharacteristic characteristic, KonashiNotifier notifier) {
+            notifyKonashiEvent(notifier, characteristic.getValue()[0], null);
+        }
+    },
+    I2C_CONDITION(KonashiUUID.I2C_START_STOP_UUID, KonashiI2cEvent.SEND_I2C_CONDITION) {
+        @Override
+        public void handle(BluetoothGattCharacteristic characteristic, KonashiNotifier notifier) {
+            notifyKonashiEvent(notifier, characteristic.getValue()[0], null);
+        }
+    },
+    I2C_WRITE(KonashiUUID.I2C_WRITE_UUID, KonashiI2cEvent.WRITE_I2C) {
+        @Override
+        public void handle(BluetoothGattCharacteristic characteristic, KonashiNotifier notifier) {
+            byte address = KonashiUtils.getI2cWriteAddress(characteristic);
+            byte[] data = KonashiUtils.getI2cWriteData(characteristic);
+            notifyKonashiEvent(notifier, data, address);
+        }
+    },
+    I2C_READ_COMPLETE(KonashiUUID.I2C_READ_UUID, KonashiI2cEvent.I2C_READ_COMPLETE) {
+        @Override
+        public void handle(BluetoothGattCharacteristic characteristic, KonashiNotifier notifier) {
+            // TODO: Not yet implemented...
         }
     },
 
