@@ -115,7 +115,7 @@ public class KonashiUtils {
      * @param characteristic 返ってきたcharacteristic
      * @return 送信したバイト列
      */
-    public static byte[] getUartWriteBytes(BluetoothGattCharacteristic characteristic) {
+    public static byte[] getUartWriteData(BluetoothGattCharacteristic characteristic) {
         byte[] bytes = characteristic.getValue();
         return Arrays.copyOfRange(bytes, 1, bytes[0] + 1);
     }

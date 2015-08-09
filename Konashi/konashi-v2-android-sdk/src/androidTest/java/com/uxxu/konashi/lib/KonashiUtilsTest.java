@@ -91,7 +91,7 @@ public class KonashiUtilsTest {
     public void testGetUartWriteData() {
         byte[] values = new byte[] {4, 0x74, 0x65, 0x73, 0x74};
         Mockito.when(mCharacteristic.getValue()).thenReturn(values);
-        assertThat(KonashiUtils.getUartWriteBytes(mCharacteristic), is(new byte[]{0x74, 0x65, 0x73, 0x74}));
+        assertThat(KonashiUtils.getUartWriteData(mCharacteristic), is(new byte[]{0x74, 0x65, 0x73, 0x74}));
     }
 
     @Test

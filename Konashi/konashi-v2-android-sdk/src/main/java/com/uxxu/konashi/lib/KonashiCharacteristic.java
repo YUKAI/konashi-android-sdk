@@ -106,7 +106,7 @@ public enum KonashiCharacteristic {
     UART_WRITE(KonashiUUID.UART_TX_UUID, KonashiUartEvent.WRITE_UART) {
         @Override
         public void handle(BluetoothGattCharacteristic characteristic, KonashiNotifier notifier) {
-            byte[] bytes = KonashiUtils.getUartWriteBytes(characteristic);
+            byte[] bytes = KonashiUtils.getUartWriteData(characteristic);
             notifyKonashiEvent(notifier, bytes, null);
         }
     },
