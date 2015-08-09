@@ -69,6 +69,24 @@ public class KonashiCharacteristicTest {
     }
 
     @Test
+    public void testHandlePioSetting() {
+        Mockito.when(mCharacteristic.getValue()).thenReturn(new byte[] {0x08});
+        KonashiCharacteristic
+                .valueOf(KonashiUUID.PIO_SETTING_UUID)
+                .handle(mCharacteristic, mNotifier);
+        Mockito.verify(mListener, Mockito.times(1)).onUpdatePioSetting((byte) 0x08);
+    }
+
+    @Test
+    public void testHandlePioPullup() {
+        Mockito.when(mCharacteristic.getValue()).thenReturn(new byte[] {0x08});
+        KonashiCharacteristic
+                .valueOf(KonashiUUID.PIO_PULLUP_UUID)
+                .handle(mCharacteristic, mNotifier);
+        Mockito.verify(mListener, Mockito.times(1)).onUpdatePioPullup((byte) 0x08);
+    }
+
+    @Test
     public void testHandlePioNotification() {
         Mockito.when(mCharacteristic.getValue()).thenReturn(new byte[] {0x13});
         KonashiCharacteristic

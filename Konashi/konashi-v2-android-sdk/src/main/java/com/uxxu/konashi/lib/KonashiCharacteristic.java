@@ -42,6 +42,18 @@ public enum KonashiCharacteristic {
             notifyKonashiEvent(notifier, value, null);
         }
     },
+    PIO_SETTING(KonashiUUID.PIO_SETTING_UUID, KonashiDigitalEvent.UPDATE_PIO_SETTING) {
+        @Override
+        public void handle(BluetoothGattCharacteristic characteristic, KonashiNotifier notifier) {
+            notifyKonashiEvent(notifier, characteristic.getValue()[0], null);
+        }
+    },
+    PIO_PULLUP(KonashiUUID.PIO_PULLUP_UUID, KonashiDigitalEvent.UPDATE_PIO_PULLUP) {
+        @Override
+        public void handle(BluetoothGattCharacteristic characteristic, KonashiNotifier notifier) {
+            notifyKonashiEvent(notifier, characteristic.getValue()[0], null);
+        }
+    },
     PIO_INPUT(KonashiUUID.PIO_INPUT_NOTIFICATION_UUID, KonashiDigitalEvent.UPDATE_PIO_INPUT) {
         @Override
         public void handle(BluetoothGattCharacteristic characteristic, KonashiNotifier notifier) {
