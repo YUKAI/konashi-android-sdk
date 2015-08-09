@@ -2,7 +2,7 @@ package com.uxxu.konashi.lib;
 
 import android.content.Context;
 
-import com.uxxu.konashi.lib.listeners.KonashiListener;
+import com.uxxu.konashi.lib.listeners.KonashiBaseListener;
 
 import java.util.List;
 
@@ -123,7 +123,7 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * @param listener 追加するリスナー
      */
     @Override
-    public void addListener(KonashiListener listener){
+    public void addListener(KonashiBaseListener listener){
         mNotifier.addListener(listener);
     }
 
@@ -132,7 +132,7 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * @param listener 削除するリスナー
      */
     @Override
-    public void removeListener(KonashiListener listener){
+    public void removeListener(KonashiBaseListener listener){
         mNotifier.removeListener(listener);
     }
 
@@ -149,7 +149,7 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * konashiのイベントのオブザーバを追加する
      * @param observer 追加するオブザーバ
      * @deprecated This method deprecated in 0.5.0.
-     * Use {@link #addListener(KonashiListener)} instead.
+     * Use {@link #addListener(KonashiBaseListener)} instead.
      */
     @Deprecated
     @Override
@@ -161,7 +161,7 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * 指定したオブザーバを削除する
      * @param observer 削除するオブザーバ
      * @deprecated This method deprecated in 0.5.0.
-     * Use {@link #removeListener(KonashiListener)} instead.
+     * Use {@link #removeListener(KonashiBaseListener)} instead.
      */
     @Deprecated
     @Override
