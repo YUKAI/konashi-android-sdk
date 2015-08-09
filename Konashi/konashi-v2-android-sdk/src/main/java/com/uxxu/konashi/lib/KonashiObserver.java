@@ -95,6 +95,31 @@ public abstract class KonashiObserver implements KonashiListener {
      */
     @Override
     public void onUpdateAnalogValueAio2(int value){}
+    @Override
+    public void onUpdatePioSetting(int modes) {}
+    @Override
+    public void onUpdatePioPullup(int pullups) {}
+    @Override
+    public void onUpdatePwmMode(int modes) {}
+    @Override
+    public void onUpdatePwmPeriod(int pin, int period) {}
+    @Override
+    public void onUpdatePwmDuty(int pin, int duty) {}
+    @Override
+    public void onUpdateUartMode(int mode) {}
+    @Override
+    public void onUpdateUartBaudrate(int baudrate) {}
+    @Override
+    public void onWriteUart(byte[] data) {}
+    @Override
+    public void onUpdateI2cMode(int mode) {}
+    @Override
+    public void onSendI2cCondition(int condition) {}
+    @Override
+    public void onWriteI2c(byte[] data, byte address) {}
+    @Override
+    public void onReadI2c(byte[] data, byte address) {}
+
     /**
      * UARTのRxからデータを受信した時
      */

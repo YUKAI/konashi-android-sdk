@@ -8,6 +8,24 @@ import com.uxxu.konashi.lib.listeners.KonashiDigitalListener;
  */
 public enum KonashiDigitalEvent implements KonashiEvent {
     /**
+     * PIOのピンの設定が変化した時
+     */
+    UPDATE_PIO_SETTING {
+        @Override
+        protected void notifyDigitalEvent(Object param, KonashiDigitalListener listener) {
+            listener.onUpdatePioSetting(Byte.valueOf(param.toString()));
+        }
+    },
+    /**
+     * PIOのピンをプルアップするかの設定が変化した時
+     */
+    UPDATE_PIO_PULLUP {
+        @Override
+        protected void notifyDigitalEvent(Object param, KonashiDigitalListener listener) {
+            listener.onUpdatePioPullup(Byte.valueOf(param.toString()));
+        }
+    },
+    /**
      * PIOの入力の状態が変化した時
      */
     UPDATE_PIO_INPUT {

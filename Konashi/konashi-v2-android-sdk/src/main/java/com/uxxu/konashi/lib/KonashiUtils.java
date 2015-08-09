@@ -3,6 +3,8 @@ package com.uxxu.konashi.lib;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.util.Log;
 
+import java.util.Arrays;
+
 /**
  * konashiライブラリの便利ツール。ライブラリ外から使うことはたぶんないかな！
  * 
@@ -75,5 +77,73 @@ public class KonashiUtils {
      */
     public static int getBatteryLevel(BluetoothGattCharacteristic characteristic) {
         return characteristic.getValue()[0] & 0xff;
+    }
+
+    /**
+     * characteristicからPwmのPeriodを取得する
+     * @param characteristic 返ってきたcharacteristic
+     * @return Period値
+     */
+    public static int getPwmPeriod(BluetoothGattCharacteristic characteristic) {
+        byte[] bytes = characteristic.getValue();
+        bytes = Arrays.copyOfRange(bytes, 1, bytes.length);
+        return bytes2int(bytes);
+    }
+
+    /**
+     * characteristicからPwmのDutyを取得する
+     * @param characteristic 返ってきたcharacteristic
+     * @return Duty値
+     */
+    public static int getPwmDuty(BluetoothGattCharacteristic characteristic) {
+        byte[] bytes = characteristic.getValue();
+        bytes = Arrays.copyOfRange(bytes, 1, bytes.length);
+        return bytes2int(bytes);
+    }
+
+    /**
+     * characteristicからUARTのbaudrateを取得する
+     * @param characteristic 返ってきたcharacteristic
+     * @return baudrate
+     */
+    public static int getUartBaudrate(BluetoothGattCharacteristic characteristic) {
+        return bytes2int(characteristic.getValue());
+    }
+
+    /**
+     * characteristicからUARTの送信データを取得する
+     * @param characteristic 返ってきたcharacteristic
+     * @return 送信したバイト列
+     */
+    public static byte[] getUartWriteData(BluetoothGattCharacteristic characteristic) {
+        byte[] bytes = characteristic.getValue();
+        return Arrays.copyOfRange(bytes, 1, bytes[0] + 1);
+    }
+
+    /**
+     * characteristicからI2Cの送信アドレスを取得する
+     * @param characteristic 返ってきたcharacteristic
+     * @return 送信先アドレス
+     */
+    public static byte getI2cWriteAddress(BluetoothGattCharacteristic characteristic) {
+        return (byte) ((characteristic.getValue()[1] >> 1) & 0x7F);
+    }
+
+    /**
+     * characteristicからI2Cの送信データを取得する
+     * @param characteristic 返ってきたcharacteristic
+     * @return 送信したバイト列
+     */
+    public static byte[] getI2cWriteData(BluetoothGattCharacteristic characteristic) {
+        byte[] bytes = characteristic.getValue();
+        return Arrays.copyOfRange(bytes, 2, bytes[0] + 1);
+    }
+
+    private static int bytes2int(byte[] bytes) {
+        int value = 0;
+        for (byte b : bytes) {
+            value = (value << 8) | (b & 0xff);
+        }
+        return value;
     }
 }

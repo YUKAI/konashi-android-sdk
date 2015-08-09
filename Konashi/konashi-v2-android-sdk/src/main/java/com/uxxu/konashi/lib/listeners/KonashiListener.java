@@ -29,6 +29,6 @@ import com.uxxu.konashi.lib.listeners.KonashiUartListener;
  */
 public interface KonashiListener extends
         KonashiConnectionListener, KonashiDeviceInfoListener,
-        KonashiAnalogListener, KonashiDigitalListener,
-        KonashiUartListener {
+        KonashiAnalogListener, KonashiDigitalListener, KonashiPwmListener,
+        KonashiUartListener, KonashiI2cListener {
 }
