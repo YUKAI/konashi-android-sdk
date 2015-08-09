@@ -14,6 +14,9 @@ import java.util.UUID;
  * Created by izumin on 8/4/15.
  */
 public enum KonashiCharacteristic {
+
+    /* ==== Analog ================================================================ */
+
     ANALOG_READ0(KonashiUUID.ANALOG_READ0_UUID, KonashiAnalogEvent.UPDATE_ANALOG_VALUE_AIO0) {
         @Override
         public void handle(BluetoothGattCharacteristic characteristic, KonashiNotifier notifier) {
@@ -35,13 +38,9 @@ public enum KonashiCharacteristic {
             notifyKonashiEvent(notifier, value, null);
         }
     },
-    BATTERY_LEVEL(KonashiUUID.BATTERY_LEVEL_UUID, KonashiDeviceInfoEvent.UPDATE_BATTERY_LEVEL) {
-        @Override
-        public void handle(BluetoothGattCharacteristic characteristic, KonashiNotifier notifier) {
-            int value = KonashiUtils.getBatteryLevel(characteristic);
-            notifyKonashiEvent(notifier, value, null);
-        }
-    },
+
+    /* ==== PIO ================================================================ */
+
     PIO_SETTING(KonashiUUID.PIO_SETTING_UUID, KonashiDigitalEvent.UPDATE_PIO_SETTING) {
         @Override
         public void handle(BluetoothGattCharacteristic characteristic, KonashiNotifier notifier) {
@@ -60,12 +59,28 @@ public enum KonashiCharacteristic {
             notifyKonashiEvent(notifier, characteristic.getValue()[0], null);
         }
     },
+
+    /* ==== UART ================================================================ */
+
     UART_RX(KonashiUUID.UART_RX_NOTIFICATION_UUID, KonashiUartEvent.UART_RX_COMPLETE) {
         @Override
         public void handle(BluetoothGattCharacteristic characteristic, KonashiNotifier notifier) {
             notifyKonashiEvent(notifier, characteristic.getValue(), null);
         }
     },
+
+    /* ==== Device info ================================================================ */
+
+    BATTERY_LEVEL(KonashiUUID.BATTERY_LEVEL_UUID, KonashiDeviceInfoEvent.UPDATE_BATTERY_LEVEL) {
+        @Override
+        public void handle(BluetoothGattCharacteristic characteristic, KonashiNotifier notifier) {
+            int value = KonashiUtils.getBatteryLevel(characteristic);
+            notifyKonashiEvent(notifier, value, null);
+        }
+    },
+
+    /* ==== UNKNOWN ================================================================ */
+
     UNKNOWN(null, null) {
         @Override
         public void handle(BluetoothGattCharacteristic characteristic, KonashiNotifier notifier) {
