@@ -1,5 +1,15 @@
 <resources>
-    <string name="app_name">AIO Sample</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
+    <string name="app_name">konashi AIO Sample</string>
+
+    <string name="action_find_konashi">Find konashi</string>
+    <string name="action_disconnect">Disconnect</string>
+
+    <string name="text_no_connection">No konashi connection</string>
+    <string name="text_pin">PIN</string>
+    <string name="text_voltage">Voltage</string>
+    <string name="text_read">Read</string>
+    <string name="text_aio1">1</string>
+    <string name="text_aio2">2</string>
+    <string name="text_aio3">3</string>
+    <string name="text_voltage_value">%1$d mV</string>
 </resources>
