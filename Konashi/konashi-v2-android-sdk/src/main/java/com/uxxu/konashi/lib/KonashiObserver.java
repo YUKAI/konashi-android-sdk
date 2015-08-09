@@ -111,6 +111,14 @@ public abstract class KonashiObserver implements KonashiListener {
     public void onUpdateUartBaudrate(int baudrate) {}
     @Override
     public void onWriteUart(byte[] data) {}
+    @Override
+    public void onUpdateI2cMode(int mode) {}
+    @Override
+    public void onSendI2cCondition(int condition) {}
+    @Override
+    public void onWriteI2c(byte[] data, byte address) {}
+    @Override
+    public void onReadI2c(byte[] data, byte address) {}
 
     /**
      * UARTのRxからデータを受信した時
