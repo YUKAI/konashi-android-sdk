@@ -5,8 +5,8 @@ android {
     buildToolsVersion "22.0.1"
 
     defaultConfig {
-        applicationId "com.e10dokup.konashi_sdk_test"
-        minSdkVersion 18
+        applicationId "com.uxxu.konashi.test_all_functions"
+        minSdkVersion 19
         targetSdkVersion 22
         versionCode 1
         versionName "1.0"
@@ -21,6 +21,6 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:22.+'
-    compile project(':Konashi:konashi-v2-android-sdk')
+    compile 'com.android.support:appcompat-v7:22.2.1'
+    compile project(':konashi-android-sdk')
 }
