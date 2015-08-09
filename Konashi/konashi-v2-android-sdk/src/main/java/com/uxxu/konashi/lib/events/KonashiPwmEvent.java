@@ -30,6 +30,8 @@ public enum KonashiPwmEvent implements KonashiEvent {
 
     @Override
     public void notify(Object param0, Object param1, KonashiBaseListener listener) {
-        notifyPwmEvent(param0, param1, (KonashiPwmListener) listener);
+        if (listener instanceof KonashiPwmListener) {
+            notifyPwmEvent(param0, param1, (KonashiPwmListener) listener);
+        }
     }
 }
