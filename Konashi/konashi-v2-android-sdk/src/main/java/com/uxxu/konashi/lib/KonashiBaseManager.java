@@ -433,8 +433,9 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
 
         @Override
         public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
-            // TODO Auto-generated method stub
-            super.onCharacteristicWrite(gatt, characteristic, status);
+            KonashiCharacteristic
+                    .valueOf(characteristic.getUuid())
+                    .handle(characteristic, mNotifier);
         }
 
         @Override
