@@ -931,10 +931,10 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
         super.onRecieveUart(uartData);
     }
 
-    /**
-     * for konashi v1(old codes)
-     * @param data
-     */
+//    /**
+//     * for konashi v1(old codes)
+//     * @param data
+//     */
 //    @Override
 //    protected void onRecieveUart(byte data) {
 //        super.onRecieveUart(data);
