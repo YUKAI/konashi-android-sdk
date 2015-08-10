@@ -1,11 +1,119 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivityFragment">
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:stretchColumns="1,2"
+    tools:context=".MainActivityFragment">
 
-    <TextView android:text="@string/hello_world" android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <TableRow android:layout_marginBottom="@dimen/column_vertical_margin">
+        <TextView style="@style/TableHeaderColumn" android:text="@string/text_pin" />
+        <TextView style="@style/TableHeaderColumn" android:text="@string/text_mode"/>
+        <TextView style="@style/TableHeaderColumn" android:text="@string/text_output"/>
+        <TextView style="@style/TableHeaderColumn" android:text="@string/text_input"/>
+        <TextView style="@style/TableHeaderColumn" android:text="@string/text_pullup"/>
+    </TableRow>
 
-</RelativeLayout>
+    <TableRow style="@style/TableRow">
+        <TextView style="@style/TableHeaderColumn"
+            android:text="@string/text_pio0" />
+
+        <ToggleButton style="@style/PioModeToggleButton"
+            android:id="@+id/btn_mode_pio0" />
+
+        <ToggleButton style="@style/PioOutputToggleButton"
+            android:id="@+id/btn_output_pio0" />
+
+        <TextView style="@style/PioInputTextView"
+            android:id="@+id/text_input_pio0" />
+
+        <CheckBox style="@style/PioPullupToggle"
+            android:id="@+id/checkbox_pullup_pio0" />
+    </TableRow>
+
+    <TableRow style="@style/TableRow">
+        <TextView style="@style/TableHeaderColumn"
+            android:text="@string/text_pio1" />
+
+        <ToggleButton style="@style/PioModeToggleButton"
+            android:id="@+id/btn_mode_pio1" />
+
+        <ToggleButton style="@style/PioOutputToggleButton"
+            android:id="@+id/btn_output_pio1" />
+
+        <TextView style="@style/PioInputTextView"
+            android:id="@+id/text_input_pio1" />
+
+        <CheckBox style="@style/PioPullupToggle"
+            android:id="@+id/checkbox_pullup_pio1" />
+    </TableRow>
+
+    <TableRow style="@style/TableRow">
+        <TextView style="@style/TableHeaderColumn"
+            android:text="@string/text_pio2" />
+
+        <ToggleButton style="@style/PioModeToggleButton"
+            android:id="@+id/btn_mode_pio2" />
+
+        <ToggleButton style="@style/PioOutputToggleButton"
+            android:id="@+id/btn_output_pio2" />
+
+        <TextView style="@style/PioInputTextView"
+            android:id="@+id/text_input_pio2" />
+
+        <CheckBox style="@style/PioPullupToggle"
+            android:id="@+id/checkbox_pullup_pio2" />
+    </TableRow>
+
+    <TableRow style="@style/TableRow">
+        <TextView style="@style/TableHeaderColumn"
+            android:text="@string/text_pio3" />
+
+        <ToggleButton style="@style/PioModeToggleButton"
+            android:id="@+id/btn_mode_pio3" />
+
+        <ToggleButton style="@style/PioOutputToggleButton"
+            android:id="@+id/btn_output_pio3" />
+
+        <TextView style="@style/PioInputTextView"
+            android:id="@+id/text_input_pio3" />
+
+        <CheckBox style="@style/PioPullupToggle"
+            android:id="@+id/checkbox_pullup_pio3" />
+    </TableRow>
+
+    <TableRow style="@style/TableRow">
+        <TextView style="@style/TableHeaderColumn"
+            android:text="@string/text_pio4" />
+
+        <ToggleButton style="@style/PioModeToggleButton"
+            android:id="@+id/btn_mode_pio4" />
+
+        <ToggleButton style="@style/PioOutputToggleButton"
+            android:id="@+id/btn_output_pio4" />
+
+        <TextView style="@style/PioInputTextView"
+            android:id="@+id/text_input_pio4" />
+
+        <CheckBox style="@style/PioPullupToggle"
+            android:id="@+id/checkbox_pullup_pio4" />
+    </TableRow>
+
+    <TableRow style="@style/TableRow">
+        <TextView style="@style/TableHeaderColumn"
+            android:text="@string/text_pio5" />
+
+        <ToggleButton style="@style/PioModeToggleButton"
+            android:id="@+id/btn_mode_pio5" />
+
+        <ToggleButton style="@style/PioOutputToggleButton"
+            android:id="@+id/btn_output_pio5" />
+
+        <TextView style="@style/PioInputTextView"
+            android:id="@+id/text_input_pio5" />
+
+        <CheckBox style="@style/PioPullupToggle"
+            android:id="@+id/checkbox_pullup_pio5" />
+    </TableRow>
+</TableLayout>
