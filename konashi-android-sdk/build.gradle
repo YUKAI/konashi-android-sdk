@@ -57,7 +57,7 @@ bintray {
 
     configurations = ['archives']
     pkg {
-        repo = 'android'
+        repo = 'maven'
         name = project.name
         // TODO: description
         desc = 'Bintray aar publishing example'
