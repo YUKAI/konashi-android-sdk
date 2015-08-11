@@ -1,1 +1,1 @@
-include ':app', ':Konashi:konashi-v2-android-sdk'
+include ':konashi-android-sdk', ':samples:test_all_functions', ':samples:aio-sample'
