@@ -28,11 +28,12 @@
     </style>
 
     <style name="PioModeToggleButton" parent="PioToggleButton">
-        <item name="android:textOff">@string/text_output</item>
-        <item name="android:textOn">@string/text_input</item>
+        <item name="android:textOn">@string/text_output</item>
+        <item name="android:textOff">@string/text_input</item>
     </style>
 
     <style name="PioOutputToggleButton" parent="PioToggleButton">
+        <item name="android:enabled">false</item>
         <item name="android:textOff">@string/text_low</item>
         <item name="android:textOn">@string/text_high</item>
     </style>
