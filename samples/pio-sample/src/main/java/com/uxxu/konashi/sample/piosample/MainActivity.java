@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
                 mKonashiManager.find(this);
                 return true;
             case R.id.action_disconnect:
+                mKonashiManager.disconnect();
                 return true;
         }
 
@@ -84,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
             public void run() {
                 boolean isReady = mKonashiManager.isReady();
                 mMenu.findItem(R.id.action_find_konashi).setVisible(!isReady);
-                mMenu.findItem(R.id.action_find_konashi).setVisible(isReady);
+                mMenu.findItem(R.id.action_disconnect).setVisible(isReady);
                 mTextNoConnection.setVisibility(isReady ? View.GONE : View.VISIBLE);
             }
         });
