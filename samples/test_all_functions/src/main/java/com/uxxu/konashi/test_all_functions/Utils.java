@@ -21,11 +21,23 @@ public class Utils {
     public static final int[] AIO_PINS = new int[]{Konashi.AIO0, Konashi.AIO1, Konashi.AIO2};
 
     public static int uartLabelToValue(String uartLabel) {
-        if (uartLabel.equals("2400")) {
-            return Konashi.UART_RATE_2K4;
-        }
         if (uartLabel.equals("9600")) {
             return Konashi.UART_RATE_9K6;
+        }
+        if (uartLabel.equals("19200")) {
+            return Konashi.UART_RATE_19K2;
+        }
+        if (uartLabel.equals("38400")) {
+            return Konashi.UART_RATE_38K4;
+        }
+        if (uartLabel.equals("57600")) {
+            return Konashi.UART_RATE_57K6;
+        }
+        if (uartLabel.equals("76800")) {
+            return Konashi.UART_RATE_76K8;
+        }
+        if (uartLabel.equals("115200")) {
+            return Konashi.UART_RATE_115K2;
         }
         return 0;
     }

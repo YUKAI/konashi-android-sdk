@@ -580,7 +580,10 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
             return;
         }
         
-        if(baudrate==Konashi.UART_RATE_2K4 || baudrate==Konashi.UART_RATE_9K6){
+        if (baudrate == Konashi.UART_RATE_9K6 || baudrate == Konashi.UART_RATE_19K2 ||
+                baudrate == Konashi.UART_RATE_38K4 || baudrate == Konashi.UART_RATE_57K6 ||
+                baudrate == Konashi.UART_RATE_76K8 || baudrate == Konashi.UART_RATE_115K2
+                ) {
             mUartBaudrate = (byte)baudrate;
             
             byte[] val = new byte[2];
