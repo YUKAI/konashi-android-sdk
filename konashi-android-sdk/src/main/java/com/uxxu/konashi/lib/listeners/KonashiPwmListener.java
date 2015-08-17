@@ -3,7 +3,7 @@ package com.uxxu.konashi.lib.listeners;
 /**
  * Created by izumin on 8/9/15.
  */
-public interface KonashiPwmListener {
+public interface KonashiPwmListener extends KonashiBaseListener {
     /**
      * PIOのピンのPWM設定が変化した時に呼ばれる
      */
