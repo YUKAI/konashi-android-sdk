@@ -1,4 +1,4 @@
-package com.uxxu.konashi.sample.pwmsample.;
+package com.uxxu.konashi.sample.pwmsample;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
