@@ -7,7 +7,11 @@
 
 ---
 
-Android向けkonashi2.0用SDKです。konashi ver1用のsdk [konashi-v1-android-sdk](https://github.com/YUKAI/konashi-v1-android-sdk)を統合予定です。
+## Supported version
+
+現在、konashi2.0以降のみをサポートしています。
+
+将来、緑色のモジュールを搭載したkonashi ver1用のsdk [konashi-v1-android-sdk](https://github.com/YUKAI/konashi-v1-android-sdk)を統合予定です。
 
 ## Getting Started
 
