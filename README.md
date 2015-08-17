@@ -10,7 +10,7 @@
 
 ## Getting Started
 
-TODO
+\{8月末をめどに更新予定です\}
 
 ## 開発について
 
@@ -18,7 +18,7 @@ TODO
 開発者に要望を伝える報告する方法は以下です。
 
 - GitHub の Issues に投稿
-  - [https://github.com/YUKAI/konashi-ios-sdk/issues](https://github.com/YUKAI/konashi-ios-sdk/issues)
+  - [https://github.com/YUKAI/konashi-android-sdk/issues](https://github.com/YUKAI/konashi-android-sdk/issues)
   - feature-requests、bug、discussion などのラベルをご使用ください。
 - Pull Request
   - バグ見つけて修正しといたよ、というときは Pull Request を **develop ブランチ**に送ってください。
@@ -45,7 +45,7 @@ TODO
 ### タグの運用
 基本的にリリース時にバージョン名でタグを切ります。konashi 公式ページからリンクされる zip ダウンロード先は最新のリリースタグの zip です。
 
-タグ一覧は[こちら](https://github.com/YUKAI/konashi-ios-sdk/tags)。
+タグ一覧は[こちら](https://github.com/YUKAI/konashi-android-sdk/tags)。
 
 ### Pull Request
 **規模の大小関わらず、バグ修正や機能追加などの Pull Request 大歓迎！**
