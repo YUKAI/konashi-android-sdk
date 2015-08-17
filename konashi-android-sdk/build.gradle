@@ -48,8 +48,8 @@ group = 'com.uxxu.konashi'
 version = '0.5.0'
 
 // TODO: move repository
-def siteUrl = 'https://github.com/e10dokup/konashi-v2-android-sdk'
-def gitUrl = 'https://github.com/e10dokup/konashi-v2-android-sdk.git'
+def siteUrl = 'https://github.com/YUKAI/konashi-android-sdk'
+def gitUrl = 'https://github.com/YUKAI/konashi-android-sdk.git'
 
 bintray {
     user = System.getenv('BINTRAY_USER')
