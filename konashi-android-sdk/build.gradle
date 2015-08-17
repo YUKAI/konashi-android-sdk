@@ -75,6 +75,12 @@ bintray {
         licenses = ['Apache-2.0']
         labels = ['aar', 'android', 'konashi', 'BLE']
         publicDownloadNumbers = true
+        version {
+            name = sdkVersionName
+            desc = "konashi Android SDK ${sdkVersionName}"
+            released  = new Date()
+            vcsTag = sdkVersionName
+        }
     }
 }
 
