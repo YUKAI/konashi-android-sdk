@@ -59,6 +59,7 @@ bintray {
     pkg {
         repo = 'maven'
         name = project.name
+        userOrg = 'konashi-dev'
         desc = 'konashi SDK for Android'
         websiteUrl = siteUrl
         issueTrackerUrl = "${siteUrl}/issues"
