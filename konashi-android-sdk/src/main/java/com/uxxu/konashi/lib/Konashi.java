@@ -177,10 +177,6 @@ public class Konashi {
      */
     public static final int UART_ENABLE = 1;
     /**
-     * 通信速度: 2400bps
-     */
-    public static final int UART_RATE_2K4 = 0x000a;
-    /**
      * 通信速度: 9600bps
      */
     public static final int UART_RATE_9K6 = 0x0028;
