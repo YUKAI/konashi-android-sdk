@@ -4,7 +4,7 @@
 
 ---
 
-<img src="http://konashi.ux-xu.com/img/showcase/i2c_lcd.png" width="500" />
+<img src="http://konashi.ux-xu.com/img/hero1.png" width="500" />
 
 ---
 
