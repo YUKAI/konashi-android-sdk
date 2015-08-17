@@ -59,8 +59,7 @@ bintray {
     pkg {
         repo = 'maven'
         name = project.name
-        // TODO: description
-        desc = 'Bintray aar publishing example'
+        desc = 'konashi SDK for Android'
         websiteUrl = siteUrl
         issueTrackerUrl = "${siteUrl}/issues"
         vcsUrl = gitUrl
