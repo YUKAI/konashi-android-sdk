@@ -11,7 +11,7 @@
 
 現在、konashi2.0以降のみをサポートしています。
 
-将来、緑色のモジュールを搭載したkonashi ver1用のsdk [konashi-v1-android-sdk](https://github.com/YUKAI/konashi-v1-android-sdk)を統合予定です。
+将来、konashi ver1 (緑色のモジュールを搭載) 用のsdk [konashi-v1-android-sdk](https://github.com/YUKAI/konashi-v1-android-sdk)を統合予定です。
 
 ## Getting Started
 
