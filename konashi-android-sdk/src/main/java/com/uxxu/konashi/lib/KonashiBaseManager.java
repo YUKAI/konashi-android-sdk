@@ -239,13 +239,8 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
      */
     public void disconnect(){
         if(mBluetoothGatt!=null){
-            mBluetoothGatt.close();
-            mBluetoothGatt = null;
-            setStatus(BleStatus.DISCONNECTED);
+            mBluetoothGatt.disconnect();
         }
-
-        mKonashiMessageHandler.stop();
-        mKonashiMessageHandler = null;
     }
     
     /**
@@ -450,11 +445,19 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
                 gatt.discoverServices();
             }
             else if(newState == BluetoothProfile.STATE_DISCONNECTED){
+                if (mBluetoothGatt != null) {
+                    mBluetoothGatt.close();
+                    mBluetoothGatt = null;
+                }
+
+                if (mKonashiMessageHandler != null) {
+                    mKonashiMessageHandler.stop();
+                    mKonashiMessageHandler = null;
+                }
+
                 setStatus(BleStatus.DISCONNECTED);
                 
                 notifyKonashiEvent(KonashiConnectionEvent.DISCONNECTED);
-                
-                mBluetoothGatt = null;
             }
         }
 
