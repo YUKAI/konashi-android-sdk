@@ -1,12 +1,13 @@
 # konashi SDK for Android
 [![wercker status](https://app.wercker.com/status/976eb8c14c7b24a59c5c1e1a3d42ecbf/m "wercker status")](https://app.wercker.com/project/bykey/976eb8c14c7b24a59c5c1e1a3d42ecbf)
 
-
 ---
 
 <img src="http://konashi.ux-xu.com/img/documents/i2c.png" width="600" />
 
 ---
+
+Android向けkonashi2.0用SDKです。konashi ver1用のsdk [konashi-v1-android-sdk](https://github.com/YUKAI/konashi-v1-android-sdk)を統合予定です。
 
 ## Getting Started
 
