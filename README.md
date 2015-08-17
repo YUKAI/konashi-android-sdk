@@ -4,13 +4,13 @@
 
 ---
 
-<img src="http://konashi.ux-xu.com/img/documents/i2c.png" width="600" />
+<img src="http://konashi.ux-xu.com/img/showcase/i2c_lcd.png" width="500" />
 
 ---
 
 ## Getting Started
 
-\{8月末をめどに更新予定です\}
+\{2015年8月末をめどに更新予定です\}
 
 ## 開発について
 
@@ -30,6 +30,7 @@
   - メールでの報告も受け付けています。
 
 ### ブランチの運用
+<!--
 [git-flow](https://github.com/nvie/gitflow) を使用しています。各ブランチの役割は以下です。
 
 - master
@@ -40,7 +41,7 @@
   - 新機能追加やバグ修正を行うブランチです。develop ブランチから feature ブランチを切り、開発が完了後に develop ブランチに merge します。
 - release/v***
   - リリース前ブランチです。develop ブランチから release ブランチを切り、テストが終わり次第 master ブランチにマージされます。(現在は基本的に origin に push されません)
-
+-->
 
 ### タグの運用
 基本的にリリース時にバージョン名でタグを切ります。konashi 公式ページからリンクされる zip ダウンロード先は最新のリリースタグの zip です。
