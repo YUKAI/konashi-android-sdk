@@ -98,6 +98,11 @@ public class MainActivityFragment extends Fragment {
             mViewHolders[0].setInputValue(value);
         }
 
+        @Override
+        public void onUpdatePioOutput(byte value) {
+
+        }
+
         @Override public void onError(KonashiErrorReason errorReason, String message) {}
     };
 
