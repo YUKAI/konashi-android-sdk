@@ -1,8 +1,6 @@
 package com.uxxu.konashi.lib.entities;
 
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.NonNull;
 
 import com.uxxu.konashi.lib.KonashiMessageHandler;
