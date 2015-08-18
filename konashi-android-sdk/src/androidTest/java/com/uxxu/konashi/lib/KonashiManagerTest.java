@@ -17,7 +17,6 @@ import org.mockito.internal.util.reflection.Whitebox;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
 
 
 /**
@@ -88,8 +87,6 @@ public class KonashiManagerTest {
             public void whenKonashiIsNotEnable() {
                 stubIsEnableAccessKonashi(false);
                 getManager().analogRead(9999);
-                Mockito.verify(getManager(), Mockito.times(1))
-                        .notifyKonashiError(any(KonashiErrorReason.class));
                 assertThat(getCapturedError()).isEqualTo(KonashiErrorReason.NOT_READY);
             }
 
@@ -97,8 +94,6 @@ public class KonashiManagerTest {
             public void withInvalidPin() {
                 stubIsEnableAccessKonashi(true);
                 getManager().analogRead(9999);
-                Mockito.verify(getManager(), Mockito.times(1))
-                        .notifyKonashiError(any(KonashiErrorReason.class));
                 assertThat(getCapturedError()).isEqualTo(KonashiErrorReason.INVALID_PARAMETER);
             }
 
@@ -117,21 +112,9 @@ public class KonashiManagerTest {
         @RunWith(AndroidJUnit4.class)
         public static class I2cModeTest extends BaseTest {
             @Test
-            public void withValidMode() {
-                stubIsEnableAccessKonashi(true);
-                getManager().i2cMode(Konashi.I2C_ENABLE);
-                Mockito.verify(getManager(), Mockito.times(1))
-                        .addWriteMessage(any(UUID.class), any(byte[].class));
-                assertThat(getCapturedWrittenUuid()).isEqualTo(KonashiUUID.I2C_CONFIG_UUID);
-                assertThat(getCapturedWrittenValue()).isEqualTo(new byte[] {1});
-            }
-
-            @Test
             public void withInValidMode() {
                 stubIsEnableAccessKonashi(true);
                 getManager().i2cMode(9999);
-                Mockito.verify(getManager(), Mockito.times(1))
-                        .notifyKonashiError(any(KonashiErrorReason.class));
                 assertThat(getCapturedError()).isEqualTo(KonashiErrorReason.INVALID_PARAMETER);
             }
 
@@ -139,9 +122,15 @@ public class KonashiManagerTest {
             public void whenKonashiIsNotEnable() {
                 stubIsEnableAccessKonashi(false);
                 getManager().i2cMode(9999);
-                Mockito.verify(getManager(), Mockito.times(1))
-                        .notifyKonashiError(any(KonashiErrorReason.class));
                 assertThat(getCapturedError()).isEqualTo(KonashiErrorReason.NOT_READY);
+            }
+
+            @Test
+            public void withValidMode() {
+                stubIsEnableAccessKonashi(true);
+                getManager().i2cMode(Konashi.I2C_ENABLE);
+                assertThat(getCapturedWrittenUuid()).isEqualTo(KonashiUUID.I2C_CONFIG_UUID);
+                assertThat(getCapturedWrittenValue()).isEqualTo(new byte[] {1});
             }
         }
 
@@ -151,8 +140,6 @@ public class KonashiManagerTest {
             public void whenKonashiIsNotEnable() {
                 stubIsEnableAccessKonashi(false);
                 getManager().i2cStartCondition();
-                Mockito.verify(getManager(), Mockito.times(1))
-                        .notifyKonashiError(any(KonashiErrorReason.class));
                 assertThat(getCapturedError()).isEqualTo(KonashiErrorReason.NOT_READY);
             }
 
@@ -161,8 +148,6 @@ public class KonashiManagerTest {
                 stubIsEnableAccessKonashi(true);
                 stubIsEnableI2c(false);
                 getManager().i2cStartCondition();
-                Mockito.verify(getManager(), Mockito.times(1))
-                        .notifyKonashiError(any(KonashiErrorReason.class));
                 assertThat(getCapturedError()).isEqualTo(KonashiErrorReason.NOT_ENABLED_I2C);
             }
 
@@ -171,8 +156,6 @@ public class KonashiManagerTest {
                 stubIsEnableAccessKonashi(true);
                 stubIsEnableI2c(true);
                 getManager().i2cStartCondition();
-                Mockito.verify(getManager(), Mockito.times(1))
-                        .addWriteMessage(any(UUID.class), any(byte[].class));
                 assertThat(getCapturedWrittenUuid()).isEqualTo(KonashiUUID.I2C_START_STOP_UUID);
                 assertThat(getCapturedWrittenValue()).isEqualTo(new byte[]{Konashi.I2C_START_CONDITION});
             }
@@ -184,8 +167,6 @@ public class KonashiManagerTest {
             public void whenKonashiIsNotEnable() {
                 stubIsEnableAccessKonashi(false);
                 getManager().i2cRestartCondition();
-                Mockito.verify(getManager(), Mockito.times(1))
-                        .notifyKonashiError(any(KonashiErrorReason.class));
                 assertThat(getCapturedError()).isEqualTo(KonashiErrorReason.NOT_READY);
             }
 
@@ -194,8 +175,6 @@ public class KonashiManagerTest {
                 stubIsEnableAccessKonashi(true);
                 stubIsEnableI2c(false);
                 getManager().i2cRestartCondition();
-                Mockito.verify(getManager(), Mockito.times(1))
-                        .notifyKonashiError(any(KonashiErrorReason.class));
                 assertThat(getCapturedError()).isEqualTo(KonashiErrorReason.NOT_ENABLED_I2C);
             }
 
@@ -204,8 +183,6 @@ public class KonashiManagerTest {
                 stubIsEnableAccessKonashi(true);
                 stubIsEnableI2c(true);
                 getManager().i2cRestartCondition();
-                Mockito.verify(getManager(), Mockito.times(1))
-                        .addWriteMessage(any(UUID.class), any(byte[].class));
                 assertThat(getCapturedWrittenUuid()).isEqualTo(KonashiUUID.I2C_START_STOP_UUID);
                 assertThat(getCapturedWrittenValue()).isEqualTo(new byte[] {Konashi.I2C_RESTART_CONDITION});
             }
@@ -217,8 +194,6 @@ public class KonashiManagerTest {
             public void whenKonashiIsNotEnable() {
                 stubIsEnableAccessKonashi(false);
                 getManager().i2cStopCondition();
-                Mockito.verify(getManager(), Mockito.times(1))
-                        .notifyKonashiError(any(KonashiErrorReason.class));
                 assertThat(getCapturedError()).isEqualTo(KonashiErrorReason.NOT_READY);
             }
 
@@ -227,8 +202,6 @@ public class KonashiManagerTest {
                 stubIsEnableAccessKonashi(true);
                 stubIsEnableI2c(false);
                 getManager().i2cStopCondition();
-                Mockito.verify(getManager(), Mockito.times(1))
-                        .notifyKonashiError(any(KonashiErrorReason.class));
                 assertThat(getCapturedError()).isEqualTo(KonashiErrorReason.NOT_ENABLED_I2C);
             }
 
@@ -237,8 +210,6 @@ public class KonashiManagerTest {
                 stubIsEnableAccessKonashi(true);
                 stubIsEnableI2c(true);
                 getManager().i2cStopCondition();
-                Mockito.verify(getManager(), Mockito.times(1))
-                        .addWriteMessage(any(UUID.class), any(byte[].class));
                 assertThat(getCapturedWrittenUuid()).isEqualTo(KonashiUUID.I2C_START_STOP_UUID);
                 assertThat(getCapturedWrittenValue()).isEqualTo(new byte[] {Konashi.I2C_STOP_CONDITION});
             }
@@ -253,8 +224,6 @@ public class KonashiManagerTest {
             public void whenKonashiIsNotEnable() {
                 stubIsEnableAccessKonashi(false);
                 getManager().i2cWrite(mData.length(), mData.getBytes(), mAddress);
-                Mockito.verify(getManager(), Mockito.times(1))
-                        .notifyKonashiError(any(KonashiErrorReason.class));
                 assertThat(getCapturedError()).isEqualTo(KonashiErrorReason.NOT_READY);
             }
 
@@ -263,8 +232,6 @@ public class KonashiManagerTest {
                 stubIsEnableAccessKonashi(true);
                 stubIsEnableI2c(false);
                 getManager().i2cWrite(mData.length(), mData.getBytes(), mAddress);
-                Mockito.verify(getManager(), Mockito.times(1))
-                        .notifyKonashiError(any(KonashiErrorReason.class));
                 assertThat(getCapturedError()).isEqualTo(KonashiErrorReason.NOT_ENABLED_I2C);
             }
 
@@ -274,8 +241,6 @@ public class KonashiManagerTest {
                 stubIsEnableI2c(true);
                 String invalidData = "too long data string";
                 getManager().i2cWrite(invalidData.length(), invalidData.getBytes(), mAddress);
-                Mockito.verify(getManager(), Mockito.times(1))
-                        .notifyKonashiError(any(KonashiErrorReason.class));
                 assertThat(getCapturedError()).isEqualTo(KonashiErrorReason.INVALID_PARAMETER);
             }
 
@@ -284,8 +249,6 @@ public class KonashiManagerTest {
                 stubIsEnableAccessKonashi(true);
                 stubIsEnableI2c(true);
                 getManager().i2cWrite(mData.length(), mData.getBytes(), mAddress);
-                Mockito.verify(getManager(), Mockito.times(1))
-                        .addWriteMessage(any(UUID.class), any(byte[].class));
                 assertThat(getCapturedWrittenUuid()).isEqualTo(KonashiUUID.I2C_WRITE_UUID);
                 byte[] value = new byte[] {
                         0x05, 0x3E, 0x74, 0x65, 0x73, 0x74, 0x00, 0x00, 0x00, 0x00,
@@ -303,8 +266,6 @@ public class KonashiManagerTest {
             public void whenKonashiIsNotEnable() {
                 stubIsEnableAccessKonashi(false);
                 getManager().i2cReadRequest(0x13, mAddress);
-                Mockito.verify(getManager(), Mockito.times(1))
-                        .notifyKonashiError(any(KonashiErrorReason.class));
                 assertThat(getCapturedError()).isEqualTo(KonashiErrorReason.NOT_READY);
             }
 
@@ -313,8 +274,6 @@ public class KonashiManagerTest {
                 stubIsEnableAccessKonashi(true);
                 stubIsEnableI2c(false);
                 getManager().i2cReadRequest(0x13, mAddress);
-                Mockito.verify(getManager(), Mockito.times(1))
-                        .notifyKonashiError(any(KonashiErrorReason.class));
                 assertThat(getCapturedError()).isEqualTo(KonashiErrorReason.NOT_ENABLED_I2C);
             }
 
@@ -323,8 +282,6 @@ public class KonashiManagerTest {
                 stubIsEnableAccessKonashi(true);
                 stubIsEnableI2c(true);
                 getManager().i2cReadRequest(0xff, mAddress);
-                Mockito.verify(getManager(), Mockito.times(1))
-                        .notifyKonashiError(any(KonashiErrorReason.class));
                 assertThat(getCapturedError()).isEqualTo(KonashiErrorReason.INVALID_PARAMETER);
             }
 
@@ -333,8 +290,6 @@ public class KonashiManagerTest {
                 stubIsEnableAccessKonashi(true);
                 stubIsEnableI2c(true);
                 getManager().i2cReadRequest(0x13, mAddress);
-                Mockito.verify(getManager(), Mockito.times(1))
-                        .addWriteMessage(any(UUID.class), any(byte[].class));
                 assertThat(getCapturedWrittenUuid()).isEqualTo(KonashiUUID.I2C_READ_PARAM_UUID);
                 assertThat(getCapturedWrittenValue()).isEqualTo(new byte[] {0x13, 0x3f});
             }
@@ -355,8 +310,6 @@ public class KonashiManagerTest {
             public void whenKonashiIsNotEnable() {
                 stubIsEnableAccessKonashi(false);
                 assertThat(getManager().i2cRead(0x13)).isNull();
-                Mockito.verify(getManager(), Mockito.times(1))
-                        .notifyKonashiError(any(KonashiErrorReason.class));
                 assertThat(getCapturedError()).isEqualTo(KonashiErrorReason.NOT_READY);
             }
 
@@ -365,8 +318,6 @@ public class KonashiManagerTest {
                 stubIsEnableAccessKonashi(true);
                 stubIsEnableI2c(false);
                 assertThat(getManager().i2cRead(0x13)).isNull();
-                Mockito.verify(getManager(), Mockito.times(1))
-                        .notifyKonashiError(any(KonashiErrorReason.class));
                 assertThat(getCapturedError()).isEqualTo(KonashiErrorReason.NOT_ENABLED_I2C);
             }
 
@@ -375,8 +326,6 @@ public class KonashiManagerTest {
                 stubIsEnableAccessKonashi(true);
                 stubIsEnableI2c(true);
                 assertThat(getManager().i2cRead(0xff)).isNull();
-                Mockito.verify(getManager(), Mockito.times(1))
-                        .notifyKonashiError(any(KonashiErrorReason.class));
                 assertThat(getCapturedError()).isEqualTo(KonashiErrorReason.INVALID_PARAMETER);
             }
 
@@ -385,11 +334,8 @@ public class KonashiManagerTest {
                 stubIsEnableAccessKonashi(true);
                 stubIsEnableI2c(true);
                 assertThat(getManager().i2cRead(0x01)).isNull();
-                Mockito.verify(getManager(), Mockito.times(1))
-                        .notifyKonashiError(any(KonashiErrorReason.class));
                 assertThat(getCapturedError()).isEqualTo(KonashiErrorReason.INVALID_PARAMETER);
             }
-
 
             @Test
             public void withValidLength() {
