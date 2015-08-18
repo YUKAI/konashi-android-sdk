@@ -6,8 +6,8 @@ import android.bluetooth.BluetoothGattService;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
-import android.util.Log;
 
+import com.uxxu.konashi.lib.entities.KonashiMessage;
 import com.uxxu.konashi.lib.entities.KonashiReadMessage;
 import com.uxxu.konashi.lib.entities.KonashiWriteMessage;
 
@@ -16,8 +16,6 @@ import com.uxxu.konashi.lib.entities.KonashiWriteMessage;
  */
 public class KonashiMessageHandler extends Handler {
     public static final String TAG = KonashiMessageHandler.class.getSimpleName();
-
-    public static final int MESSAGE_WRITE = 0, MESSAGE_READ = 1;
 
     private HandlerThread mHandlerThread;
     private BluetoothGatt mBluetoothGatt;
@@ -42,10 +40,10 @@ public class KonashiMessageHandler extends Handler {
     @Override
     public void handleMessage(Message msg) {
         switch (msg.what) {
-            case MESSAGE_WRITE:
+            case KonashiMessage.MESSAGE_WRITE:
                 writeValue(new KonashiWriteMessage(msg.getData()));
                 break;
-            case MESSAGE_READ:
+            case KonashiMessage.MESSAGE_READ:
                 readValue(new KonashiReadMessage(msg.getData()));
                 break;
         }
