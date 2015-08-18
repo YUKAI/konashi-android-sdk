@@ -76,6 +76,11 @@ public abstract class KonashiObserver implements KonashiListener {
     @Override
     public void onUpdatePioInput(byte value){}
     /**
+     * PIOの出力の状態が変化した時に呼ばれる
+     */
+    @Override
+    public void onUpdatePioOutput(byte value) {}
+    /**
      * AIOのどれかのピンの電圧が取得できた時
      */
     @Override
