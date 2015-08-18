@@ -179,6 +179,31 @@ public class KonashiManagerTest {
                 assertThat(getCapturedWrittenValue()).isEqualTo(new byte[] {0x15});
             }
         }
+
+        @RunWith(AndroidJUnit4.class)
+        public static class PinPullupAllTest extends BaseTest {
+            @Test
+            public void whenKonashiIsNotEnable() {
+                stubIsEnableAccessKonashi(false);
+                getManager().pinPullupAll(9999);
+                assertThat(getCapturedError()).isEqualTo(KonashiErrorReason.NOT_READY);
+            }
+
+            @Test
+            public void withInvalidMode() {
+                stubIsEnableAccessKonashi(true);
+                getManager().pinPullupAll(9999);
+                assertThat(getCapturedError()).isEqualTo(KonashiErrorReason.INVALID_PARAMETER);
+            }
+
+            @Test
+            public void whenPioModeAll() {
+                stubIsEnableAccessKonashi(true);
+                getManager().pinPullupAll(0x17);
+                assertThat(getCapturedWrittenUuid()).isEqualTo(KonashiUUID.PIO_PULLUP_UUID);
+                assertThat(getCapturedWrittenValue()).isEqualTo(new byte[] {0x17});
+            }
+        }
     }
 
     @RunWith(Enclosed.class)
