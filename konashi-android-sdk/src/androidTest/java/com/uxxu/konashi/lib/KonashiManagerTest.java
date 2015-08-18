@@ -245,6 +245,72 @@ public class KonashiManagerTest {
                 assertThat(getManager().digitalReadAll()).isEqualTo(0x17);
             }
         }
+
+        @RunWith(AndroidJUnit4.class)
+        public static class DigitalWriteTest extends BaseTest {
+            @Test
+            public void whenKonashiIsNotEnable() {
+                stubIsEnableAccessKonashi(false);
+                getManager().digitalWrite(9999, 9999);
+                assertThat(getCapturedError()).isEqualTo(KonashiErrorReason.NOT_READY);
+            }
+
+            @Test
+            public void withInvalidPin() {
+                stubIsEnableAccessKonashi(true);
+                getManager().digitalWrite(9999, Konashi.OUTPUT);
+                assertThat(getCapturedError()).isEqualTo(KonashiErrorReason.INVALID_PARAMETER);
+            }
+
+            @Test
+            public void withInvalidValue() {
+                stubIsEnableAccessKonashi(true);
+                getManager().digitalWrite(Konashi.PIO1, 9999);
+                assertThat(getCapturedError()).isEqualTo(KonashiErrorReason.INVALID_PARAMETER);
+            }
+
+            @Test
+            public void whenPioOutputHasNotSet() {
+                stubIsEnableAccessKonashi(true);
+                getManager().digitalWrite(Konashi.PIO1, Konashi.OUTPUT);
+                assertThat(getCapturedWrittenUuid()).isEqualTo(KonashiUUID.PIO_OUTPUT_UUID);
+                assertThat(getCapturedWrittenValue()).isEqualTo(new byte[] {0x02});
+            }
+
+            @Test
+            public void whenPioOutputHasAlreadySet() {
+                stubIsEnableAccessKonashi(true);
+                Whitebox.setInternalState(getManager(), "mPioOutput", (byte) 0x17);
+                getManager().digitalWrite(Konashi.PIO1, Konashi.INPUT);
+                assertThat(getCapturedWrittenUuid()).isEqualTo(KonashiUUID.PIO_OUTPUT_UUID);
+                assertThat(getCapturedWrittenValue()).isEqualTo(new byte[] {0x15});
+            }
+        }
+
+        @RunWith(AndroidJUnit4.class)
+        public static class DigitalWriteAllTest extends BaseTest {
+            @Test
+            public void whenKonashiIsNotEnable() {
+                stubIsEnableAccessKonashi(false);
+                getManager().digitalWriteAll(9999);
+                assertThat(getCapturedError()).isEqualTo(KonashiErrorReason.NOT_READY);
+            }
+
+            @Test
+            public void withInvalidInvalidValue() {
+                stubIsEnableAccessKonashi(true);
+                getManager().digitalWriteAll(9999);
+                assertThat(getCapturedError()).isEqualTo(KonashiErrorReason.INVALID_PARAMETER);
+            }
+
+            @Test
+            public void withValidArgs() {
+                stubIsEnableAccessKonashi(true);
+                getManager().digitalWriteAll(0x17);
+                assertThat(getCapturedWrittenUuid()).isEqualTo(KonashiUUID.PIO_OUTPUT_UUID);
+                assertThat(getCapturedWrittenValue()).isEqualTo(new byte[] {0x17});
+            }
+        }
     }
 
     @RunWith(Enclosed.class)
