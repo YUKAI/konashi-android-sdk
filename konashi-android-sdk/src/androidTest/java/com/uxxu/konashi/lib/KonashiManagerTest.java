@@ -72,6 +72,50 @@ public class KonashiManagerTest {
     }
 
     @RunWith(Enclosed.class)
+    public static class PioTest {
+        @RunWith(AndroidJUnit4.class)
+        public static class PinModeTest extends BaseTest {
+            @Test
+            public void whenKonashiIsNotEnable() {
+                stubIsEnableAccessKonashi(false);
+                getManager().pinMode(9999, 9999);
+                assertThat(getCapturedError()).isEqualTo(KonashiErrorReason.NOT_READY);
+            }
+
+            @Test
+            public void withInvalidPin() {
+                stubIsEnableAccessKonashi(true);
+                getManager().pinMode(9999, Konashi.OUTPUT);
+                assertThat(getCapturedError()).isEqualTo(KonashiErrorReason.INVALID_PARAMETER);
+            }
+
+            @Test
+            public void withInvalidMode() {
+                stubIsEnableAccessKonashi(true);
+                getManager().pinMode(Konashi.PIO1, 9999);
+                assertThat(getCapturedError()).isEqualTo(KonashiErrorReason.INVALID_PARAMETER);
+            }
+
+            @Test
+            public void whenPioModeHasNotSet() {
+                stubIsEnableAccessKonashi(true);
+                getManager().pinMode(Konashi.PIO1, Konashi.OUTPUT);
+                assertThat(getCapturedWrittenUuid()).isEqualTo(KonashiUUID.PIO_SETTING_UUID);
+                assertThat(getCapturedWrittenValue()).isEqualTo(new byte[] {0x02});
+            }
+
+            @Test
+            public void whenPioModeHasAlreadySet() {
+                stubIsEnableAccessKonashi(true);
+                Whitebox.setInternalState(getManager(), "mPioModeSetting", (byte) 0x17);
+                getManager().pinMode(Konashi.PIO1, Konashi.INPUT);
+                assertThat(getCapturedWrittenUuid()).isEqualTo(KonashiUUID.PIO_SETTING_UUID);
+                assertThat(getCapturedWrittenValue()).isEqualTo(new byte[] {0x15});
+            }
+        }
+    }
+
+    @RunWith(Enclosed.class)
     public static class AnalogTest {
         @RunWith(AndroidJUnit4.class)
         public static class AnalogReadTest extends BaseTest {
