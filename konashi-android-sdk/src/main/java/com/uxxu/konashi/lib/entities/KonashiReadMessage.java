@@ -1,8 +1,7 @@
 package com.uxxu.konashi.lib.entities;
 
 import android.os.Bundle;
-
-import com.uxxu.konashi.lib.KonashiMessageHandler;
+import android.os.Message;
 
 import java.util.UUID;
 
@@ -31,12 +30,7 @@ public class KonashiReadMessage extends KonashiMessage {
 
     private static final String KEY_SERVICE_UUID = "service uuid";
 
-    private UUID mServiceUuid;
-
-    public KonashiReadMessage(UUID serviceUuid, UUID characteristicUuid){
-        super(characteristicUuid);
-        mServiceUuid = serviceUuid;
-    }
+    private final UUID mServiceUuid;
 
     public KonashiReadMessage(Bundle bundle) {
         super(bundle);
@@ -47,15 +41,16 @@ public class KonashiReadMessage extends KonashiMessage {
         return mServiceUuid;
     }
 
-    @Override
-    public Bundle getBundle() {
-        Bundle bundle = super.getBundle();
-        bundle.putSerializable(KEY_SERVICE_UUID, mServiceUuid);
-        return bundle;
+    public static Message obtain(UUID serviceUuid, UUID characteristicUuid) {
+        Message message = Message.obtain();
+        message.what = MESSAGE_READ;
+        message.setData(getBundle(serviceUuid, characteristicUuid));
+        return message;
     }
 
-    @Override
-    protected int getWhat() {
-        return KonashiMessageHandler.MESSAGE_READ;
+    private static Bundle getBundle(UUID serviceUuid, UUID characteristicUuid) {
+        Bundle bundle = getBundle(characteristicUuid);
+        bundle.putSerializable(KEY_SERVICE_UUID, serviceUuid);
+        return bundle;
     }
 }

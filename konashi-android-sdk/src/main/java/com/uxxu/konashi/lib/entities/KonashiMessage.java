@@ -1,7 +1,6 @@
 package com.uxxu.konashi.lib.entities;
 
 import android.os.Bundle;
-import android.os.Message;
 
 import java.util.UUID;
 
@@ -28,15 +27,13 @@ import java.util.UUID;
 abstract public class KonashiMessage {
     public static final String TAG = KonashiMessage.class.getSimpleName();
 
+    public static final int MESSAGE_WRITE = 0, MESSAGE_READ = 1;
+
     private static final String KEY_CHARACTERISTIC_UUID = "characteristic uuid";
 
-    private UUID mCharacteristicUuid;
+    private final UUID mCharacteristicUuid;
 
-    protected KonashiMessage(UUID characteristicUuid) {
-        mCharacteristicUuid = characteristicUuid;
-    }
-
-    protected KonashiMessage(Bundle bundle) {
+    public KonashiMessage(Bundle bundle) {
         mCharacteristicUuid = (UUID) bundle.getSerializable(KEY_CHARACTERISTIC_UUID);
     }
 
@@ -44,18 +41,9 @@ abstract public class KonashiMessage {
         return mCharacteristicUuid;
     }
 
-    public Bundle getBundle() {
+    protected static Bundle getBundle(UUID characteristicUuid) {
         Bundle bundle = new Bundle();
-        bundle.putSerializable(KEY_CHARACTERISTIC_UUID, mCharacteristicUuid);
+        bundle.putSerializable(KEY_CHARACTERISTIC_UUID, characteristicUuid);
         return bundle;
     }
-
-    public Message getMessage() {
-        Message msg = Message.obtain();
-        msg.what = getWhat();
-        msg.setData(getBundle());
-        return msg;
-    }
-
-    abstract protected int getWhat();
 }
