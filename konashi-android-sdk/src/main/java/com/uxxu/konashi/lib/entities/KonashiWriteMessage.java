@@ -1,8 +1,7 @@
 package com.uxxu.konashi.lib.entities;
 
 import android.os.Bundle;
-
-import com.uxxu.konashi.lib.KonashiMessageHandler;
+import android.os.Message;
 
 import java.util.UUID;
 
@@ -31,12 +30,7 @@ public class KonashiWriteMessage extends KonashiMessage {
 
     private static final String KEY_DATA = "data";
 
-    private byte[] mData;
-
-    public KonashiWriteMessage(UUID characteristicUuid, byte[] data){
-        super(characteristicUuid);
-        mData = data;
-    }
+    private final byte[] mData;
 
     public KonashiWriteMessage(Bundle bundle) {
         super(bundle);
@@ -47,15 +41,16 @@ public class KonashiWriteMessage extends KonashiMessage {
         return mData;
     }
 
-    @Override
-    public Bundle getBundle() {
-        Bundle bundle = super.getBundle();
-        bundle.putByteArray(KEY_DATA, mData);
-        return bundle;
+    public static Message obtain(UUID characteristicUuid, byte[] data) {
+        Message message = Message.obtain();
+        message.what = MESSAGE_WRITE;
+        message.setData(getBundle(characteristicUuid, data));
+        return message;
     }
 
-    @Override
-    protected int getWhat() {
-        return KonashiMessageHandler.MESSAGE_WRITE;
+    private static Bundle getBundle(UUID characteristicUuid, byte[] data) {
+        Bundle bundle = getBundle(characteristicUuid);
+        bundle.putByteArray(KEY_DATA, data);
+        return bundle;
     }
 }
