@@ -1,8 +1,6 @@
 package com.uxxu.konashi.lib.entities;
 
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 
 import com.uxxu.konashi.lib.KonashiMessageHandler;
 
@@ -57,9 +55,7 @@ public class KonashiWriteMessage extends KonashiMessage {
     }
 
     @Override
-    public Message getMessage(Handler handler) {
-        Message msg = handler.obtainMessage(KonashiMessageHandler.MESSAGE_WRITE);
-        msg.setData(getBundle());
-        return msg;
+    protected int getWhat() {
+        return KonashiMessageHandler.MESSAGE_WRITE;
     }
 }

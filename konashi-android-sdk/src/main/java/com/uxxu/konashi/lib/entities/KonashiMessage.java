@@ -1,7 +1,6 @@
 package com.uxxu.konashi.lib.entities;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Message;
 
 import java.util.UUID;
@@ -51,5 +50,12 @@ abstract public class KonashiMessage {
         return bundle;
     }
 
-    abstract public Message getMessage(Handler handler);
+    public Message getMessage() {
+        Message msg = Message.obtain();
+        msg.what = getWhat();
+        msg.setData(getBundle());
+        return msg;
+    }
+
+    abstract protected int getWhat();
 }

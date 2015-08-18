@@ -18,6 +18,7 @@ import android.os.HandlerThread;
 import android.os.Message;
 import android.widget.Toast;
 
+import com.uxxu.konashi.lib.entities.KonashiMessage;
 import com.uxxu.konashi.lib.entities.KonashiReadMessage;
 import com.uxxu.konashi.lib.entities.KonashiWriteMessage;
 import com.uxxu.konashi.lib.events.KonashiAnalogEvent;
@@ -610,11 +611,7 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
      *********************************/
 
     protected void addWriteMessage(UUID uuid, byte[] value){
-        addWriteMessage(new KonashiWriteMessage(uuid, value));
-    }
-
-    protected void addWriteMessage(KonashiWriteMessage message){
-        mKonashiMessageHandler.sendMessage(message.getMessage(mKonashiMessageHandler));
+        sendMessage(new KonashiWriteMessage(uuid, value));
     }
 
     protected void addReadMessage(UUID characteristicUuid){
@@ -622,11 +619,11 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
     }
     
     protected void addReadMessage(UUID serviceUuid, UUID characteristicUuid){
-        addReadMessage(new KonashiReadMessage(serviceUuid, characteristicUuid));
+        sendMessage(new KonashiReadMessage(serviceUuid, characteristicUuid));
     }
 
-    protected void addReadMessage(KonashiReadMessage message) {
-        mKonashiMessageHandler.sendMessage(message.getMessage(mKonashiMessageHandler));
+    private void sendMessage(KonashiMessage message) {
+        mKonashiMessageHandler.sendMessage(message.getMessage());
     }
 
     /******************************
