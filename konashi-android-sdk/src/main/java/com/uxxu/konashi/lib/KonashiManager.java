@@ -917,14 +917,6 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
     }
 
     @Override
-    protected void onUpdateAnalogValue(int pin, int value) {
-        //KonashiUtils.log(String.valueOf(value));
-        mAioValue[pin] = value;
-                
-        super.onUpdateAnalogValue(pin, value);
-    }
-
-    @Override
     protected void onRecieveUart(byte[] data) {
         int length = Integer.valueOf(data[0]);
         byte[] uartData = new byte[length];
