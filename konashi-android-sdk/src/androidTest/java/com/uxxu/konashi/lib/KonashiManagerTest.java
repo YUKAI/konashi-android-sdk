@@ -138,6 +138,47 @@ public class KonashiManagerTest {
                 assertThat(getCapturedWrittenValue()).isEqualTo(new byte[] {0x17});
             }
         }
+
+        @RunWith(AndroidJUnit4.class)
+        public static class PinPullupTest extends BaseTest {
+            @Test
+            public void whenKonashiIsNotEnable() {
+                stubIsEnableAccessKonashi(false);
+                getManager().pinPullup(9999, 9999);
+                assertThat(getCapturedError()).isEqualTo(KonashiErrorReason.NOT_READY);
+            }
+
+            @Test
+            public void withInvalidPin() {
+                stubIsEnableAccessKonashi(true);
+                getManager().pinPullup(9999, Konashi.PULLUP);
+                assertThat(getCapturedError()).isEqualTo(KonashiErrorReason.INVALID_PARAMETER);
+            }
+
+            @Test
+            public void withInvalidMode() {
+                stubIsEnableAccessKonashi(true);
+                getManager().pinPullup(Konashi.PIO1, 9999);
+                assertThat(getCapturedError()).isEqualTo(KonashiErrorReason.INVALID_PARAMETER);
+            }
+
+            @Test
+            public void whenPioPullupHasNotSet() {
+                stubIsEnableAccessKonashi(true);
+                getManager().pinPullup(Konashi.PIO1, Konashi.PULLUP);
+                assertThat(getCapturedWrittenUuid()).isEqualTo(KonashiUUID.PIO_PULLUP_UUID);
+                assertThat(getCapturedWrittenValue()).isEqualTo(new byte[] {0x02});
+            }
+
+            @Test
+            public void whenPioPullupHasAlreadySet() {
+                stubIsEnableAccessKonashi(true);
+                Whitebox.setInternalState(getManager(), "mPioPullup", (byte) 0x17);
+                getManager().pinPullup(Konashi.PIO1, Konashi.NO_PULLS);
+                assertThat(getCapturedWrittenUuid()).isEqualTo(KonashiUUID.PIO_PULLUP_UUID);
+                assertThat(getCapturedWrittenValue()).isEqualTo(new byte[] {0x15});
+            }
+        }
     }
 
     @RunWith(Enclosed.class)
