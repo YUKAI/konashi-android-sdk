@@ -3,6 +3,7 @@ package com.uxxu.konashi.lib;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.uxxu.konashi.lib.stores.KonashiAnalogStore;
+import com.uxxu.konashi.lib.stores.KonashiDigitalStore;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -73,8 +74,22 @@ public class KonashiManagerTest {
 
     @RunWith(Enclosed.class)
     public static class PioTest {
+        private static class PioBaseTest extends BaseTest {
+            @Spy private KonashiDigitalStore mDigitalStore;
+
+            @Before
+            public void setUp() throws Exception {
+                super.setUp();
+                Whitebox.setInternalState(getManager(), "mDigitalStore", mDigitalStore);
+            }
+
+            public KonashiDigitalStore getDigitalStore() {
+                return mDigitalStore;
+            }
+        }
+
         @RunWith(AndroidJUnit4.class)
-        public static class PinModeTest extends BaseTest {
+        public static class PinModeTest extends PioBaseTest {
             @Test
             public void whenKonashiIsNotEnable() {
                 stubIsEnableAccessKonashi(false);
@@ -107,7 +122,7 @@ public class KonashiManagerTest {
             @Test
             public void whenPioModeHasAlreadySet() {
                 stubIsEnableAccessKonashi(true);
-                Whitebox.setInternalState(getManager(), "mPioModeSetting", (byte) 0x17);
+                getDigitalStore().onUpdatePioSetting((byte) 0x17);
                 getManager().pinMode(Konashi.PIO1, Konashi.INPUT);
                 assertThat(getCapturedWrittenUuid()).isEqualTo(KonashiUUID.PIO_SETTING_UUID);
                 assertThat(getCapturedWrittenValue()).isEqualTo(new byte[] {0x15});
@@ -115,7 +130,7 @@ public class KonashiManagerTest {
         }
 
         @RunWith(AndroidJUnit4.class)
-        public static class PinModeAllTest extends BaseTest {
+        public static class PinModeAllTest extends PioBaseTest {
             @Test
             public void whenKonashiIsNotEnable() {
                 stubIsEnableAccessKonashi(false);
@@ -140,7 +155,7 @@ public class KonashiManagerTest {
         }
 
         @RunWith(AndroidJUnit4.class)
-        public static class PinPullupTest extends BaseTest {
+        public static class PinPullupTest extends PioBaseTest {
             @Test
             public void whenKonashiIsNotEnable() {
                 stubIsEnableAccessKonashi(false);
@@ -173,7 +188,7 @@ public class KonashiManagerTest {
             @Test
             public void whenPioPullupHasAlreadySet() {
                 stubIsEnableAccessKonashi(true);
-                Whitebox.setInternalState(getManager(), "mPioPullup", (byte) 0x17);
+                getDigitalStore().onUpdatePioPullup((byte) 0x17);
                 getManager().pinPullup(Konashi.PIO1, Konashi.NO_PULLS);
                 assertThat(getCapturedWrittenUuid()).isEqualTo(KonashiUUID.PIO_PULLUP_UUID);
                 assertThat(getCapturedWrittenValue()).isEqualTo(new byte[] {0x15});
@@ -181,7 +196,7 @@ public class KonashiManagerTest {
         }
 
         @RunWith(AndroidJUnit4.class)
-        public static class PinPullupAllTest extends BaseTest {
+        public static class PinPullupAllTest extends PioBaseTest {
             @Test
             public void whenKonashiIsNotEnable() {
                 stubIsEnableAccessKonashi(false);
@@ -206,7 +221,7 @@ public class KonashiManagerTest {
         }
 
         @RunWith(AndroidJUnit4.class)
-        public static class DigitalReadTest extends BaseTest {
+        public static class DigitalReadTest extends PioBaseTest {
             @Test
             public void whenKonashiIsNotEnable() {
                 stubIsEnableAccessKonashi(false);
@@ -224,13 +239,13 @@ public class KonashiManagerTest {
             @Test
             public void withValidArgs() {
                 stubIsEnableAccessKonashi(true);
-                Whitebox.setInternalState(getManager(), "mPioInput", (byte) 0x17);
+                getDigitalStore().onUpdatePioInput((byte) 0x17);
                 assertThat(getManager().digitalRead(Konashi.PIO1)).isEqualTo(1);
             }
         }
 
         @RunWith(AndroidJUnit4.class)
-        public static class DigitalReadAllTest extends BaseTest {
+        public static class DigitalReadAllTest extends PioBaseTest {
             @Test
             public void whenKonashiIsNotEnable() {
                 stubIsEnableAccessKonashi(false);
@@ -241,13 +256,13 @@ public class KonashiManagerTest {
             @Test
             public void withValidArgs() {
                 stubIsEnableAccessKonashi(true);
-                Whitebox.setInternalState(getManager(), "mPioInput", (byte) 0x17);
+                getDigitalStore().onUpdatePioInput((byte) 0x17);
                 assertThat(getManager().digitalReadAll()).isEqualTo(0x17);
             }
         }
 
         @RunWith(AndroidJUnit4.class)
-        public static class DigitalWriteTest extends BaseTest {
+        public static class DigitalWriteTest extends PioBaseTest {
             @Test
             public void whenKonashiIsNotEnable() {
                 stubIsEnableAccessKonashi(false);
@@ -280,7 +295,7 @@ public class KonashiManagerTest {
             @Test
             public void whenPioOutputHasAlreadySet() {
                 stubIsEnableAccessKonashi(true);
-                Whitebox.setInternalState(getManager(), "mPioOutput", (byte) 0x17);
+                getDigitalStore().onUpdatePioOutput((byte) 0x17);
                 getManager().digitalWrite(Konashi.PIO1, Konashi.INPUT);
                 assertThat(getCapturedWrittenUuid()).isEqualTo(KonashiUUID.PIO_OUTPUT_UUID);
                 assertThat(getCapturedWrittenValue()).isEqualTo(new byte[] {0x15});
@@ -288,7 +303,7 @@ public class KonashiManagerTest {
         }
 
         @RunWith(AndroidJUnit4.class)
-        public static class DigitalWriteAllTest extends BaseTest {
+        public static class DigitalWriteAllTest extends PioBaseTest {
             @Test
             public void whenKonashiIsNotEnable() {
                 stubIsEnableAccessKonashi(false);
