@@ -106,6 +106,15 @@ public class KonashiCharacteristicTest {
                     .handle(getCharacteristic(), getNotifier());
             Mockito.verify(getListener(), Mockito.times(1)).onUpdatePioInput((byte) 0x13);
         }
+
+        @Test
+        public void testHandlePioOutput() {
+            Mockito.when(getCharacteristic().getValue()).thenReturn(new byte[]{0x13});
+            KonashiCharacteristic
+                    .valueOf(KonashiUUID.PIO_OUTPUT_UUID)
+                    .handle(getCharacteristic(), getNotifier());
+            Mockito.verify(getListener(), Mockito.times(1)).onUpdatePioOutput((byte) 0x13);
+        }
     }
 
     @RunWith(AndroidJUnit4.class)
