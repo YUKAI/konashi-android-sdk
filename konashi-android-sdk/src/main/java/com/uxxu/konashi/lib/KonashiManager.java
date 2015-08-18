@@ -3,6 +3,7 @@ package com.uxxu.konashi.lib;
 import android.content.Context;
 
 import com.uxxu.konashi.lib.listeners.KonashiBaseListener;
+import com.uxxu.konashi.lib.stores.KonashiAnalogStore;
 
 import java.util.List;
 
@@ -45,8 +46,8 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
     private int[] mPwmPeriod;
     
     // AIO
-    private int[] mAioValue;
-    
+    private KonashiAnalogStore mAnalogStore;
+
     // I2C
     private byte mI2cSetting;
     private byte[] mI2cReadData;
@@ -85,10 +86,9 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
             mPwmPeriod[i] = 0;
             
         // AIO
-        mAioValue = new int[AIO_LENGTH];
-        for(i=0; i<AIO_LENGTH; i++)
-            mAioValue[i] = 0;
-        
+        mAnalogStore = new KonashiAnalogStore();
+        addListener(mAnalogStore);
+
         // I2C
         mI2cSetting = 0;
         mI2cReadData = new byte[Konashi.I2C_DATA_MAX_LENGTH];
@@ -508,7 +508,7 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
         }
         
         if(pin >= Konashi.AIO0 && pin <= Konashi.AIO2){
-            return mAioValue[pin];
+            return mAnalogStore.getAnalogValue(pin);
         } else {
             notifyKonashiError(KonashiErrorReason.INVALID_PARAMETER);
             return -1;

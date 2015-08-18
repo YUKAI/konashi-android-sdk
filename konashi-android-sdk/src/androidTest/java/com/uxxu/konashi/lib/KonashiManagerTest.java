@@ -2,7 +2,7 @@ package com.uxxu.konashi.lib;
 
 import android.support.test.runner.AndroidJUnit4;
 
-import com.uxxu.konashi.lib.entities.KonashiWriteMessage;
+import com.uxxu.konashi.lib.stores.KonashiAnalogStore;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -10,6 +10,8 @@ import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
 import org.mockito.internal.util.reflection.Whitebox;
 
 import java.util.UUID;
@@ -26,14 +28,15 @@ public class KonashiManagerTest {
     public static final String TAG = KonashiManagerTest.class.getSimpleName();
 
     abstract public static class BaseTest {
-        private KonashiManager mManager;
+        @Spy private KonashiManager mManager;
+
         private ArgumentCaptor<UUID> mWriteMessageUuidCaptor;
         private ArgumentCaptor<byte[]> mWriteMessageValueCaptor;
         private ArgumentCaptor<KonashiErrorReason> mNotifyKonashiErrorCaptor;
 
         @Before
         public void setUp() throws Exception {
-            mManager = Mockito.spy(new KonashiManager());
+            MockitoAnnotations.initMocks(this);
 
             mWriteMessageUuidCaptor = ArgumentCaptor.forClass(UUID.class);
             mWriteMessageValueCaptor = ArgumentCaptor.forClass(byte[].class);
@@ -66,6 +69,45 @@ public class KonashiManagerTest {
 
         public KonashiErrorReason getCapturedError() {
             return mNotifyKonashiErrorCaptor.getValue();
+        }
+    }
+
+    @RunWith(Enclosed.class)
+    public static class AnalogTest {
+        @RunWith(AndroidJUnit4.class)
+        public static class AnalogReadTest extends BaseTest {
+            @Spy private KonashiAnalogStore mAnalogStore;
+
+            @Before
+            public void setUp() throws Exception {
+                super.setUp();
+                Whitebox.setInternalState(getManager(), "mAnalogStore", mAnalogStore);
+            }
+
+            @Test
+            public void whenKonashiIsNotEnable() {
+                stubIsEnableAccessKonashi(false);
+                getManager().analogRead(9999);
+                Mockito.verify(getManager(), Mockito.times(1))
+                        .notifyKonashiError(any(KonashiErrorReason.class));
+                assertThat(getCapturedError()).isEqualTo(KonashiErrorReason.NOT_READY);
+            }
+
+            @Test
+            public void withInvalidPin() {
+                stubIsEnableAccessKonashi(true);
+                getManager().analogRead(9999);
+                Mockito.verify(getManager(), Mockito.times(1))
+                        .notifyKonashiError(any(KonashiErrorReason.class));
+                assertThat(getCapturedError()).isEqualTo(KonashiErrorReason.INVALID_PARAMETER);
+            }
+
+            @Test
+            public void withValidPin() {
+                stubIsEnableAccessKonashi(true);
+                getManager().analogRead(Konashi.AIO1);
+                Mockito.verify(mAnalogStore, Mockito.times(1)).getAnalogValue(Konashi.AIO1);
+            }
         }
     }
 
