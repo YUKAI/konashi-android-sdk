@@ -3,7 +3,6 @@ package com.uxxu.konashi.lib.entities;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.NonNull;
 
 import com.uxxu.konashi.lib.KonashiMessageHandler;
 
@@ -36,7 +35,7 @@ public class KonashiWriteMessage extends KonashiMessage {
 
     private byte[] mData;
 
-    public KonashiWriteMessage(@NonNull UUID characteristicUuid, @NonNull byte[] data){
+    public KonashiWriteMessage(UUID characteristicUuid, byte[] data){
         super(characteristicUuid);
         mData = data;
     }
@@ -46,7 +45,6 @@ public class KonashiWriteMessage extends KonashiMessage {
         mData = bundle.getByteArray(KEY_DATA);
     }
 
-    @NonNull
     public byte[] getData() {
         return mData;
     }
