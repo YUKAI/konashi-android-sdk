@@ -113,6 +113,31 @@ public class KonashiManagerTest {
                 assertThat(getCapturedWrittenValue()).isEqualTo(new byte[] {0x15});
             }
         }
+
+        @RunWith(AndroidJUnit4.class)
+        public static class PinModeAllTest extends BaseTest {
+            @Test
+            public void whenKonashiIsNotEnable() {
+                stubIsEnableAccessKonashi(false);
+                getManager().pinModeAll(9999);
+                assertThat(getCapturedError()).isEqualTo(KonashiErrorReason.NOT_READY);
+            }
+
+            @Test
+            public void withInvalidMode() {
+                stubIsEnableAccessKonashi(true);
+                getManager().pinModeAll(9999);
+                assertThat(getCapturedError()).isEqualTo(KonashiErrorReason.INVALID_PARAMETER);
+            }
+
+            @Test
+            public void whenPioModeAll() {
+                stubIsEnableAccessKonashi(true);
+                getManager().pinModeAll(0x17);
+                assertThat(getCapturedWrittenUuid()).isEqualTo(KonashiUUID.PIO_SETTING_UUID);
+                assertThat(getCapturedWrittenValue()).isEqualTo(new byte[] {0x17});
+            }
+        }
     }
 
     @RunWith(Enclosed.class)
