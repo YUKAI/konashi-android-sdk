@@ -204,6 +204,47 @@ public class KonashiManagerTest {
                 assertThat(getCapturedWrittenValue()).isEqualTo(new byte[] {0x17});
             }
         }
+
+        @RunWith(AndroidJUnit4.class)
+        public static class DigitalReadTest extends BaseTest {
+            @Test
+            public void whenKonashiIsNotEnable() {
+                stubIsEnableAccessKonashi(false);
+                assertThat(getManager().digitalRead(9999)).isEqualTo(-1);
+                assertThat(getCapturedError()).isEqualTo(KonashiErrorReason.NOT_READY);
+            }
+
+            @Test
+            public void withInvalidPin() {
+                stubIsEnableAccessKonashi(true);
+                assertThat(getManager().digitalRead(9999)).isEqualTo(-1);
+                assertThat(getCapturedError()).isEqualTo(KonashiErrorReason.INVALID_PARAMETER);
+            }
+
+            @Test
+            public void withValidArgs() {
+                stubIsEnableAccessKonashi(true);
+                Whitebox.setInternalState(getManager(), "mPioInput", (byte) 0x17);
+                assertThat(getManager().digitalRead(Konashi.PIO1)).isEqualTo(1);
+            }
+        }
+
+        @RunWith(AndroidJUnit4.class)
+        public static class DigitalReadAllTest extends BaseTest {
+            @Test
+            public void whenKonashiIsNotEnable() {
+                stubIsEnableAccessKonashi(false);
+                assertThat(getManager().digitalReadAll()).isEqualTo(-1);
+                assertThat(getCapturedError()).isEqualTo(KonashiErrorReason.NOT_READY);
+            }
+
+            @Test
+            public void withValidArgs() {
+                stubIsEnableAccessKonashi(true);
+                Whitebox.setInternalState(getManager(), "mPioInput", (byte) 0x17);
+                assertThat(getManager().digitalReadAll()).isEqualTo(0x17);
+            }
+        }
     }
 
     @RunWith(Enclosed.class)
