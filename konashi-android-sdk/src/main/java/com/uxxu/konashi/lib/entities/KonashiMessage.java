@@ -2,7 +2,6 @@ package com.uxxu.konashi.lib.entities;
 
 import android.os.Bundle;
 import android.os.Message;
-import android.support.annotation.NonNull;
 
 import java.util.UUID;
 
@@ -33,7 +32,7 @@ abstract public class KonashiMessage {
 
     private UUID mCharacteristicUuid;
 
-    protected KonashiMessage(@NonNull UUID characteristicUuid) {
+    protected KonashiMessage(UUID characteristicUuid) {
         mCharacteristicUuid = characteristicUuid;
     }
 
@@ -41,7 +40,6 @@ abstract public class KonashiMessage {
         mCharacteristicUuid = (UUID) bundle.getSerializable(KEY_CHARACTERISTIC_UUID);
     }
 
-    @NonNull
     public UUID getCharacteristicUuid() {
         return mCharacteristicUuid;
     }
