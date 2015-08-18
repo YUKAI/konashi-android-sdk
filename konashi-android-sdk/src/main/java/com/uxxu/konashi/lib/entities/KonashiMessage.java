@@ -53,5 +53,12 @@ abstract public class KonashiMessage {
         return bundle;
     }
 
-    abstract public Message getMessage(Handler handler);
+    public Message getMessage() {
+        Message msg = Message.obtain();
+        msg.what = getWhat();
+        msg.setData(getBundle());
+        return msg;
+    }
+
+    abstract protected int getWhat();
 }

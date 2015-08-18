@@ -59,9 +59,15 @@ public class KonashiReadMessage extends KonashiMessage {
     }
 
     @Override
-    public Message getMessage(Handler handler) {
-        Message msg = handler.obtainMessage(KonashiMessageHandler.MESSAGE_READ);
+    public Message getMessage() {
+        Message msg = Message.obtain();
+        msg.what = KonashiMessageHandler.MESSAGE_READ;
         msg.setData(getBundle());
         return msg;
+    }
+
+    @Override
+    protected int getWhat() {
+        return KonashiMessageHandler.MESSAGE_WRITE;
     }
 }
