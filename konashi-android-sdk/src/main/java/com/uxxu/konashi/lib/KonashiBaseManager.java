@@ -611,7 +611,7 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
      *********************************/
 
     protected void addWriteMessage(UUID uuid, byte[] value){
-        sendMessage(new KonashiWriteMessage(uuid, value));
+        sendMessage(KonashiWriteMessage.obtain(uuid, value));
     }
 
     protected void addReadMessage(UUID characteristicUuid){
@@ -619,11 +619,11 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
     }
     
     protected void addReadMessage(UUID serviceUuid, UUID characteristicUuid){
-        sendMessage(new KonashiReadMessage(serviceUuid, characteristicUuid));
+        sendMessage(KonashiReadMessage.obtain(serviceUuid, characteristicUuid));
     }
 
-    private void sendMessage(KonashiMessage message) {
-        mKonashiMessageHandler.sendMessage(message.getMessage());
+    private void sendMessage(Message message) {
+        mKonashiMessageHandler.sendMessage(message);
     }
 
     /******************************
