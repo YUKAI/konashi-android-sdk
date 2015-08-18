@@ -381,6 +381,7 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
             }
             
             if (mode == Konashi.PWM_ENABLE_LED_MODE){
+                
                 pwmPeriod(pin, Konashi.PWM_LED_PERIOD);
                 pwmLedDrive(pin, 0.0F);
             }
