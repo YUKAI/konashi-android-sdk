@@ -902,16 +902,6 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
     // Notification event handler 
     ////////////////////////////////
 
-    // TODO: need refactor
-    
-    @Override
-    protected void onUpdatePioInput(byte value) {
-        // PIO input notification
-        mPioInput = value;
-                
-        super.onUpdatePioInput(value);
-    }
-
     @Override
     protected void onRecieveUart(byte[] data) {
         int length = Integer.valueOf(data[0]);
