@@ -39,7 +39,7 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
     private byte mPioPullup = 0;
     private byte mPioInput = 0;
     private byte mPioOutput = 0;
-    
+
     // PWM
     private byte mPwmSetting = 0;
     private int[] mPwmDuty;
@@ -75,7 +75,7 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
         mPioPullup = 0;
         mPioInput = 0;
         mPioOutput = 0;
-            
+
         // PWM
         mPwmSetting = 0;
         mPwmDuty = new int[PWM_LENGTH];
@@ -207,6 +207,8 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
             val[0] = mPioModeSetting;
             
             addWriteMessage(KonashiUUID.PIO_SETTING_UUID, val);
+        } else {
+            notifyKonashiError(KonashiErrorReason.INVALID_PARAMETER);
         }
     }
     
@@ -223,11 +225,13 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
         
         if(modes >= 0x00 && modes <= 0xFF){
             mPioModeSetting = (byte)modes;
-            
+
             byte[] val = new byte[1];
             val[0] = mPioModeSetting;
             
             addWriteMessage(KonashiUUID.PIO_SETTING_UUID, val);
+        } else {
+            notifyKonashiError(KonashiErrorReason.INVALID_PARAMETER);
         }
     }
     
@@ -254,6 +258,8 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
             val[0] = mPioPullup;
             
             addWriteMessage(KonashiUUID.PIO_PULLUP_UUID, val);
+        } else {
+            notifyKonashiError(KonashiErrorReason.INVALID_PARAMETER);
         }
     }
     
@@ -275,6 +281,8 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
             val[0] = mPioPullup;
             
             addWriteMessage(KonashiUUID.PIO_PULLUP_UUID, val);
+        } else {
+            notifyKonashiError(KonashiErrorReason.INVALID_PARAMETER);
         }
     }
     
@@ -289,7 +297,16 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
             notifyKonashiError(KonashiErrorReason.NOT_READY);
             return -1;
         }
-        
+
+        if ((pin != Konashi.PIO0) && (pin != Konashi.PIO1) && (pin != Konashi.PIO2) &&
+                (pin != Konashi.PIO3) && (pin != Konashi.PIO4) && (pin != Konashi.PIO5) &&
+                (pin != Konashi.PIO6) && (pin != Konashi.PIO7)) {
+            notifyKonashiError(KonashiErrorReason.INVALID_PARAMETER);
+            return -1;
+        } else {
+            notifyKonashiError(KonashiErrorReason.INVALID_PARAMETER);
+        }
+
         return (mPioInput >> pin) & 0x01;
     }
     
@@ -332,6 +349,8 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
             val[0] = mPioOutput;
             
             addWriteMessage(KonashiUUID.PIO_OUTPUT_UUID, val);
+        } else {
+            notifyKonashiError(KonashiErrorReason.INVALID_PARAMETER);
         }
     }
     
@@ -353,6 +372,8 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
             val[0] = mPioOutput;
             
             addWriteMessage(KonashiUUID.PIO_OUTPUT_UUID, val);
+        } else {
+            notifyKonashiError(KonashiErrorReason.INVALID_PARAMETER);
         }
     }
     
