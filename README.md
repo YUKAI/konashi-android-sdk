@@ -13,6 +13,14 @@
 
 将来、konashi ver1 (緑色のモジュールを搭載) 用のsdk [konashi-v1-android-sdk](https://github.com/YUKAI/konashi-v1-android-sdk)を統合予定です。
 
+## Installation
+
+```groovy
+dependencies {
+    compile 'com.uxxu.konashi:konashi-android-sdk:0.5.1'
+}
+```
+
 ## Getting Started
 
 \{Android版ドキュメントは2015年8月末をめどに更新予定です\}
