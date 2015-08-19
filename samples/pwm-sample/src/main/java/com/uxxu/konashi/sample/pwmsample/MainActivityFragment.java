@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.uxxu.konashi.lib.Konashi;
 import com.uxxu.konashi.lib.KonashiErrorReason;
 import com.uxxu.konashi.lib.KonashiManager;
+import com.uxxu.konashi.lib.KonashiUtils;
 import com.uxxu.konashi.lib.listeners.KonashiPwmListener;
 
 import java.util.ArrayList;
@@ -116,22 +117,22 @@ public class MainActivityFragment extends Fragment {
     private final KonashiPwmListener mKonashiPwmListener = new KonashiPwmListener() {
         @Override
         public void onUpdatePwmMode(int modes) {
-
+            KonashiUtils.log("modes:" + String.valueOf(modes));
         }
 
         @Override
         public void onUpdatePwmPeriod(int pin, int period) {
-
+            KonashiUtils.log("pin:" + String.valueOf(pin) + ",period:" + String.valueOf(period));
         }
 
         @Override
         public void onUpdatePwmDuty(int pin, int duty) {
-
+            KonashiUtils.log("pin:" + String.valueOf(pin) + ",duty:" + String.valueOf(duty));
         }
 
         @Override
         public void onError(KonashiErrorReason errorReason, String message) {
-
+            KonashiUtils.log("reason:" + errorReason.toString() + ",message:" + message);
         }
     };
 
@@ -174,6 +175,7 @@ public class MainActivityFragment extends Fragment {
                         public void run() {
                             mCallback.getKonashiManager().pwmMode(mPinNumber, pwmMode);
                             if (pwmMode == Konashi.PWM_ENABLE_LED_MODE) {
+                                Utils.sleepShort();
                                 mCallback.getKonashiManager().pwmLedDrive(mPinNumber, mDutySeekBar.getProgress());
                             }
                         }
