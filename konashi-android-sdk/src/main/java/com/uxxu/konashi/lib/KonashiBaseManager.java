@@ -18,6 +18,7 @@ import android.os.HandlerThread;
 import android.os.Message;
 import android.widget.Toast;
 
+import com.uxxu.konashi.lib.entities.KonashiMessage;
 import com.uxxu.konashi.lib.entities.KonashiReadMessage;
 import com.uxxu.konashi.lib.entities.KonashiWriteMessage;
 import com.uxxu.konashi.lib.events.KonashiAnalogEvent;
@@ -239,13 +240,8 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
      */
     public void disconnect(){
         if(mBluetoothGatt!=null){
-            mBluetoothGatt.close();
-            mBluetoothGatt = null;
-            setStatus(BleStatus.DISCONNECTED);
+            mBluetoothGatt.disconnect();
         }
-
-        mKonashiMessageHandler.stop();
-        mKonashiMessageHandler = null;
     }
     
     /**
@@ -450,11 +446,19 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
                 gatt.discoverServices();
             }
             else if(newState == BluetoothProfile.STATE_DISCONNECTED){
+                if (mBluetoothGatt != null) {
+                    mBluetoothGatt.close();
+                    mBluetoothGatt = null;
+                }
+
+                if (mKonashiMessageHandler != null) {
+                    mKonashiMessageHandler.stop();
+                    mKonashiMessageHandler = null;
+                }
+
                 setStatus(BleStatus.DISCONNECTED);
                 
                 notifyKonashiEvent(KonashiConnectionEvent.DISCONNECTED);
-                
-                mBluetoothGatt = null;
             }
         }
 
@@ -607,11 +611,7 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
      *********************************/
 
     protected void addWriteMessage(UUID uuid, byte[] value){
-        addWriteMessage(new KonashiWriteMessage(uuid, value));
-    }
-
-    protected void addWriteMessage(KonashiWriteMessage message){
-        mKonashiMessageHandler.sendMessage(message.getMessage(mKonashiMessageHandler));
+        sendMessage(KonashiWriteMessage.obtain(uuid, value));
     }
 
     protected void addReadMessage(UUID characteristicUuid){
@@ -619,11 +619,11 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
     }
     
     protected void addReadMessage(UUID serviceUuid, UUID characteristicUuid){
-        addReadMessage(new KonashiReadMessage(serviceUuid, characteristicUuid));
+        sendMessage(KonashiReadMessage.obtain(serviceUuid, characteristicUuid));
     }
 
-    protected void addReadMessage(KonashiReadMessage message) {
-        mKonashiMessageHandler.sendMessage(message.getMessage(mKonashiMessageHandler));
+    private void sendMessage(Message message) {
+        mKonashiMessageHandler.sendMessage(message);
     }
 
     /******************************
@@ -669,31 +669,7 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
     /***************************************
      * Konashi notification event handler
      ***************************************/
-        
-    /**
-     * PIOの入力の状態が変更された時
-     * @param value PIO8bitで表現
-     */
-    protected void onUpdatePioInput(byte value){
-        notifyKonashiEvent(KonashiDigitalEvent.UPDATE_PIO_INPUT, value);
-    }
-    
-    /**
-     * AIOの特定の値が取得できた時
-     * @param pin ピン番号 AIO0〜AIO2
-     * @param value アナログ値
-     */
-    protected void onUpdateAnalogValue(int pin, int value){
-        notifyKonashiEvent(KonashiAnalogEvent.UPDATE_ANALOG_VALUE, pin, value);
-        
-        if(pin==Konashi.AIO0)
-            notifyKonashiEvent(KonashiAnalogEvent.UPDATE_ANALOG_VALUE_AIO0, value);
-        else if(pin==Konashi.AIO1)
-            notifyKonashiEvent(KonashiAnalogEvent.UPDATE_ANALOG_VALUE_AIO1, value);
-        else
-            notifyKonashiEvent(KonashiAnalogEvent.UPDATE_ANALOG_VALUE_AIO2, value);
-    }
-    
+
     /**
      * のRxからデータを受信した時
      * @param data 受信データ

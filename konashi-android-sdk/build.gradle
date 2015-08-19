@@ -1,14 +1,22 @@
 apply plugin: 'com.android.library'
 
+def versionMajor = 0
+def versionMinor = 5
+def versionPatch = 1
+def versionBuild = 0
+
+def sdkVersionCode = versionMajor * 1000 + versionMinor * 100 + versionPatch * 10 + versionBuild
+def sdkVersionName = "${versionMajor}.${versionMinor}.${versionPatch}"
+
 android {
-    compileSdkVersion 22
-    buildToolsVersion "22.0.1"
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
         minSdkVersion 18
         targetSdkVersion 22
-        versionCode 1
-        versionName "1.0"
+        versionCode sdkVersionCode
+        versionName sdkVersionName
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     packagingOptions {
@@ -30,7 +38,6 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:22.2.1'
 
     androidTestCompile 'com.android.support.test:runner:0.3'
     androidTestCompile 'com.android.support.test:rules:0.3'
@@ -45,11 +52,10 @@ apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 
 group = 'com.uxxu.konashi'
-version = '0.5.0'
+version = sdkVersionName
 
-// TODO: move repository
-def siteUrl = 'https://github.com/e10dokup/konashi-v2-android-sdk'
-def gitUrl = 'https://github.com/e10dokup/konashi-v2-android-sdk.git'
+def siteUrl = 'https://github.com/YUKAI/konashi-android-sdk'
+def gitUrl = 'https://github.com/YUKAI/konashi-android-sdk.git'
 
 bintray {
     user = System.getenv('BINTRAY_USER')
@@ -59,14 +65,20 @@ bintray {
     pkg {
         repo = 'maven'
         name = project.name
-        // TODO: description
-        desc = 'Bintray aar publishing example'
+        userOrg = 'konashi-dev'
+        desc = 'konashi SDK for Android'
         websiteUrl = siteUrl
         issueTrackerUrl = "${siteUrl}/issues"
         vcsUrl = gitUrl
         licenses = ['Apache-2.0']
         labels = ['aar', 'android', 'konashi', 'BLE']
         publicDownloadNumbers = true
+        version {
+            name = sdkVersionName
+            desc = "konashi Android SDK ${sdkVersionName}"
+            released  = new Date()
+            vcsTag = sdkVersionName
+        }
     }
 }
 

@@ -62,6 +62,12 @@ public enum KonashiCharacteristic {
             notifyKonashiEvent(notifier, characteristic.getValue()[0], null);
         }
     },
+    PIO_OUTPUT(KonashiUUID.PIO_OUTPUT_UUID, KonashiDigitalEvent.UPDATE_PIO_OUTPUT) {
+        @Override
+        public void handle(BluetoothGattCharacteristic characteristic, KonashiNotifier notifier) {
+            notifyKonashiEvent(notifier, characteristic.getValue()[0], null);
+        }
+    },
 
     /* ==== PWM ================================================================ */
 
