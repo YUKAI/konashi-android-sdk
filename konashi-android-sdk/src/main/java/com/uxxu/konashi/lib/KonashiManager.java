@@ -3,6 +3,8 @@ package com.uxxu.konashi.lib;
 import android.content.Context;
 
 import com.uxxu.konashi.lib.listeners.KonashiBaseListener;
+import com.uxxu.konashi.lib.stores.KonashiAnalogStore;
+import com.uxxu.konashi.lib.stores.KonashiDigitalStore;
 
 import java.util.List;
 
@@ -34,19 +36,16 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
     
     // konashi members
     // PIO
-    private byte mPioModeSetting = 0;
-    private byte mPioPullup = 0;
-    private byte mPioInput = 0;
-    private byte mPioOutput = 0;
-    
+    private KonashiDigitalStore mDigitalStore;
+
     // PWM
     private byte mPwmSetting = 0;
     private int[] mPwmDuty;
     private int[] mPwmPeriod;
     
     // AIO
-    private int[] mAioValue;
-    
+    private KonashiAnalogStore mAnalogStore;
+
     // I2C
     private byte mI2cSetting;
     private byte[] mI2cReadData;
@@ -70,11 +69,9 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
         int i;
         
         // PIO
-        mPioModeSetting = 0;
-        mPioPullup = 0;
-        mPioInput = 0;
-        mPioOutput = 0;
-            
+        mDigitalStore = new KonashiDigitalStore();
+        addListener(mDigitalStore);
+
         // PWM
         mPwmSetting = 0;
         mPwmDuty = new int[PWM_LENGTH];
@@ -85,10 +82,9 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
             mPwmPeriod[i] = 0;
             
         // AIO
-        mAioValue = new int[AIO_LENGTH];
-        for(i=0; i<AIO_LENGTH; i++)
-            mAioValue[i] = 0;
-        
+        mAnalogStore = new KonashiAnalogStore();
+        addListener(mAnalogStore);
+
         // I2C
         mI2cSetting = 0;
         mI2cReadData = new byte[Konashi.I2C_DATA_MAX_LENGTH];
@@ -197,16 +193,16 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
         }
         
         if(pin >= Konashi.PIO0 && pin <= Konashi.PIO7 && (mode == Konashi.OUTPUT || mode == Konashi.INPUT)){
+            byte modes = mDigitalStore.getPioModes();
             if(mode == Konashi.OUTPUT){
-                mPioModeSetting |= (byte)(0x01 << pin);
+                modes |= (byte)(0x01 << pin);
             }else{
-                mPioModeSetting &= (byte)(~(0x01 << pin) & 0xFF);
+                modes &= (byte)(~(0x01 << pin) & 0xFF);
             }
-            
-            byte[] val = new byte[1];
-            val[0] = mPioModeSetting;
-            
-            addWriteMessage(KonashiUUID.PIO_SETTING_UUID, val);
+
+            addWriteMessage(KonashiUUID.PIO_SETTING_UUID, new byte[] {modes});
+        } else {
+            notifyKonashiError(KonashiErrorReason.INVALID_PARAMETER);
         }
     }
     
@@ -222,12 +218,9 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
         }
         
         if(modes >= 0x00 && modes <= 0xFF){
-            mPioModeSetting = (byte)modes;
-            
-            byte[] val = new byte[1];
-            val[0] = mPioModeSetting;
-            
-            addWriteMessage(KonashiUUID.PIO_SETTING_UUID, val);
+            addWriteMessage(KonashiUUID.PIO_SETTING_UUID, new byte[] {(byte) modes});
+        } else {
+            notifyKonashiError(KonashiErrorReason.INVALID_PARAMETER);
         }
     }
     
@@ -244,16 +237,16 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
         }
         
         if(pin >= Konashi.PIO0 && pin <= Konashi.PIO7 && (pullup == Konashi.PULLUP || pullup == Konashi.NO_PULLS)){
+            byte pullups = mDigitalStore.getPioPullups();
             if(pullup == Konashi.PULLUP){
-                mPioPullup |= (byte)(0x01 << pin);
+                pullups |= (byte)(0x01 << pin);
             }else{
-                mPioPullup &= (byte)(~(0x01 << pin) & 0xFF);
+                pullups &= (byte)(~(0x01 << pin) & 0xFF);
             }
-            
-            byte[] val = new byte[1];
-            val[0] = mPioPullup;
-            
-            addWriteMessage(KonashiUUID.PIO_PULLUP_UUID, val);
+
+            addWriteMessage(KonashiUUID.PIO_PULLUP_UUID, new byte[]{pullups});
+        } else {
+            notifyKonashiError(KonashiErrorReason.INVALID_PARAMETER);
         }
     }
     
@@ -269,12 +262,9 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
         }
         
         if(pullups >= 0x00 && pullups <= 0xFF){
-            mPioPullup = (byte)pullups;
-            
-            byte[] val = new byte[1];
-            val[0] = mPioPullup;
-            
-            addWriteMessage(KonashiUUID.PIO_PULLUP_UUID, val);
+            addWriteMessage(KonashiUUID.PIO_PULLUP_UUID, new byte[]{(byte) pullups});
+        } else {
+            notifyKonashiError(KonashiErrorReason.INVALID_PARAMETER);
         }
     }
     
@@ -289,8 +279,17 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
             notifyKonashiError(KonashiErrorReason.NOT_READY);
             return -1;
         }
-        
-        return (mPioInput >> pin) & 0x01;
+
+        if ((pin != Konashi.PIO0) && (pin != Konashi.PIO1) && (pin != Konashi.PIO2) &&
+                (pin != Konashi.PIO3) && (pin != Konashi.PIO4) && (pin != Konashi.PIO5) &&
+                (pin != Konashi.PIO6) && (pin != Konashi.PIO7)) {
+            notifyKonashiError(KonashiErrorReason.INVALID_PARAMETER);
+            return -1;
+        } else {
+            notifyKonashiError(KonashiErrorReason.INVALID_PARAMETER);
+        }
+
+        return mDigitalStore.getPioInput(pin);
     }
     
     /**
@@ -304,7 +303,7 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
             return -1;
         }
         
-        return mPioInput;
+        return mDigitalStore.getPioInputs();
     }
     
     /**
@@ -321,17 +320,17 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
         
         if(pin >= Konashi.PIO0 && pin <= Konashi.PIO7 && (value == Konashi.HIGH || value == Konashi.LOW)){
             KonashiUtils.log("digitalWrite pin: " + pin + ", value: " + value);
+            byte outputs = mDigitalStore.getPioOutputs();
             
             if(value == Konashi.HIGH){
-                mPioOutput |= 0x01 << pin;
+                outputs |= 0x01 << pin;
             } else {
-                mPioOutput &= ~(0x01 << pin) & 0xFF;
+                outputs &= ~(0x01 << pin) & 0xFF;
             }
             
-            byte[] val = new byte[1];
-            val[0] = mPioOutput;
-            
-            addWriteMessage(KonashiUUID.PIO_OUTPUT_UUID, val);
+            addWriteMessage(KonashiUUID.PIO_OUTPUT_UUID, new byte[]{outputs});
+        } else {
+            notifyKonashiError(KonashiErrorReason.INVALID_PARAMETER);
         }
     }
     
@@ -347,12 +346,9 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
         }
         
         if(value >= 0x00 && value <= 0xFF){            
-            mPioOutput = (byte)value;
-            
-            byte[] val = new byte[1];
-            val[0] = mPioOutput;
-            
-            addWriteMessage(KonashiUUID.PIO_OUTPUT_UUID, val);
+            addWriteMessage(KonashiUUID.PIO_OUTPUT_UUID, new byte[]{(byte) value});
+        } else {
+            notifyKonashiError(KonashiErrorReason.INVALID_PARAMETER);
         }
     }
     
@@ -508,7 +504,7 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
         }
         
         if(pin >= Konashi.AIO0 && pin <= Konashi.AIO2){
-            return mAioValue[pin];
+            return mAnalogStore.getAnalogValue(pin);
         } else {
             notifyKonashiError(KonashiErrorReason.INVALID_PARAMETER);
             return -1;
@@ -905,24 +901,6 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
     ////////////////////////////////
     // Notification event handler 
     ////////////////////////////////
-
-    // TODO: need refactor
-    
-    @Override
-    protected void onUpdatePioInput(byte value) {
-        // PIO input notification
-        mPioInput = value;
-                
-        super.onUpdatePioInput(value);
-    }
-
-    @Override
-    protected void onUpdateAnalogValue(int pin, int value) {
-        //KonashiUtils.log(String.valueOf(value));
-        mAioValue[pin] = value;
-                
-        super.onUpdateAnalogValue(pin, value);
-    }
 
     @Override
     protected void onRecieveUart(byte[] data) {

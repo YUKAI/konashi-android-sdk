@@ -33,6 +33,15 @@ public enum KonashiDigitalEvent implements KonashiEvent {
         protected void notifyDigitalEvent(Object param, KonashiDigitalListener listener) {
             listener.onUpdatePioInput(Byte.valueOf(param.toString()));
         }
+    },
+    /**
+     * PIOの出力の状態が変化した時
+     */
+    UPDATE_PIO_OUTPUT {
+        @Override
+        protected void notifyDigitalEvent(Object param, KonashiDigitalListener listener) {
+            listener.onUpdatePioOutput(Byte.valueOf(param.toString()));
+        }
     };
 
     abstract protected void notifyDigitalEvent(Object param0, KonashiDigitalListener listener);

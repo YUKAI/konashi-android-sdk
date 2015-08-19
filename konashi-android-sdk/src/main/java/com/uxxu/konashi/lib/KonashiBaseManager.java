@@ -669,31 +669,7 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
     /***************************************
      * Konashi notification event handler
      ***************************************/
-        
-    /**
-     * PIOの入力の状態が変更された時
-     * @param value PIO8bitで表現
-     */
-    protected void onUpdatePioInput(byte value){
-        notifyKonashiEvent(KonashiDigitalEvent.UPDATE_PIO_INPUT, value);
-    }
-    
-    /**
-     * AIOの特定の値が取得できた時
-     * @param pin ピン番号 AIO0〜AIO2
-     * @param value アナログ値
-     */
-    protected void onUpdateAnalogValue(int pin, int value){
-        notifyKonashiEvent(KonashiAnalogEvent.UPDATE_ANALOG_VALUE, pin, value);
-        
-        if(pin==Konashi.AIO0)
-            notifyKonashiEvent(KonashiAnalogEvent.UPDATE_ANALOG_VALUE_AIO0, value);
-        else if(pin==Konashi.AIO1)
-            notifyKonashiEvent(KonashiAnalogEvent.UPDATE_ANALOG_VALUE_AIO1, value);
-        else
-            notifyKonashiEvent(KonashiAnalogEvent.UPDATE_ANALOG_VALUE_AIO2, value);
-    }
-    
+
     /**
      * のRxからデータを受信した時
      * @param data 受信データ
