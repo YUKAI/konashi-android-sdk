@@ -377,9 +377,10 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
             }
             
             if (mode == Konashi.PWM_ENABLE_LED_MODE){
-                
                 pwmPeriod(pin, Konashi.PWM_LED_PERIOD);
+                KonashiUtils.sleep(30);
                 pwmLedDrive(pin, 0.0F);
+                KonashiUtils.sleep(30);
             }
             
             byte[] val = new byte[1];
@@ -814,8 +815,7 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
             return null;
         }        
     }
-    
-    
+
     ///////////////////////////
     // Hardware
     ///////////////////////////
@@ -934,5 +934,6 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
         mRssi = rssi;
         
         super.onUpdateSignalSrength(rssi);
-    }    
+    }
+
 }
