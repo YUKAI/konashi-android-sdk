@@ -152,6 +152,7 @@ public class KonashiUtils {
         try {
             Thread.sleep(millis);
         } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 }
