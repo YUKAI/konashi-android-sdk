@@ -377,9 +377,10 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
             }
             
             if (mode == Konashi.PWM_ENABLE_LED_MODE){
-                
                 pwmPeriod(pin, Konashi.PWM_LED_PERIOD);
+                sleep(30);
                 pwmLedDrive(pin, 0.0F);
+                sleep(30);
             }
             
             byte[] val = new byte[1];
@@ -814,8 +815,7 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
             return null;
         }        
     }
-    
-    
+
     ///////////////////////////
     // Hardware
     ///////////////////////////
@@ -934,5 +934,18 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
         mRssi = rssi;
         
         super.onUpdateSignalSrength(rssi);
-    }    
+    }
+
+    ////////////////////////////////
+    // Sleep
+    ////////////////////////////////
+
+    //TODO: pwmModeをPWM_ENABLE_LEDにした時にpwmModeが反映されなくなるので応急処置的に遅延．要変更
+    public static void sleep(int millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+        }
+    }
+
 }
