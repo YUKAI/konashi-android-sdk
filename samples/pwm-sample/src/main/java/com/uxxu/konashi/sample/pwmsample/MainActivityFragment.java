@@ -170,16 +170,11 @@ public class MainActivityFragment extends Fragment {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     final int pwmMode = b ? Konashi.PWM_ENABLE_LED_MODE : Konashi.PWM_DISABLE;
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mCallback.getKonashiManager().pwmMode(mPinNumber, pwmMode);
-                            if (pwmMode == Konashi.PWM_ENABLE_LED_MODE) {
-                                Utils.sleepShort();
-                                mCallback.getKonashiManager().pwmLedDrive(mPinNumber, mDutySeekBar.getProgress());
-                            }
-                        }
-                    }).start();
+                    mCallback.getKonashiManager().pwmMode(mPinNumber, pwmMode);
+                    if (pwmMode == Konashi.PWM_ENABLE_LED_MODE) {
+                        Utils.sleepShort();
+                        mCallback.getKonashiManager().pwmLedDrive(mPinNumber, mDutySeekBar.getProgress());
+                    }
                     mDutySeekBar.setEnabled(b);
                 }
             });
@@ -193,12 +188,7 @@ public class MainActivityFragment extends Fragment {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                     final int drive = i;
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mCallback.getKonashiManager().pwmLedDrive(mPinNumber, drive);
-                        }
-                    }).start();
+                    mCallback.getKonashiManager().pwmLedDrive(mPinNumber, drive);
                 }
 
                 @Override
@@ -218,14 +208,9 @@ public class MainActivityFragment extends Fragment {
         }
 
         public void setValues(final int period, final int duty) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    mCallback.getKonashiManager().pwmPeriod(mPinNumber, period);
-                    Utils.sleepShort();
-                    mCallback.getKonashiManager().pwmDuty(mPinNumber, duty);
-                }
-            }).start();
+            mCallback.getKonashiManager().pwmPeriod(mPinNumber, period);
+            Utils.sleepShort();
+            mCallback.getKonashiManager().pwmDuty(mPinNumber, duty);
         }
     }
 }
