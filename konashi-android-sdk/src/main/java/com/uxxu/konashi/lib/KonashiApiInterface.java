@@ -1,9 +1,14 @@
 package com.uxxu.konashi.lib;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothGattCharacteristic;
 import android.content.Context;
 
 import com.uxxu.konashi.lib.listeners.KonashiBaseListener;
+
+import org.jdeferred.Promise;
+
+import info.izumin.android.bletia.BletiaException;
 
 /**
  * konashi APIのインタフェース
@@ -42,14 +47,14 @@ public interface KonashiApiInterface {
     public void findWithName(Activity activity, String name);
     
     // PIO
-    public void pinMode(int pin, int mode);
-    public void pinModeAll(int modes);
-    public void pinPullup(int pin, int pullup);
-    public void pinPullupAll(int pullups);
+    public Promise<BluetoothGattCharacteristic, BletiaException, Object> pinMode(int pin, int mode);
+    public Promise<BluetoothGattCharacteristic, BletiaException, Object> pinModeAll(int modes);
+    public Promise<BluetoothGattCharacteristic, BletiaException, Object> pinPullup(int pin, int pullup);
+    public Promise<BluetoothGattCharacteristic, BletiaException, Object> pinPullupAll(int pullups);
     public int digitalRead(int pin);
     public int digitalReadAll();
-    public void digitalWrite(int pin, int value);
-    public void digitalWriteAll(int value);
+    public Promise<BluetoothGattCharacteristic, BletiaException, Object> digitalWrite(int pin, int value);
+    public Promise<BluetoothGattCharacteristic, BletiaException, Object> digitalWriteAll(int value);
     
     // PWM
     public void pwmMode(int pin, int mode);

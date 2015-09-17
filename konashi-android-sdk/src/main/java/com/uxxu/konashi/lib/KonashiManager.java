@@ -1,12 +1,22 @@
 package com.uxxu.konashi.lib;
 
+import android.bluetooth.BluetoothGattCharacteristic;
 import android.content.Context;
 
+import com.uxxu.konashi.lib.action.PioDigitalWriteAction;
+import com.uxxu.konashi.lib.action.PioPinModeAction;
+import com.uxxu.konashi.lib.action.PioPinPullupAction;
+import com.uxxu.konashi.lib.dispatcher.PioDispatcher;
 import com.uxxu.konashi.lib.listeners.KonashiBaseListener;
 import com.uxxu.konashi.lib.stores.KonashiAnalogStore;
-import com.uxxu.konashi.lib.stores.KonashiDigitalStore;
+import com.uxxu.konashi.lib.stores.PioStore;
+
+import org.jdeferred.Promise;
 
 import java.util.List;
+
+import info.izumin.android.bletia.BletiaException;
+
 
 /**
  * konashiを管理するメインクラス
@@ -36,7 +46,8 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
     
     // konashi members
     // PIO
-    private KonashiDigitalStore mDigitalStore;
+    private PioStore mPioStore;
+    private PioDispatcher mPioDispatcher;
 
     // PWM
     private byte mPwmSetting = 0;
@@ -59,8 +70,7 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
     // Hardware
     private int mBatteryLevel;
     private int mRssi;
-    
-    
+
     ///////////////////////////
     // Initialization
     ///////////////////////////
@@ -69,8 +79,8 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
         int i;
         
         // PIO
-        mDigitalStore = new KonashiDigitalStore();
-        addListener(mDigitalStore);
+        mPioDispatcher = new PioDispatcher();
+        mPioStore = new PioStore(mPioDispatcher);
 
         // PWM
         mPwmSetting = 0;
@@ -100,12 +110,13 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
         // Hardware
         mBatteryLevel = 0;
         mRssi = 0;
+
     }
 
     @Override
     public void initialize(Context context) {
         super.initialize(context);
-        
+
         initializeMembers();
     }
     
@@ -186,24 +197,8 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * @param mode ピンに設定するモード。INPUT か OUTPUT が設定できます。
      */
     @Override
-    public void pinMode(int pin, int mode){
-        if(!isEnableAccessKonashi()){
-            notifyKonashiError(KonashiErrorReason.NOT_READY);
-            return;
-        }
-        
-        if(pin >= Konashi.PIO0 && pin <= Konashi.PIO7 && (mode == Konashi.OUTPUT || mode == Konashi.INPUT)){
-            byte modes = mDigitalStore.getPioModes();
-            if(mode == Konashi.OUTPUT){
-                modes |= (byte)(0x01 << pin);
-            }else{
-                modes &= (byte)(~(0x01 << pin) & 0xFF);
-            }
-
-            addWriteMessage(KonashiUUID.PIO_SETTING_UUID, new byte[] {modes});
-        } else {
-            notifyKonashiError(KonashiErrorReason.INVALID_PARAMETER);
-        }
+    public Promise<BluetoothGattCharacteristic, BletiaException, Object> pinMode(int pin, int mode){
+        return execute(new PioPinModeAction(getKonashiService(), pin, mode, mPioStore.getPioModes()), mPioDispatcher);
     }
     
     /**
@@ -211,17 +206,8 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * @param modes PIO0 〜 PIO7 の計8ピンの設定
      */
     @Override
-    public void pinModeAll(int modes){
-        if(!isEnableAccessKonashi()){
-            notifyKonashiError(KonashiErrorReason.NOT_READY);
-            return;
-        }
-        
-        if(modes >= 0x00 && modes <= 0xFF){
-            addWriteMessage(KonashiUUID.PIO_SETTING_UUID, new byte[] {(byte) modes});
-        } else {
-            notifyKonashiError(KonashiErrorReason.INVALID_PARAMETER);
-        }
+    public Promise<BluetoothGattCharacteristic, BletiaException, Object> pinModeAll(int modes){
+        return execute(new PioPinModeAction(getKonashiService(), modes), mPioDispatcher);
     }
     
     /**
@@ -230,24 +216,8 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * @param pullup ピンをプルアップするかの設定。PULLUP か NO_PULLS が設定できます。
      */
     @Override
-    public void pinPullup(int pin, int pullup){
-        if(!isEnableAccessKonashi()){
-            notifyKonashiError(KonashiErrorReason.NOT_READY);
-            return;
-        }
-        
-        if(pin >= Konashi.PIO0 && pin <= Konashi.PIO7 && (pullup == Konashi.PULLUP || pullup == Konashi.NO_PULLS)){
-            byte pullups = mDigitalStore.getPioPullups();
-            if(pullup == Konashi.PULLUP){
-                pullups |= (byte)(0x01 << pin);
-            }else{
-                pullups &= (byte)(~(0x01 << pin) & 0xFF);
-            }
-
-            addWriteMessage(KonashiUUID.PIO_PULLUP_UUID, new byte[]{pullups});
-        } else {
-            notifyKonashiError(KonashiErrorReason.INVALID_PARAMETER);
-        }
+    public Promise<BluetoothGattCharacteristic, BletiaException, Object> pinPullup(int pin, int pullup){
+        return execute(new PioPinPullupAction(getKonashiService(), pin, pullup, mPioStore.getPioPullups()), mPioDispatcher);
     }
     
     /**
@@ -255,17 +225,8 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * @param pullups PIO0 〜 PIO7 の計8ピンのプルアップの設定
      */
     @Override
-    public void pinPullupAll(int pullups){
-        if(!isEnableAccessKonashi()){
-            notifyKonashiError(KonashiErrorReason.NOT_READY);
-            return;
-        }
-        
-        if(pullups >= 0x00 && pullups <= 0xFF){
-            addWriteMessage(KonashiUUID.PIO_PULLUP_UUID, new byte[]{(byte) pullups});
-        } else {
-            notifyKonashiError(KonashiErrorReason.INVALID_PARAMETER);
-        }
+    public Promise<BluetoothGattCharacteristic, BletiaException, Object> pinPullupAll(int pullups){
+        return execute(new PioPinPullupAction(getKonashiService(), pullups), mPioDispatcher);
     }
     
     /**
@@ -289,7 +250,7 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
             notifyKonashiError(KonashiErrorReason.INVALID_PARAMETER);
         }
 
-        return mDigitalStore.getPioInput(pin);
+        return mPioStore.getPioInput(pin);
     }
     
     /**
@@ -303,53 +264,26 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
             return -1;
         }
         
-        return mDigitalStore.getPioInputs();
+        return mPioStore.getPioInputs();
     }
     
     /**
      * PIOの特定のピンの出力状態を設定する
      * @param pin 設定するPIOのピン名
-     * @param value 設定するPIOの出力状態。HIGH もしくは LOW が指定可能
+     * @param output 設定するPIOの出力状態。HIGH もしくは LOW が指定可能
      */
     @Override
-    public void digitalWrite(int pin, int value){
-        if(!isEnableAccessKonashi()){
-            notifyKonashiError(KonashiErrorReason.NOT_READY);
-            return;
-        }
-        
-        if(pin >= Konashi.PIO0 && pin <= Konashi.PIO7 && (value == Konashi.HIGH || value == Konashi.LOW)){
-            KonashiUtils.log("digitalWrite pin: " + pin + ", value: " + value);
-            byte outputs = mDigitalStore.getPioOutputs();
-            
-            if(value == Konashi.HIGH){
-                outputs |= 0x01 << pin;
-            } else {
-                outputs &= ~(0x01 << pin) & 0xFF;
-            }
-            
-            addWriteMessage(KonashiUUID.PIO_OUTPUT_UUID, new byte[]{outputs});
-        } else {
-            notifyKonashiError(KonashiErrorReason.INVALID_PARAMETER);
-        }
+    public Promise<BluetoothGattCharacteristic, BletiaException, Object> digitalWrite(int pin, int output){
+        return execute(new PioDigitalWriteAction(getKonashiService(), pin, output, mPioStore.getPioOutputs()), mPioDispatcher);
     }
     
     /**
      * PIOの特定のピンの出力状態を設定する
-     * @param value PIOの出力状態。PIO0〜PIO7の出力状態が8bit(1byte)で表現
+     * @param outputs PIOの出力状態。PIO0〜PIO7の出力状態が8bit(1byte)で表現
      */
     @Override
-    public void digitalWriteAll(int value){
-        if(!isEnableAccessKonashi()){
-            notifyKonashiError(KonashiErrorReason.NOT_READY);
-            return;
-        }
-        
-        if(value >= 0x00 && value <= 0xFF){            
-            addWriteMessage(KonashiUUID.PIO_OUTPUT_UUID, new byte[]{(byte) value});
-        } else {
-            notifyKonashiError(KonashiErrorReason.INVALID_PARAMETER);
-        }
+    public Promise<BluetoothGattCharacteristic, BletiaException, Object> digitalWriteAll(int outputs){
+        return execute(new PioDigitalWriteAction(getKonashiService(), outputs), mPioDispatcher);
     }
     
     
@@ -935,5 +869,4 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
         
         super.onUpdateSignalSrength(rssi);
     }
-
 }
