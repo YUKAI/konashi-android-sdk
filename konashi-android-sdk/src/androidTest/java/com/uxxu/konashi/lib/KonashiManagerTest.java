@@ -2,14 +2,16 @@ package com.uxxu.konashi.lib;
 
 import android.support.test.runner.AndroidJUnit4;
 
+import com.uxxu.konashi.lib.dispatcher.PioDispatcher;
 import com.uxxu.konashi.lib.stores.KonashiAnalogStore;
-import com.uxxu.konashi.lib.stores.KonashiDigitalStore;
+import com.uxxu.konashi.lib.stores.PioStore;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
@@ -75,16 +77,17 @@ public class KonashiManagerTest {
     @RunWith(Enclosed.class)
     public static class PioTest {
         private static class PioBaseTest extends BaseTest {
-            @Spy private KonashiDigitalStore mDigitalStore;
+            @Mock private PioDispatcher mDispatcher;
+            @Spy private PioStore mPioStore = new ;
 
             @Before
             public void setUp() throws Exception {
                 super.setUp();
-                Whitebox.setInternalState(getManager(), "mDigitalStore", mDigitalStore);
+                Whitebox.setInternalState(getManager(), "mPioStore", mPioStore);
             }
 
-            public KonashiDigitalStore getDigitalStore() {
-                return mDigitalStore;
+            public PioStore getDigitalStore() {
+                return mPioStore;
             }
         }
 
@@ -122,7 +125,7 @@ public class KonashiManagerTest {
             @Test
             public void whenPioModeHasAlreadySet() {
                 stubIsEnableAccessKonashi(true);
-                getDigitalStore().onUpdatePioSetting((byte) 0x17);
+                getDigitalStore().setPioModes((byte) 0x17);
                 getManager().pinMode(Konashi.PIO1, Konashi.INPUT);
                 assertThat(getCapturedWrittenUuid()).isEqualTo(KonashiUUID.PIO_SETTING_UUID);
                 assertThat(getCapturedWrittenValue()).isEqualTo(new byte[] {0x15});
@@ -188,7 +191,7 @@ public class KonashiManagerTest {
             @Test
             public void whenPioPullupHasAlreadySet() {
                 stubIsEnableAccessKonashi(true);
-                getDigitalStore().onUpdatePioPullup((byte) 0x17);
+                getDigitalStore().setPioPullups((byte) 0x17);
                 getManager().pinPullup(Konashi.PIO1, Konashi.NO_PULLS);
                 assertThat(getCapturedWrittenUuid()).isEqualTo(KonashiUUID.PIO_PULLUP_UUID);
                 assertThat(getCapturedWrittenValue()).isEqualTo(new byte[] {0x15});
@@ -239,7 +242,7 @@ public class KonashiManagerTest {
             @Test
             public void withValidArgs() {
                 stubIsEnableAccessKonashi(true);
-                getDigitalStore().onUpdatePioInput((byte) 0x17);
+                getDigitalStore().setPioInputs((byte) 0x17);
                 assertThat(getManager().digitalRead(Konashi.PIO1)).isEqualTo(1);
             }
         }
@@ -256,7 +259,7 @@ public class KonashiManagerTest {
             @Test
             public void withValidArgs() {
                 stubIsEnableAccessKonashi(true);
-                getDigitalStore().onUpdatePioInput((byte) 0x17);
+                getDigitalStore().setPioInputs((byte) 0x17);
                 assertThat(getManager().digitalReadAll()).isEqualTo(0x17);
             }
         }
@@ -295,7 +298,7 @@ public class KonashiManagerTest {
             @Test
             public void whenPioOutputHasAlreadySet() {
                 stubIsEnableAccessKonashi(true);
-                getDigitalStore().onUpdatePioOutput((byte) 0x17);
+                getDigitalStore().setPioOutputs((byte) 0x17);
                 getManager().digitalWrite(Konashi.PIO1, Konashi.INPUT);
                 assertThat(getCapturedWrittenUuid()).isEqualTo(KonashiUUID.PIO_OUTPUT_UUID);
                 assertThat(getCapturedWrittenValue()).isEqualTo(new byte[] {0x15});
