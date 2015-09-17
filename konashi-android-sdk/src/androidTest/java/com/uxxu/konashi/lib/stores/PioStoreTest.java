@@ -1,0 +1,39 @@
+package com.uxxu.konashi.lib.stores;
+
+import android.support.test.runner.AndroidJUnit4;
+
+import com.uxxu.konashi.lib.Konashi;
+import com.uxxu.konashi.lib.dispatcher.PioDispatcher;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.internal.util.reflection.Whitebox;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+
+/**
+ * Created by izumin on 8/18/15.
+ */
+@RunWith(AndroidJUnit4.class)
+public class PioStoreTest {
+
+    @Mock private PioDispatcher mDispatcher;
+    private PioStore mPioStore;
+
+    @Before
+    public void setUp() throws Exception {
+        MockitoAnnotations.initMocks(this);
+        mPioStore = new PioStore(mDispatcher);
+        Whitebox.setInternalState(mPioStore, "mPioInputs", (byte) 0x17);
+    }
+
+    @Test
+    public void testGetPioInput() throws Exception {
+        assertThat(mPioStore.getPioInput(Konashi.PIO1)).isEqualTo((byte) Konashi.HIGH);
+        assertThat(mPioStore.getPioInput(Konashi.PIO5)).isEqualTo((byte) Konashi.LOW);
+    }
+}
