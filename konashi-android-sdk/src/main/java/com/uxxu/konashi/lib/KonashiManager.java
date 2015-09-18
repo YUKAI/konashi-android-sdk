@@ -6,7 +6,8 @@ import android.content.Context;
 import com.uxxu.konashi.lib.action.PioDigitalWriteAction;
 import com.uxxu.konashi.lib.action.PioPinModeAction;
 import com.uxxu.konashi.lib.action.PioPinPullupAction;
-import com.uxxu.konashi.lib.dispatcher.PioDispatcher;
+import com.uxxu.konashi.lib.dispatcher.CharacteristicDispatcher;
+import com.uxxu.konashi.lib.dispatcher.PioStoreUpdater;
 import com.uxxu.konashi.lib.listeners.KonashiBaseListener;
 import com.uxxu.konashi.lib.stores.KonashiAnalogStore;
 import com.uxxu.konashi.lib.stores.PioStore;
@@ -47,7 +48,7 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
     // konashi members
     // PIO
     private PioStore mPioStore;
-    private PioDispatcher mPioDispatcher;
+    private CharacteristicDispatcher<PioStore, PioStoreUpdater> mPioDispatcher;
 
     // PWM
     private byte mPwmSetting = 0;
@@ -79,7 +80,7 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
         int i;
         
         // PIO
-        mPioDispatcher = new PioDispatcher();
+        mPioDispatcher = new CharacteristicDispatcher<>(PioStoreUpdater.class);
         mPioStore = new PioStore(mPioDispatcher);
 
         // PWM

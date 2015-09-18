@@ -1,17 +1,18 @@
 package com.uxxu.konashi.lib.stores;
 
-import com.uxxu.konashi.lib.dispatcher.PioDispatcher;
+import com.uxxu.konashi.lib.dispatcher.CharacteristicDispatcher;
+import com.uxxu.konashi.lib.dispatcher.PioStoreUpdater;
 
 /**
  * Created by izumin on 8/18/15.
  */
-public class PioStore {
+public class PioStore implements Store {
     private int mPioModes = 0;
     private int mPioPullups = 0;
     private int mPioInputs = 0;
     private int mPioOutputs = 0;
 
-    public PioStore(PioDispatcher dispatcher) {
+    public PioStore(CharacteristicDispatcher<PioStore, PioStoreUpdater> dispatcher) {
         dispatcher.setStore(this);
     }
 
