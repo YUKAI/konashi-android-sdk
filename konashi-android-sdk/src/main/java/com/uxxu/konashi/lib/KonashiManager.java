@@ -6,12 +6,19 @@ import android.content.Context;
 import com.uxxu.konashi.lib.action.PioDigitalWriteAction;
 import com.uxxu.konashi.lib.action.PioPinModeAction;
 import com.uxxu.konashi.lib.action.PioPinPullupAction;
+import com.uxxu.konashi.lib.action.PwmDutyAction;
+import com.uxxu.konashi.lib.action.PwmLedDriveAction;
+import com.uxxu.konashi.lib.action.PwmPeriodAction;
+import com.uxxu.konashi.lib.action.PwmPinModeAction;
 import com.uxxu.konashi.lib.dispatcher.CharacteristicDispatcher;
 import com.uxxu.konashi.lib.dispatcher.PioStoreUpdater;
+import com.uxxu.konashi.lib.dispatcher.PwmStoreUpdater;
 import com.uxxu.konashi.lib.listeners.KonashiBaseListener;
 import com.uxxu.konashi.lib.stores.KonashiAnalogStore;
 import com.uxxu.konashi.lib.stores.PioStore;
+import com.uxxu.konashi.lib.stores.PwmStore;
 
+import org.jdeferred.DonePipe;
 import org.jdeferred.Promise;
 
 import java.util.List;
@@ -41,8 +48,6 @@ import info.izumin.android.bletia.BletiaException;
  *
  */
 public class KonashiManager extends KonashiBaseManager implements KonashiApiInterface {
-    private static final int PIO_LENGTH = 8;
-    private static final int PWM_LENGTH = 8;
     private static final int AIO_LENGTH = 3;
     
     // konashi members
@@ -51,10 +56,9 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
     private CharacteristicDispatcher<PioStore, PioStoreUpdater> mPioDispatcher;
 
     // PWM
-    private byte mPwmSetting = 0;
-    private int[] mPwmDuty;
-    private int[] mPwmPeriod;
-    
+    private PwmStore mPwmStore;
+    private CharacteristicDispatcher<PwmStore, PwmStoreUpdater> mPwmDispatcher;
+
     // AIO
     private KonashiAnalogStore mAnalogStore;
 
@@ -84,14 +88,9 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
         mPioStore = new PioStore(mPioDispatcher);
 
         // PWM
-        mPwmSetting = 0;
-        mPwmDuty = new int[PWM_LENGTH];
-        for(i=0; i<PWM_LENGTH; i++)
-            mPwmDuty[i] = 0;
-        mPwmPeriod = new int[PWM_LENGTH];
-        for(i=0; i<PWM_LENGTH; i++)
-            mPwmPeriod[i] = 0;
-            
+        mPwmDispatcher = new CharacteristicDispatcher<>(PwmStoreUpdater.class);
+        mPwmStore = new PwmStore(mPwmDispatcher);
+
         // AIO
         mAnalogStore = new KonashiAnalogStore();
         addListener(mAnalogStore);
@@ -298,31 +297,25 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * @param mode 設定するPWMのモード。Konashi.PWM_DISABLE, Konashi.PWM_ENABLE, Konashi.PWM_ENABLE_LED_MODE のいずれかをセットする。
      */
     @Override
-    public void pwmMode(int pin, int mode){
-        if(!isEnableAccessKonashi()){
-            notifyKonashiError(KonashiErrorReason.NOT_READY);
-            return;
+    public Promise<BluetoothGattCharacteristic, BletiaException, Object> pwmMode(final int pin, int mode){
+        Promise<BluetoothGattCharacteristic, BletiaException, Object> promise =
+                execute(new PwmPinModeAction(getKonashiService(), pin, mode, mPwmStore.getPwmModes())).then(mPwmDispatcher);
+
+        if (mode == Konashi.PWM_ENABLE_LED_MODE) {
+            promise.then(new DonePipe<BluetoothGattCharacteristic, BluetoothGattCharacteristic, BletiaException, Object>() {
+                @Override
+                public Promise<BluetoothGattCharacteristic, BletiaException, Object> pipeDone(BluetoothGattCharacteristic result) {
+                    return pwmPeriod(pin, Konashi.PWM_LED_PERIOD).then(mPwmDispatcher);
+                }
+            }).then(new DonePipe<BluetoothGattCharacteristic, BluetoothGattCharacteristic, BletiaException, Object>() {
+                @Override
+                public Promise<BluetoothGattCharacteristic, BletiaException, Object> pipeDone(BluetoothGattCharacteristic result) {
+                    return pwmLedDrive(pin, 0.0f).then(mPwmDispatcher);
+                }
+            });
         }
-        
-        if(pin >= Konashi.PIO0 && pin <= Konashi.PIO7 && (mode == Konashi.PWM_DISABLE || mode == Konashi.PWM_ENABLE || mode == Konashi.PWM_ENABLE_LED_MODE)){
-            if(mode == Konashi.PWM_ENABLE || mode == Konashi.PWM_ENABLE_LED_MODE){
-                mPwmSetting |= 0x01 << pin;
-            } else {
-                mPwmSetting &= ~(0x01 << pin) & 0xFF;
-            }
-            
-            if (mode == Konashi.PWM_ENABLE_LED_MODE){
-                pwmPeriod(pin, Konashi.PWM_LED_PERIOD);
-                KonashiUtils.sleep(30);
-                pwmLedDrive(pin, 0.0F);
-                KonashiUtils.sleep(30);
-            }
-            
-            byte[] val = new byte[1];
-            val[0] = mPwmSetting;
-            
-            addWriteMessage(KonashiUUID.PWM_CONFIG_UUID, val);
-        }
+
+        return promise;
     }
     
     /**
@@ -331,24 +324,8 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * @param period 周期。単位はマイクロ秒(us)で32bitで指定してください。最大2^(32)us = 71.5分。
      */
     @Override
-    public void pwmPeriod(int pin, int period){
-        if(!isEnableAccessKonashi()){
-            notifyKonashiError(KonashiErrorReason.NOT_READY);
-            return;
-        }
-        
-        if(pin >= Konashi.PIO0 && pin <= Konashi.PIO7 && mPwmDuty[pin] <= period){
-            mPwmPeriod[pin] = period;
-            
-            byte[] val = new byte[5];
-            val[0] = (byte)pin;
-            val[1] = (byte)((mPwmPeriod[pin] >> 24) & 0xFF);
-            val[2] = (byte)((mPwmPeriod[pin] >> 16) & 0xFF);
-            val[3] = (byte)((mPwmPeriod[pin] >> 8) & 0xFF);
-            val[4] = (byte)((mPwmPeriod[pin] >> 0) & 0xFF);
-            
-            addWriteMessage(KonashiUUID.PWM_PARAM_UUID, val);
-        }
+    public Promise<BluetoothGattCharacteristic, BletiaException, Object> pwmPeriod(int pin, int period){
+        return execute(new PwmPeriodAction(getKonashiService(), pin, period, mPwmStore.getPwmDuty(pin))).then(mPwmDispatcher);
     }
     
     /**
@@ -357,24 +334,8 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * @param duty デューティ。単位はマイクロ秒(us)で32bitで指定してください。最大2^(32)us = 71.5分。
      */
     @Override
-    public void pwmDuty(int pin, int duty){
-        if(!isEnableAccessKonashi()){
-            notifyKonashiError(KonashiErrorReason.NOT_READY);
-            return;
-        }
-        
-        if(pin >= Konashi.PIO0 && pin <= Konashi.PIO7 && duty <= mPwmPeriod[pin]){
-            mPwmDuty[pin] = duty;
-            
-            byte[] val = new byte[5];
-            val[0] = (byte)pin;
-            val[1] = (byte)((mPwmDuty[pin] >> 24) & 0xFF);
-            val[2] = (byte)((mPwmDuty[pin] >> 16) & 0xFF);
-            val[3] = (byte)((mPwmDuty[pin] >> 8) & 0xFF);
-            val[4] = (byte)((mPwmDuty[pin] >> 0) & 0xFF);
-            
-            addWriteMessage(KonashiUUID.PWM_DUTY_UUID, val);
-        }
+    public Promise<BluetoothGattCharacteristic, BletiaException, Object> pwmDuty(int pin, int duty){
+        return execute(new PwmDutyAction(getKonashiService(), pin, duty, mPwmStore.getPwmPeriod(pin))).then(mPwmDispatcher);
     }
     
     /**
@@ -383,13 +344,8 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * @param dutyRatio LEDの明るさ。0.0F〜100.0F をしてしてください。
      */
     @Override
-    public void pwmLedDrive(int pin, float dutyRatio){
-        int duty;
-
-        if(dutyRatio >= 0.0 && dutyRatio <= 100.0){
-            duty = (int)(Konashi.PWM_LED_PERIOD * dutyRatio / 100);        
-            pwmDuty(pin, duty);
-        }
+    public Promise<BluetoothGattCharacteristic, BletiaException, Object> pwmLedDrive(int pin, float dutyRatio){
+        return execute(new PwmLedDriveAction(getKonashiService(), pin, dutyRatio, mPwmStore.getPwmPeriod(pin))).then(mPwmDispatcher);
     }
     
     /**
@@ -398,8 +354,8 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * @param dutyRatio LEDの明るさ。0.0〜100.0 をしてしてください。
      */
     @Override
-    public void pwmLedDrive(int pin, double dutyRatio){        
-        pwmLedDrive(pin, (float)dutyRatio);
+    public Promise<BluetoothGattCharacteristic, BletiaException, Object> pwmLedDrive(int pin, double dutyRatio){
+        return pwmLedDrive(pin, (float) dutyRatio);
     }
     
     
