@@ -14,6 +14,8 @@ import com.uxxu.konashi.lib.KonashiErrorReason;
 import com.uxxu.konashi.lib.KonashiManager;
 import com.uxxu.konashi.lib.listeners.KonashiAnalogListener;
 
+import org.jdeferred.DoneCallback;
+
 /**
  * A placeholder fragment containing a simple view.
  */
@@ -95,8 +97,14 @@ public class MainActivityFragment extends Fragment {
         public void onClick(View v) {
             for (int i = 0; i < READ_BUTTON_IDS.length; i++) {
                 if (READ_BUTTON_IDS[i] == v.getId()) {
-                    mCallback.getKonashiManager().analogReadRequest(AIO_PINS[i]);
-                    break;
+                    final int finalI = i;
+                    mCallback.getKonashiManager().analogRead(AIO_PINS[i])
+                            .then(new DoneCallback<Integer>() {
+                                @Override
+                                public void onDone(Integer result) {
+                                    setVoltage(AIO_PINS[finalI], result);
+                                }
+                            });
                 }
             }
         }
