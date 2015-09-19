@@ -9,7 +9,7 @@ import com.uxxu.konashi.lib.listeners.KonashiAnalogListener;
 /**
  * Created by izumin on 8/18/15.
  */
-public class AioStore implements KonashiAnalogListener{
+public class AioStore implements Store {
     private static final int[] PINS = {Konashi.AIO0, Konashi.AIO1, Konashi.AIO2};
     private SparseArray<Integer> mAioValues;
 
@@ -24,28 +24,7 @@ public class AioStore implements KonashiAnalogListener{
         return mAioValues.get(pin);
     }
 
-    @Override
-    public void onUpdateAnalogValue(int pin, int value) {
+    public void setAnalogValue(int pin, int value) {
         mAioValues.put(pin, value);
-    }
-
-    @Override
-    public void onUpdateAnalogValueAio0(int value) {
-        mAioValues.put(Konashi.AIO0, value);
-    }
-
-    @Override
-    public void onUpdateAnalogValueAio1(int value) {
-        mAioValues.put(Konashi.AIO1, value);
-    }
-
-    @Override
-    public void onUpdateAnalogValueAio2(int value) {
-        mAioValues.put(Konashi.AIO2, value);
-    }
-
-    @Override
-    public void onError(KonashiErrorReason errorReason, String message) {
-        // do nothing...
     }
 }
