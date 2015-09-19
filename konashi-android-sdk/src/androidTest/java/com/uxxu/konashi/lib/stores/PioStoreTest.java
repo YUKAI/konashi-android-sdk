@@ -3,7 +3,7 @@ package com.uxxu.konashi.lib.stores;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.uxxu.konashi.lib.Konashi;
-import com.uxxu.konashi.lib.dispatcher.PioDispatcher;
+import com.uxxu.konashi.lib.dispatcher.CharacteristicDispatcher;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(AndroidJUnit4.class)
 public class PioStoreTest {
 
-    @Mock private PioDispatcher mDispatcher;
+    @Mock private CharacteristicDispatcher mDispatcher;
     private PioStore mPioStore;
 
     @Before
