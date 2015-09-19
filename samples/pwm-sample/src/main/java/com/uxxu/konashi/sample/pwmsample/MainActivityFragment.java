@@ -1,6 +1,7 @@
 package com.uxxu.konashi.sample.pwmsample;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothGattCharacteristic;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -24,6 +25,8 @@ import com.uxxu.konashi.lib.KonashiErrorReason;
 import com.uxxu.konashi.lib.KonashiManager;
 import com.uxxu.konashi.lib.KonashiUtils;
 import com.uxxu.konashi.lib.listeners.KonashiPwmListener;
+
+import org.jdeferred.DoneCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -168,14 +171,19 @@ public class MainActivityFragment extends Fragment {
             mPwmSwitch = new Switch(context);
             mPwmSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                public void onCheckedChanged(CompoundButton compoundButton, final boolean b) {
                     final int pwmMode = b ? Konashi.PWM_ENABLE_LED_MODE : Konashi.PWM_DISABLE;
-                    mCallback.getKonashiManager().pwmMode(mPinNumber, pwmMode);
-                    if (pwmMode == Konashi.PWM_ENABLE_LED_MODE) {
-                        Utils.sleepShort();
-                        mCallback.getKonashiManager().pwmLedDrive(mPinNumber, mDutySeekBar.getProgress());
-                    }
-                    mDutySeekBar.setEnabled(b);
+                    mCallback.getKonashiManager().pwmMode(mPinNumber, pwmMode)
+                            .then(new DoneCallback<BluetoothGattCharacteristic>() {
+                                @Override
+                                public void onDone(BluetoothGattCharacteristic result) {
+                                    if (pwmMode == Konashi.PWM_ENABLE_LED_MODE) {
+                                        Utils.sleepShort();
+                                        mCallback.getKonashiManager().pwmLedDrive(mPinNumber, mDutySeekBar.getProgress());
+                                    }
+                                    mDutySeekBar.setEnabled(b);
+                                }
+                            });
                 }
             });
             addView(mPwmSwitch, Utils.createTableRowLayoutParamsWithWeight(1));
@@ -208,9 +216,13 @@ public class MainActivityFragment extends Fragment {
         }
 
         public void setValues(final int period, final int duty) {
-            mCallback.getKonashiManager().pwmPeriod(mPinNumber, period);
-            Utils.sleepShort();
-            mCallback.getKonashiManager().pwmDuty(mPinNumber, duty);
+            mCallback.getKonashiManager().pwmPeriod(mPinNumber, period)
+                    .then(new DoneCallback<BluetoothGattCharacteristic>() {
+                        @Override
+                        public void onDone(BluetoothGattCharacteristic result) {
+                            mCallback.getKonashiManager().pwmDuty(mPinNumber, duty);
+                        }
+                    });
         }
     }
 }

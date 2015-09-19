@@ -139,7 +139,7 @@ public class KonashiUtils {
         return Arrays.copyOfRange(bytes, 2, bytes[0] + 1);
     }
 
-    private static int bytes2int(byte[] bytes) {
+    public static int bytes2int(byte[] bytes) {
         int value = 0;
         for (byte b : bytes) {
             value = (value << 8) | (b & 0xff);
