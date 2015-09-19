@@ -386,27 +386,27 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * @param pin AIOのピン名。指定可能なピン名は AIO0, AIO1, AIO2
      * @param milliVolt 設定する電圧をmVで指定。0〜1300を指定可能
      */
-    @Override
-    public void analogWrite(int pin, int milliVolt){
-        if(!isEnableAccessKonashi()){
-            notifyKonashiError(KonashiErrorReason.NOT_READY);
-            return;
-        }
-        
-        if(pin >= Konashi.AIO0 && pin <= Konashi.AIO2 && milliVolt >= 0 && milliVolt <= Konashi.ANALOG_REFERENCE){
-            byte[] val = new byte[3];
-            val[0] = (byte)pin;
-            val[1] = (byte)((milliVolt >> 8) & 0xFF);
-            val[2] = (byte)((milliVolt >> 0) & 0xFF);
+//    @Override
+//    public void analogWrite(int pin, int milliVolt){
+//        if(!isEnableAccessKonashi()){
+//            notifyKonashiError(KonashiErrorReason.NOT_READY);
+//            return;
+//        }
+//
+//        if(pin >= Konashi.AIO0 && pin <= Konashi.AIO2 && milliVolt >= 0 && milliVolt <= Konashi.ANALOG_REFERENCE){
+//            byte[] val = new byte[3];
+//            val[0] = (byte)pin;
+//            val[1] = (byte)((milliVolt >> 8) & 0xFF);
+//            val[2] = (byte)((milliVolt >> 0) & 0xFF);
+//
+//            KonashiUtils.log("analogWrite pin: " + pin + ", value: " + milliVolt);
+//
+//            addWriteMessage(KonashiUUID.ANALOG_DRIVE_UUID, val);
+//        } else {
+//            notifyKonashiError(KonashiErrorReason.INVALID_PARAMETER);
+//        }
+//    }
 
-            KonashiUtils.log("analogWrite pin: " + pin + ", value: " + milliVolt);
-            
-            addWriteMessage(KonashiUUID.ANALOG_DRIVE_UUID, val);
-        } else {
-            notifyKonashiError(KonashiErrorReason.INVALID_PARAMETER);
-        }
-    }
-    
     
     ///////////////////////////
     // UART

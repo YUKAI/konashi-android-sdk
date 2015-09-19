@@ -65,7 +65,7 @@ public interface KonashiApiInterface {
     
     // AIO
     public Promise<Integer, BletiaException, Object> analogRead(int pin);
-    public void analogWrite(int pin, int milliVolt);
+//    public void analogWrite(int pin, int milliVolt);
 
     // I2C
     public void i2cMode(int mode);
