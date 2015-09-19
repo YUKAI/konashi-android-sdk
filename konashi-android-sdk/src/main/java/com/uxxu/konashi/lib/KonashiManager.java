@@ -3,6 +3,7 @@ package com.uxxu.konashi.lib;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.content.Context;
 
+import com.uxxu.konashi.lib.action.AioAnalogReadAction;
 import com.uxxu.konashi.lib.action.PioDigitalWriteAction;
 import com.uxxu.konashi.lib.action.PioPinModeAction;
 import com.uxxu.konashi.lib.action.PioPinPullupAction;
@@ -10,20 +11,25 @@ import com.uxxu.konashi.lib.action.PwmDutyAction;
 import com.uxxu.konashi.lib.action.PwmLedDriveAction;
 import com.uxxu.konashi.lib.action.PwmPeriodAction;
 import com.uxxu.konashi.lib.action.PwmPinModeAction;
+import com.uxxu.konashi.lib.dispatcher.AioStoreUpdater;
 import com.uxxu.konashi.lib.dispatcher.CharacteristicDispatcher;
 import com.uxxu.konashi.lib.dispatcher.PioStoreUpdater;
 import com.uxxu.konashi.lib.dispatcher.PwmStoreUpdater;
+import com.uxxu.konashi.lib.filter.AioAnalogReadFilter;
 import com.uxxu.konashi.lib.listeners.KonashiBaseListener;
-import com.uxxu.konashi.lib.stores.KonashiAnalogStore;
+import com.uxxu.konashi.lib.stores.AioStore;
 import com.uxxu.konashi.lib.stores.PioStore;
 import com.uxxu.konashi.lib.stores.PwmStore;
+import com.uxxu.konashi.lib.util.AioUtils;
 
+import org.jdeferred.DoneFilter;
 import org.jdeferred.DonePipe;
 import org.jdeferred.Promise;
 
 import java.util.List;
 
 import info.izumin.android.bletia.BletiaException;
+import info.izumin.android.bletia.action.ReadCharacteristicAction;
 
 
 /**
@@ -60,7 +66,8 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
     private CharacteristicDispatcher<PwmStore, PwmStoreUpdater> mPwmDispatcher;
 
     // AIO
-    private KonashiAnalogStore mAnalogStore;
+    private AioStore mAioStore;
+    private CharacteristicDispatcher<AioStore, AioStoreUpdater> mAioDispatcher;
 
     // I2C
     private byte mI2cSetting;
@@ -92,8 +99,8 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
         mPwmStore = new PwmStore(mPwmDispatcher);
 
         // AIO
-        mAnalogStore = new KonashiAnalogStore();
-        addListener(mAnalogStore);
+        mAioDispatcher = new CharacteristicDispatcher<>(AioStoreUpdater.class);
+        mAioStore = new AioStore(mAioDispatcher);
 
         // I2C
         mI2cSetting = 0;
@@ -364,44 +371,14 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
     ///////////////////////////
 
     /**
-     * AIO の指定のピンの入力電圧を取得するリクエストを konashi に送る
-     * @param pin AIOのピン名。指定可能なピン名は AIO0, AIO1, AIO2
-     */
-    @Override
-    public void analogReadRequest(int pin) {
-        if(!isEnableAccessKonashi()){
-            notifyKonashiError(KonashiErrorReason.NOT_READY);
-            return;
-        }
-        
-        if(pin==Konashi.AIO0){
-            addReadMessage(KonashiUUID.ANALOG_READ0_UUID);
-        } else if(pin==Konashi.AIO1){
-            addReadMessage(KonashiUUID.ANALOG_READ1_UUID);
-        } else if(pin==Konashi.AIO2) {
-            addReadMessage(KonashiUUID.ANALOG_READ2_UUID);
-        } else {
-            notifyKonashiError(KonashiErrorReason.INVALID_PARAMETER);
-        }
-    }
-    
-    /**
      * AIO の指定のピンの入力電圧を取得する
      * @param pin AIOのピン名。指定可能なピン名は AIO0, AIO1, AIO2
      */
     @Override
-    public int analogRead(int pin) {
-        if(!isEnableAccessKonashi()){
-            notifyKonashiError(KonashiErrorReason.NOT_READY);
-            return -1;
-        }
-        
-        if(pin >= Konashi.AIO0 && pin <= Konashi.AIO2){
-            return mAnalogStore.getAnalogValue(pin);
-        } else {
-            notifyKonashiError(KonashiErrorReason.INVALID_PARAMETER);
-            return -1;
-        }
+    public Promise<Integer, BletiaException, Object> analogRead(final int pin) {
+        return execute(new AioAnalogReadAction(getKonashiService(), pin))
+                .then(mAioDispatcher)
+                .then(new AioAnalogReadFilter(pin));
     }
     
     /**

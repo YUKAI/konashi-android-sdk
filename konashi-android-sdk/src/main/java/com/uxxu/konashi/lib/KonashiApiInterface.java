@@ -64,10 +64,9 @@ public interface KonashiApiInterface {
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> pwmLedDrive(int pin, double dutyRatio);
     
     // AIO
-    public void analogReadRequest(int pin);
-    public int analogRead(int pin);
+    public Promise<Integer, BletiaException, Object> analogRead(int pin);
     public void analogWrite(int pin, int milliVolt);
-    
+
     // I2C
     public void i2cMode(int mode);
     public void i2cStartCondition();
