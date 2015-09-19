@@ -57,11 +57,11 @@ public interface KonashiApiInterface {
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> digitalWriteAll(int value);
     
     // PWM
-    public void pwmMode(int pin, int mode);
-    public void pwmPeriod(int pin, int period);
-    public void pwmDuty(int pin, int duty);
-    public void pwmLedDrive(int pin, float dutyRatio);
-    public void pwmLedDrive(int pin, double dutyRatio);
+    public Promise<BluetoothGattCharacteristic, BletiaException, Object> pwmMode(int pin, int mode);
+    public Promise<BluetoothGattCharacteristic, BletiaException, Object> pwmPeriod(int pin, int period);
+    public Promise<BluetoothGattCharacteristic, BletiaException, Object> pwmDuty(int pin, int duty);
+    public Promise<BluetoothGattCharacteristic, BletiaException, Object> pwmLedDrive(int pin, float dutyRatio);
+    public Promise<BluetoothGattCharacteristic, BletiaException, Object> pwmLedDrive(int pin, double dutyRatio);
     
     // AIO
     public void analogReadRequest(int pin);
