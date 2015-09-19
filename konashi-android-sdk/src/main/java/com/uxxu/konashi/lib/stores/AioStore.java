@@ -9,11 +9,11 @@ import com.uxxu.konashi.lib.listeners.KonashiAnalogListener;
 /**
  * Created by izumin on 8/18/15.
  */
-public class KonashiAnalogStore implements KonashiAnalogListener{
+public class AioStore implements KonashiAnalogListener{
     private static final int[] PINS = {Konashi.AIO0, Konashi.AIO1, Konashi.AIO2};
     private SparseArray<Integer> mAioValues;
 
-    public KonashiAnalogStore() {
+    public AioStore() {
         mAioValues = new SparseArray<>();
         for (int pin : PINS) {
             mAioValues.put(pin, 0);
