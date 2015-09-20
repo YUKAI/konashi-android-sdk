@@ -14,4 +14,9 @@ public final class I2cUtils {
         return (mode == Konashi.I2C_DISABLE) || (mode == Konashi.I2C_ENABLE)
                 || (mode == Konashi.I2C_ENABLE_100K) || (mode == Konashi.I2C_ENABLE_400K);
     }
+
+    public static boolean isValidCondition(int condition) {
+        return (condition == Konashi.I2C_START_CONDITION) || (condition == Konashi.I2C_STOP_CONDITION)
+                || (condition == Konashi.I2C_RESTART_CONDITION);
+    }
 }
