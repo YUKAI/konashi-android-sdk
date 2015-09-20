@@ -12,7 +12,7 @@ public class UartStore implements Store {
     private byte mUartBaudrate;
 
     public UartStore(CharacteristicDispatcher<UartStore, UartStoreUpdater> dispatcher) {
-        dispatcher.getStore(this);
+        dispatcher.setStore(this);
     }
 
     public byte getUartSetting() {
