@@ -12,7 +12,7 @@ import java.util.UUID;
  */
 public class I2cModeAction extends KonashiWriteCharacteristicAction {
 
-    private static final UUID UUID = KonashiUUID.PWM_CONFIG_UUID;
+    private static final UUID UUID = KonashiUUID.I2C_CONFIG_UUID;
 
     private final int mMode;
 
