@@ -5,6 +5,7 @@ import android.content.Context;
 
 import com.uxxu.konashi.lib.action.AioAnalogReadAction;
 import com.uxxu.konashi.lib.action.I2cModeAction;
+import com.uxxu.konashi.lib.action.I2cSendConditionAction;
 import com.uxxu.konashi.lib.action.PioDigitalWriteAction;
 import com.uxxu.konashi.lib.action.PioPinModeAction;
 import com.uxxu.konashi.lib.action.PioPinPullupAction;
@@ -533,25 +534,8 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * I2Cのコンディションを発行する
      * @param condition コンディション。Konashi.I2C_START_CONDITION, Konashi.I2C_RESTART_CONDITION, Konashi.I2C_STOP_CONDITION を指定できる。
      */
-    private void i2cSendCondition(int condition) {
-        if(!isEnableAccessKonashi()){
-            notifyKonashiError(KonashiErrorReason.NOT_READY);
-            return;
-        }
-        
-        if(!isEnableI2c()){
-            notifyKonashiError(KonashiErrorReason.NOT_ENABLED_I2C);
-            return;
-        }
-        
-        if(condition==Konashi.I2C_START_CONDITION || condition==Konashi.I2C_RESTART_CONDITION || condition==Konashi.I2C_STOP_CONDITION){
-            byte[] val = new byte[1];
-            val[0] = (byte)condition;
-            
-            addWriteMessage(KonashiUUID.I2C_START_STOP_UUID, val);
-        } else {
-            notifyKonashiError(KonashiErrorReason.INVALID_PARAMETER);
-        }
+    private Promise<BluetoothGattCharacteristic, BletiaException, Object> i2cSendCondition(int condition) {
+        return execute(new I2cSendConditionAction(getKonashiService(), condition));
     }
     
     /**
@@ -575,24 +559,24 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * I2Cのスタートコンディションを発行する
      */
     @Override
-    public void i2cStartCondition() {
-        i2cSendCondition(Konashi.I2C_START_CONDITION);        
+    public Promise<BluetoothGattCharacteristic, BletiaException, Object> i2cStartCondition() {
+        return i2cSendCondition(Konashi.I2C_START_CONDITION);
     }
 
     /**
      * I2Cのリスタートコンディションを発行する
      */
     @Override
-    public void i2cRestartCondition() {
-        i2cSendCondition(Konashi.I2C_RESTART_CONDITION);
+    public Promise<BluetoothGattCharacteristic, BletiaException, Object> i2cRestartCondition() {
+        return i2cSendCondition(Konashi.I2C_RESTART_CONDITION);
     }
 
     /**
      * I2Cのストップコンディションを発行する
      */
     @Override
-    public void i2cStopCondition() {
-        i2cSendCondition(Konashi.I2C_STOP_CONDITION);
+    public Promise<BluetoothGattCharacteristic, BletiaException, Object> i2cStopCondition() {
+        return i2cSendCondition(Konashi.I2C_STOP_CONDITION);
     }
 
     /**
