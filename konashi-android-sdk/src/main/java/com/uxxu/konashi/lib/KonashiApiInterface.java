@@ -68,7 +68,7 @@ public interface KonashiApiInterface {
 //    public void analogWrite(int pin, int milliVolt);
 
     // I2C
-    public void i2cMode(int mode);
+    public Promise<BluetoothGattCharacteristic, BletiaException, Object> i2cMode(int mode);
     public void i2cStartCondition();
     public void i2cRestartCondition();
     public void i2cStopCondition();
