@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.content.Context;
 
 import com.uxxu.konashi.lib.action.AioAnalogReadAction;
+import com.uxxu.konashi.lib.action.I2cModeAction;
 import com.uxxu.konashi.lib.action.PioDigitalWriteAction;
 import com.uxxu.konashi.lib.action.PioPinModeAction;
 import com.uxxu.konashi.lib.action.PioPinPullupAction;
@@ -13,15 +14,18 @@ import com.uxxu.konashi.lib.action.PwmPeriodAction;
 import com.uxxu.konashi.lib.action.PwmPinModeAction;
 import com.uxxu.konashi.lib.dispatcher.AioStoreUpdater;
 import com.uxxu.konashi.lib.dispatcher.CharacteristicDispatcher;
+import com.uxxu.konashi.lib.dispatcher.I2cStoreUpdater;
 import com.uxxu.konashi.lib.dispatcher.PioStoreUpdater;
 import com.uxxu.konashi.lib.dispatcher.PwmStoreUpdater;
 import com.uxxu.konashi.lib.filter.AioAnalogReadFilter;
 import com.uxxu.konashi.lib.listeners.KonashiBaseListener;
 import com.uxxu.konashi.lib.stores.AioStore;
+import com.uxxu.konashi.lib.stores.I2cStore;
 import com.uxxu.konashi.lib.stores.PioStore;
 import com.uxxu.konashi.lib.stores.PwmStore;
 import com.uxxu.konashi.lib.util.AioUtils;
 
+import org.jdeferred.DoneCallback;
 import org.jdeferred.DoneFilter;
 import org.jdeferred.DonePipe;
 import org.jdeferred.Promise;
@@ -70,6 +74,8 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
     private CharacteristicDispatcher<AioStore, AioStoreUpdater> mAioDispatcher;
 
     // I2C
+    private I2cStore mI2cStore;
+    private CharacteristicDispatcher<I2cStore, I2cStoreUpdater> mI2cDispatcher;
     private byte mI2cSetting;
     private byte[] mI2cReadData;
     private int mI2cReadDataLength;
@@ -103,6 +109,9 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
         mAioStore = new AioStore(mAioDispatcher);
 
         // I2C
+        mI2cDispatcher = new CharacteristicDispatcher<>(I2cStoreUpdater.class);
+        mI2cStore = new I2cStore(mI2cDispatcher);
+
         mI2cSetting = 0;
         mI2cReadData = new byte[Konashi.I2C_DATA_MAX_LENGTH];
         for(i=0; i<Konashi.I2C_DATA_MAX_LENGTH; i++)
@@ -383,7 +392,7 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
     
     /**
      * AIO の指定のピンに任意の電圧を出力する
-     * @param pin AIOのピン名。指定可能なピン名は AIO0, AIO1, AIO2
+     * @param pin AIOのピン名。指定可能なピン名は AIO0, AIO1, AIO
      * @param milliVolt 設定する電圧をmVで指定。0〜1300を指定可能
      */
 //    @Override
@@ -558,22 +567,8 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * @param mode 設定するI2Cのモード。Konashi.I2C_DISABLE , Konashi.I2C_ENABLE, Konashi.I2C_ENABLE_100K, Konashi.I2C_ENABLE_400Kを指定。
      */
     @Override
-    public void i2cMode(int mode) {
-        if(!isEnableAccessKonashi()){
-            notifyKonashiError(KonashiErrorReason.NOT_READY);
-            return;
-        }
-        
-        if(mode==Konashi.I2C_DISABLE || mode==Konashi.I2C_ENABLE || mode==Konashi.I2C_ENABLE_100K || mode==Konashi.I2C_ENABLE_400K){
-            mI2cSetting = (byte)mode;
-            
-            byte[] val = new byte[1];
-            val[0] = (byte)mode;
-            
-            addWriteMessage(KonashiUUID.I2C_CONFIG_UUID, val);
-        } else {
-            notifyKonashiError(KonashiErrorReason.INVALID_PARAMETER);
-        }
+    public Promise<BluetoothGattCharacteristic, BletiaException, Object> i2cMode(int mode) {
+        return execute(new I2cModeAction(getKonashiService(), mode), mI2cDispatcher);
     }
 
     /**
