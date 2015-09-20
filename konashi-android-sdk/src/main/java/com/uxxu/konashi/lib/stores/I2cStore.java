@@ -1,6 +1,8 @@
 package com.uxxu.konashi.lib.stores;
 
 import com.uxxu.konashi.lib.Konashi;
+import com.uxxu.konashi.lib.dispatcher.CharacteristicDispatcher;
+import com.uxxu.konashi.lib.dispatcher.I2cStoreUpdater;
 
 /**
  * Created by izumin on 9/20/15.
@@ -11,8 +13,9 @@ public class I2cStore implements Store {
     private int mReadDataLength = 0;
     private byte mReadAddress = 0;
 
-    public I2cStore() {
+    public I2cStore(CharacteristicDispatcher<I2cStore, I2cStoreUpdater> dispatcher) {
         for (int i = 0; i < mReadData.length; i++) { mReadData[i] = 0; }
+        dispatcher.setStore(this);
     }
 
     public byte getMode() {
