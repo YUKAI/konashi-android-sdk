@@ -21,22 +21,16 @@ public enum I2cStoreUpdater implements CharacteristicDispatcher.Updater<I2cStore
             // TODO: Not yet implemented.
         }
     },
-    WRITE_DATA(KonashiUUID.I2C_WRITE_UUID) {
+    WRITE(KonashiUUID.I2C_WRITE_UUID) {
         @Override
         public void update(I2cStore store, byte[] value) {
             // TODO: Not yet implemented.
         }
     },
-    READ_PARAM(KonashiUUID.I2C_READ_PARAM_UUID) {
+    READ(KonashiUUID.I2C_READ_PARAM_UUID) {
         @Override
         public void update(I2cStore store, byte[] value) {
-            // TODO: Not yet implemented.
-        }
-    },
-    READ_DATA(KonashiUUID.I2C_READ_UUID) {
-        @Override
-        public void update(I2cStore store, byte[] value) {
-            // TODO: Not yet implemented.
+            store.setReadData(value);
         }
     };
 
