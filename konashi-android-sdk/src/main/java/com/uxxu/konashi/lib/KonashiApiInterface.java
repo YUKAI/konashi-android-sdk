@@ -73,9 +73,8 @@ public interface KonashiApiInterface {
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> i2cRestartCondition();
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> i2cStopCondition();
     public void i2cWrite(int length, byte[] data, byte address);
-    public void i2cReadRequest(int length, byte address);
-    public byte[] i2cRead(int length);
-    
+    public Promise<byte[], BletiaException, Object> i2cRead(int length, byte address);
+
     // UART
     public void uartMode(int mode);
     public void uartBaudrate(int baudrate);

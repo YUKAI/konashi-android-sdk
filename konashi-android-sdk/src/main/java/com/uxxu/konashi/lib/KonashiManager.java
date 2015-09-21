@@ -5,6 +5,8 @@ import android.content.Context;
 
 import com.uxxu.konashi.lib.action.AioAnalogReadAction;
 import com.uxxu.konashi.lib.action.I2cModeAction;
+import com.uxxu.konashi.lib.action.I2cReadAction;
+import com.uxxu.konashi.lib.action.I2cSetReadParamAction;
 import com.uxxu.konashi.lib.action.I2cSendConditionAction;
 import com.uxxu.konashi.lib.action.PioDigitalWriteAction;
 import com.uxxu.konashi.lib.action.PioPinModeAction;
@@ -19,22 +21,19 @@ import com.uxxu.konashi.lib.dispatcher.I2cStoreUpdater;
 import com.uxxu.konashi.lib.dispatcher.PioStoreUpdater;
 import com.uxxu.konashi.lib.dispatcher.PwmStoreUpdater;
 import com.uxxu.konashi.lib.filter.AioAnalogReadFilter;
+import com.uxxu.konashi.lib.filter.I2cReadFilter;
 import com.uxxu.konashi.lib.listeners.KonashiBaseListener;
 import com.uxxu.konashi.lib.stores.AioStore;
 import com.uxxu.konashi.lib.stores.I2cStore;
 import com.uxxu.konashi.lib.stores.PioStore;
 import com.uxxu.konashi.lib.stores.PwmStore;
-import com.uxxu.konashi.lib.util.AioUtils;
 
-import org.jdeferred.DoneCallback;
-import org.jdeferred.DoneFilter;
 import org.jdeferred.DonePipe;
 import org.jdeferred.Promise;
 
 import java.util.List;
 
 import info.izumin.android.bletia.BletiaException;
-import info.izumin.android.bletia.action.ReadCharacteristicAction;
 
 
 /**
@@ -617,50 +616,15 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * @param address 読み込み先のアドレス
      */
     @Override
-    public void i2cReadRequest(int length, byte address) {
-        if(!isEnableAccessKonashi()){
-            notifyKonashiError(KonashiErrorReason.NOT_READY);
-            return;
-        }
-        
-        if(!isEnableI2c()){
-            notifyKonashiError(KonashiErrorReason.NOT_ENABLED_I2C);
-            return;
-        }
-        
-        if(length>0 && length<=Konashi.I2C_DATA_MAX_LENGTH){
-            mI2cReadAddress = (byte)((address<<1)|0x1);
-            mI2cReadDataLength = length;
-            
-            byte[] val = {(byte)length, mI2cReadAddress};
-            addWriteMessage(KonashiUUID.I2C_READ_PARAM_UUID, val);
-        } else {
-            notifyKonashiError(KonashiErrorReason.INVALID_PARAMETER);
-        }
-    }
-    
-    /**
-     * I2Cから読み込んだデータを取得する
-     * @param length 読み込むデータの長さ。最大 Konashi.I2C_DATA_MAX_LENGTHs (19)
-     */
-    @Override
-    public byte[] i2cRead(int length) {
-        if(!isEnableAccessKonashi()){
-            notifyKonashiError(KonashiErrorReason.NOT_READY);
-            return null;
-        }
-        
-        if(!isEnableI2c()){
-            notifyKonashiError(KonashiErrorReason.NOT_ENABLED_I2C);
-            return null;
-        }
-        
-        if(length>0 && length<=Konashi.I2C_DATA_MAX_LENGTH && length==mI2cReadDataLength){
-            return mI2cReadData;
-        } else {
-            notifyKonashiError(KonashiErrorReason.INVALID_PARAMETER);
-            return null;
-        }        
+    public Promise<byte[], BletiaException, Object> i2cRead(int length, byte address) {
+        return execute(new I2cSetReadParamAction(getKonashiService(), length, address), mI2cDispatcher)
+                .then(new DonePipe<BluetoothGattCharacteristic, BluetoothGattCharacteristic, BletiaException, Object>() {
+                    @Override
+                    public Promise<BluetoothGattCharacteristic, BletiaException, Object> pipeDone(BluetoothGattCharacteristic result) {
+                        return execute(new I2cReadAction(getKonashiService()));
+                    }
+                })
+                .then(new I2cReadFilter());
     }
 
     ///////////////////////////
