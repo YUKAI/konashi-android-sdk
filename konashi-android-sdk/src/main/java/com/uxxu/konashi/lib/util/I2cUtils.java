@@ -20,7 +20,7 @@ public final class I2cUtils {
                 || (condition == Konashi.I2C_RESTART_CONDITION);
     }
 
-    public static boolean isValidReadLength(int length) {
+    public static boolean isValidDataLength(int length) {
         return (length > 0) && (length <= Konashi.I2C_DATA_MAX_LENGTH);
     }
 }

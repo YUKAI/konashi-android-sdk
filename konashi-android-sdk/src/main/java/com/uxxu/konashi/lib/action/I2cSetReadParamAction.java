@@ -30,6 +30,6 @@ public class I2cSetReadParamAction extends KonashiWriteCharacteristicAction {
 
     @Override
     protected boolean hasValidParams() {
-        return I2cUtils.isValidReadLength(mLength);
+        return I2cUtils.isValidDataLength(mLength);
     }
 }
