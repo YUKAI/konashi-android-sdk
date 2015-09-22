@@ -49,4 +49,9 @@ public class I2cStore implements Store {
     public void setReadAddress(byte readAddress) {
         mReadAddress = readAddress;
     }
+
+    public boolean isEnabled() {
+        return (mMode == Konashi.I2C_ENABLE)
+                || (mMode == Konashi.I2C_ENABLE_100K) || (mMode == Konashi.I2C_ENABLE_400K);
+    }
 }
