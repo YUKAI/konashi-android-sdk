@@ -3,6 +3,8 @@ package com.uxxu.konashi.lib.action;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 
+import com.uxxu.konashi.lib.stores.I2cStore;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -24,6 +26,7 @@ public class I2cSetReadParamActionTest {
 
     @Mock private BluetoothGattService mService;
     @Mock private BluetoothGattCharacteristic mCharacteristic;
+    @Mock private I2cStore mStore;
 
     private I2cSetReadParamAction mAction;
 
@@ -34,29 +37,30 @@ public class I2cSetReadParamActionTest {
         MockitoAnnotations.initMocks(this);
         mValueCaptor = ArgumentCaptor.forClass(byte[].class);
         when(mService.getCharacteristic(any(UUID.class))).thenReturn(mCharacteristic);
+        when(mStore.isEnabled()).thenReturn(true);
     }
 
     @Test
     public void hasValidParams_WithOverLength() throws Exception {
-        mAction = new I2cSetReadParamAction(mService, 20, (byte) 0x53);
+        mAction = new I2cSetReadParamAction(mService, 20, (byte) 0x53, mStore);
         assertThat(mAction.hasValidParams()).isFalse();
     }
 
     @Test
     public void hasValidParams_WithUnderValidLength() throws Exception {
-        mAction = new I2cSetReadParamAction(mService, -1, (byte) 0x53);
+        mAction = new I2cSetReadParamAction(mService, -1, (byte) 0x53, mStore);
         assertThat(mAction.hasValidParams()).isFalse();
     }
 
     @Test
     public void hasValidParams_WithValidParams() throws Exception {
-        mAction = new I2cSetReadParamAction(mService, 5, (byte) 0x53);
+        mAction = new I2cSetReadParamAction(mService, 5, (byte) 0x53, mStore);
         assertThat(mAction.hasValidParams()).isTrue();
     }
 
     @Test
     public void setValue_WithValidParams() throws Exception {
-        mAction = new I2cSetReadParamAction(mService, 5, (byte) 0x53);
+        mAction = new I2cSetReadParamAction(mService, 5, (byte) 0x53, mStore);
         mAction.setValue();
         verify(mCharacteristic, times(1)).setValue(mValueCaptor.capture());
         assertThat(mValueCaptor.getValue()[0]).isEqualTo(5);

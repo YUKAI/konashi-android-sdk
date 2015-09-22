@@ -3,6 +3,8 @@ package com.uxxu.konashi.lib.action;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 
+import com.uxxu.konashi.lib.stores.I2cStore;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -24,6 +26,7 @@ public class I2cModeActionTest {
 
     @Mock private BluetoothGattService mService;
     @Mock private BluetoothGattCharacteristic mCharacteristic;
+    @Mock private I2cStore mStore;
 
     private I2cModeAction mAction;
 
@@ -34,23 +37,24 @@ public class I2cModeActionTest {
         MockitoAnnotations.initMocks(this);
         mValueCaptor = ArgumentCaptor.forClass(byte[].class);
         when(mService.getCharacteristic(any(UUID.class))).thenReturn(mCharacteristic);
+        when(mStore.isEnabled()).thenReturn(true);
     }
 
     @Test
     public void hasValidParams_WithInvalidMode() throws Exception {
-        mAction = new I2cModeAction(mService, 0x03);
+        mAction = new I2cModeAction(mService, 0x03, mStore);
         assertThat(mAction.hasValidParams()).isFalse();
     }
 
     @Test
     public void hasValidParams_WithValidMode() throws Exception {
-        mAction = new I2cModeAction(mService, 0x01);
+        mAction = new I2cModeAction(mService, 0x01, mStore);
         assertThat(mAction.hasValidParams()).isTrue();
     }
 
     @Test
     public void setValue_ToDisable() throws Exception {
-        mAction = new I2cModeAction(mService, 0x00);
+        mAction = new I2cModeAction(mService, 0x00, mStore);
         mAction.setValue();
         verify(mCharacteristic, times(1)).setValue(mValueCaptor.capture());
         assertThat(mValueCaptor.getValue()[0]).isEqualTo((byte) 0x00);
@@ -58,7 +62,7 @@ public class I2cModeActionTest {
 
     @Test
     public void setValue_ToEnable100k() throws Exception {
-        mAction = new I2cModeAction(mService, 0x01);
+        mAction = new I2cModeAction(mService, 0x01, mStore);
         mAction.setValue();
         verify(mCharacteristic, times(1)).setValue(mValueCaptor.capture());
         assertThat(mValueCaptor.getValue()[0]).isEqualTo((byte) 0x01);
@@ -66,7 +70,7 @@ public class I2cModeActionTest {
 
     @Test
     public void setValue_ToEnable400k() throws Exception {
-        mAction = new I2cModeAction(mService, 0x02);
+        mAction = new I2cModeAction(mService, 0x02, mStore);
         mAction.setValue();
         verify(mCharacteristic, times(1)).setValue(mValueCaptor.capture());
         assertThat(mValueCaptor.getValue()[0]).isEqualTo((byte) 0x02);
