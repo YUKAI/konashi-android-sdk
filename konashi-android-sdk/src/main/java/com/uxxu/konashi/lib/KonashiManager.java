@@ -8,6 +8,7 @@ import com.uxxu.konashi.lib.action.I2cModeAction;
 import com.uxxu.konashi.lib.action.I2cReadAction;
 import com.uxxu.konashi.lib.action.I2cSetReadParamAction;
 import com.uxxu.konashi.lib.action.I2cSendConditionAction;
+import com.uxxu.konashi.lib.action.I2cWriteAction;
 import com.uxxu.konashi.lib.action.PioDigitalWriteAction;
 import com.uxxu.konashi.lib.action.PioPinModeAction;
 import com.uxxu.konashi.lib.action.PioPinPullupAction;
@@ -585,29 +586,8 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * @param address 書き込み先アドレス
      */
     @Override
-    public void i2cWrite(int length, byte[] data, byte address) {        
-        if(!isEnableAccessKonashi()){
-            notifyKonashiError(KonashiErrorReason.NOT_READY);
-            return;
-        }
-        
-        if(!isEnableI2c()){
-            notifyKonashiError(KonashiErrorReason.NOT_ENABLED_I2C);
-            return;
-        }
-        
-        if(length>0 && length<=Konashi.I2C_DATA_MAX_LENGTH){
-            byte[] val = new byte[20];
-            val[0] = (byte)(length + 1);
-            val[1] = (byte)((address << 1) & 0xFE);
-            for(int i=0; i<length; i++){
-                val[i+2] = data[i];
-            }
-            
-            addWriteMessage(KonashiUUID.I2C_WRITE_UUID, val);
-        } else {
-            notifyKonashiError(KonashiErrorReason.INVALID_PARAMETER);
-        }
+    public Promise<BluetoothGattCharacteristic, BletiaException, Object> i2cWrite(int length, byte[] data, byte address) {
+        return execute(new I2cWriteAction(getKonashiService(), address, data));
     }
 
     /**
