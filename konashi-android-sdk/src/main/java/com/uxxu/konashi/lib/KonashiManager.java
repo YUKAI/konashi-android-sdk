@@ -638,32 +638,14 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
         return execute(new BatteryLevelReadAction(getService(KonashiUUID.BATTERY_SERVICE_UUID)))
                 .then(new BatteryLevelReadFilter());
     }
-    
-    /**
-     * konashi の電波強度を取得するリクエストを行う
-     */
-    @Override
-    public void signalStrengthReadRequest() {
-        if(!isEnableAccessKonashi()){
-            notifyKonashiError(KonashiErrorReason.NOT_READY);
-            return;
-        }
-        
-        readRemoteRssi();
-    }
 
     /**
      * konashi の電波強度を取得
      * @return 電波強度(単位はdb)
      */
     @Override
-    public int getSignalStrength() {
-        if(!isEnableAccessKonashi()){
-            notifyKonashiError(KonashiErrorReason.NOT_READY);
-            return -1;
-        }
-        
-        return mRssi;
+    public Promise<Integer, BletiaException, Object> getSignalStrength() {
+        return readRemoteRssi();
     }
 
     public static byte[] toByteArray(List<Byte> in) {
