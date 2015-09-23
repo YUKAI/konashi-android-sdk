@@ -41,7 +41,7 @@ public class UartBaudrateActionTest {
     }
 
     @Test
-    public void hasValidParams_ForValidValud() throws Exception {
+    public void hasValidParams_ForValidValue() throws Exception {
         mAction = new UartBaudrateAction(mService, Konashi.UART_RATE_9K6);
         assertThat(mAction.hasValidParams()).isTrue();
     }
