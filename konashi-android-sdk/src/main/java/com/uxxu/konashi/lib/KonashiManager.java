@@ -430,36 +430,23 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> uartBaudrate(int baudrate){
         return uartBaudrate(baudrate);
     }
-    
+
     /**
      * UART でデータを送信する
-     * @param data 送信するデータ
+     * @param bytes 送信するデータ(byte[])
      */
     @Override
-    public void uartWrite(byte[] data){
-        if(!isEnableAccessKonashi()){
-            notifyKonashiError(KonashiErrorReason.NOT_READY);
-            return;
-        }
+    public Promise<BluetoothGattCharacteristic, BletiaException, Object> uartWrite(byte[] bytes) {
+        return uartWrite(bytes);
+    }
 
-        int length = data.length;
-
-        if(length > 0 && length <= Konashi.UART_DATA_MAX_LENGTH){
-            /**
-             * 先頭1バイト目に送信バイト数を，
-             * 2バイト目以降に送信データを配置
-             */
-            byte[] val = new byte[Konashi.UART_DATA_MAX_LENGTH + 1];
-            val[0] = (byte)length;
-            for(int i=0; i<length; i++){
-                val[i+1] = data[i];
-            }
-
-            addWriteMessage(KonashiUUID.UART_TX_UUID, val);
-        } else {
-            notifyKonashiError(KonashiErrorReason.INVALID_PARAMETER);
-        }
-
+    /**
+     * UART でデータを送信する
+     * @param string 送信するデータ(string)
+     */
+    @Override
+    public Promise<BluetoothGattCharacteristic, BletiaException, Object> uartWrite(String string) {
+        return uartWrite(string);
     }
 
     /**
