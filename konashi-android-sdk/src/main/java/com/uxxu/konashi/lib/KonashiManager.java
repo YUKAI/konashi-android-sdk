@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.content.Context;
 
 import com.uxxu.konashi.lib.action.AioAnalogReadAction;
+import com.uxxu.konashi.lib.action.BatteryLevelReadAction;
 import com.uxxu.konashi.lib.action.I2cModeAction;
 import com.uxxu.konashi.lib.action.I2cReadAction;
 import com.uxxu.konashi.lib.action.I2cSetReadParamAction;
@@ -22,6 +23,7 @@ import com.uxxu.konashi.lib.dispatcher.I2cStoreUpdater;
 import com.uxxu.konashi.lib.dispatcher.PioStoreUpdater;
 import com.uxxu.konashi.lib.dispatcher.PwmStoreUpdater;
 import com.uxxu.konashi.lib.filter.AioAnalogReadFilter;
+import com.uxxu.konashi.lib.filter.BatteryLevelReadFilter;
 import com.uxxu.konashi.lib.filter.I2cReadFilter;
 import com.uxxu.konashi.lib.listeners.KonashiBaseListener;
 import com.uxxu.konashi.lib.stores.AioStore;
@@ -626,32 +628,15 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
         
         addWriteMessage(KonashiUUID.HARDWARE_RESET_UUID, val);
     }
-    
-    /**
-     * konashi のバッテリ残量を取得するリクエストを konashi に送信
-     */
-    @Override
-    public void batteryLevelReadRequest(){
-        if(!isEnableAccessKonashi()){
-            notifyKonashiError(KonashiErrorReason.NOT_READY);
-            return;
-        }
-        
-        addReadMessage(KonashiUUID.BATTERY_SERVICE_UUID, KonashiUUID.BATTERY_LEVEL_UUID);
-    }
-    
+
     /**
      * konashi のバッテリ残量を取得
      * @return 0 〜 100 のパーセント単位でバッテリ残量が返る
      */
     @Override
-    public int getBatteryLevel(){
-        if(!isEnableAccessKonashi()){
-            notifyKonashiError(KonashiErrorReason.NOT_READY);
-            return -1;
-        }
-        
-        return mBatteryLevel;
+    public Promise<Integer, BletiaException, Object> getBatteryLevel(){
+        return execute(new BatteryLevelReadAction(getService(KonashiUUID.BATTERY_SERVICE_UUID)))
+                .then(new BatteryLevelReadFilter());
     }
     
     /**

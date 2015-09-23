@@ -83,8 +83,7 @@ public interface KonashiApiInterface {
     
     // Hardware
     public void reset();
-    public void batteryLevelReadRequest();
-    public int getBatteryLevel();
+    public Promise<Integer, BletiaException, Object> getBatteryLevel();
     public void signalStrengthReadRequest();
     public int getSignalStrength();
 }
