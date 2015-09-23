@@ -78,7 +78,7 @@ public interface KonashiApiInterface {
     
     // UART
     public void uartMode(int mode);
-    public void uartBaudrate(int baudrate);
+    public Promise<BluetoothGattCharacteristic, BletiaException, Object> uartBaudrate(int baudrate);
     public void uartWrite(byte[] data);
     //public void uartWrite(byte data); //for konashi v1(old code)
     

@@ -15,11 +15,13 @@ import com.uxxu.konashi.lib.dispatcher.AioStoreUpdater;
 import com.uxxu.konashi.lib.dispatcher.CharacteristicDispatcher;
 import com.uxxu.konashi.lib.dispatcher.PioStoreUpdater;
 import com.uxxu.konashi.lib.dispatcher.PwmStoreUpdater;
+import com.uxxu.konashi.lib.dispatcher.UartStoreUpdater;
 import com.uxxu.konashi.lib.filter.AioAnalogReadFilter;
 import com.uxxu.konashi.lib.listeners.KonashiBaseListener;
 import com.uxxu.konashi.lib.stores.AioStore;
 import com.uxxu.konashi.lib.stores.PioStore;
 import com.uxxu.konashi.lib.stores.PwmStore;
+import com.uxxu.konashi.lib.stores.UartStore;
 import com.uxxu.konashi.lib.util.AioUtils;
 
 import org.jdeferred.DoneFilter;
@@ -76,8 +78,8 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
     private byte mI2cReadAddress;
     
     // UART
-    private byte mUartSetting;
-    private byte mUartBaudrate;
+    private UartStore mUartStore;
+    private CharacteristicDispatcher<UartStore, UartStoreUpdater> mUartDispatcher;
     
     // Hardware
     private int mBatteryLevel;
@@ -111,8 +113,8 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
         mI2cReadAddress = 0;
             
         // UART
-        mUartSetting = 0;
-        mUartBaudrate = 0;
+        mUartDispatcher = new CharacteristicDispatcher<>(UartStoreUpdater.class);
+        mUartStore = new UartStore(mUartDispatcher);
             
         // Hardware
         mBatteryLevel = 0;
@@ -411,28 +413,27 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
     ///////////////////////////
     // UART
     ///////////////////////////
-        
     /**
      * UART の有効/無効を設定する
      * @param mode 設定するUARTのモード。Konashi.UART_DISABLE, Konashi.UART_ENABLE を指定
      */
     @Override
     public void uartMode(int mode){
-        if(!isEnableAccessKonashi()){
-            notifyKonashiError(KonashiErrorReason.NOT_READY);
-            return;
-        }
-        
-        if(mode==Konashi.UART_DISABLE || mode==Konashi.UART_ENABLE){
-            mUartSetting = (byte)mode;
-            
-            byte[] val = new byte[1];
-            val[0] = (byte)mode;
-            
-            addWriteMessage(KonashiUUID.UART_CONFIG_UUID, val);
-        } else {
-            notifyKonashiError(KonashiErrorReason.INVALID_PARAMETER);
-        }
+//        if(!isEnableAccessKonashi()){
+//            notifyKonashiError(KonashiErrorReason.NOT_READY);
+//            return;
+//        }
+//
+//        if(mode==Konashi.UART_DISABLE || mode==Konashi.UART_ENABLE){
+//            mUartSetting = (byte)mode;
+//
+//            byte[] val = new byte[1];
+//            val[0] = (byte)mode;
+//
+//            addWriteMessage(KonashiUUID.UART_CONFIG_UUID, val);
+//        } else {
+//            notifyKonashiError(KonashiErrorReason.INVALID_PARAMETER);
+//        }
     }
     
     /**
@@ -440,26 +441,8 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * @param baudrate UARTの通信速度。Konashi.UART_RATE_2K4 か Konashi.UART_RATE_9K6 を指定
      */
     @Override
-    public void uartBaudrate(int baudrate){
-        if(!isEnableAccessKonashi()){
-            notifyKonashiError(KonashiErrorReason.NOT_READY);
-            return;
-        }
-        
-        if (baudrate == Konashi.UART_RATE_9K6 || baudrate == Konashi.UART_RATE_19K2 ||
-                baudrate == Konashi.UART_RATE_38K4 || baudrate == Konashi.UART_RATE_57K6 ||
-                baudrate == Konashi.UART_RATE_76K8 || baudrate == Konashi.UART_RATE_115K2
-                ) {
-            mUartBaudrate = (byte)baudrate;
-            
-            byte[] val = new byte[2];
-            val[0] = (byte)((baudrate >> 8) & 0xFF);
-            val[1] = (byte)((baudrate >> 0) & 0xFF);
-            
-            addWriteMessage(KonashiUUID.UART_BAUDRATE_UUID, val);
-        } else {
-            notifyKonashiError(KonashiErrorReason.INVALID_PARAMETER);
-        }
+    public Promise<BluetoothGattCharacteristic, BletiaException, Object> uartBaudrate(int baudrate){
+        return uartBaudrate(baudrate);
     }
     
     /**
