@@ -418,22 +418,8 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * @param mode 設定するUARTのモード。Konashi.UART_DISABLE, Konashi.UART_ENABLE を指定
      */
     @Override
-    public void uartMode(int mode){
-//        if(!isEnableAccessKonashi()){
-//            notifyKonashiError(KonashiErrorReason.NOT_READY);
-//            return;
-//        }
-//
-//        if(mode==Konashi.UART_DISABLE || mode==Konashi.UART_ENABLE){
-//            mUartSetting = (byte)mode;
-//
-//            byte[] val = new byte[1];
-//            val[0] = (byte)mode;
-//
-//            addWriteMessage(KonashiUUID.UART_CONFIG_UUID, val);
-//        } else {
-//            notifyKonashiError(KonashiErrorReason.INVALID_PARAMETER);
-//        }
+    public Promise<BluetoothGattCharacteristic, BletiaException, Object> uartMode(int mode){
+        return uartMode(mode);
     }
     
     /**
