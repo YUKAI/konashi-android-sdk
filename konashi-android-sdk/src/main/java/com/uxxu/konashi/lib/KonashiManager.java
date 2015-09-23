@@ -1,6 +1,8 @@
 package com.uxxu.konashi.lib;
 
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattService;
 import android.content.Context;
 
 import com.uxxu.konashi.lib.action.AioAnalogReadAction;
@@ -31,12 +33,16 @@ import com.uxxu.konashi.lib.stores.I2cStore;
 import com.uxxu.konashi.lib.stores.PioStore;
 import com.uxxu.konashi.lib.stores.PwmStore;
 
+import org.jdeferred.DoneCallback;
 import org.jdeferred.DonePipe;
 import org.jdeferred.Promise;
 
 import java.util.List;
+import java.util.UUID;
 
+import info.izumin.android.bletia.Bletia;
 import info.izumin.android.bletia.BletiaException;
+import info.izumin.android.bletia.action.Action;
 
 
 /**
@@ -88,6 +94,10 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
     private int mBatteryLevel;
     private int mRssi;
 
+    private Bletia mBletia;
+    private EventEmitter mEmitter;
+    private CallbackHandler mCallbackHandler;
+
     ///////////////////////////
     // Initialization
     ///////////////////////////
@@ -125,13 +135,34 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
     public void initialize(Context context) {
         super.initialize(context);
 
+        mBletia = new Bletia(context);
+        mEmitter = new EventEmitter();
+        mCallbackHandler = new CallbackHandler(this, mEmitter);
+        mBletia.addListener(mCallbackHandler);
+
         initializeMembers();
     }
-    
-    
+
+
+    /**
+     * konashiとの接続を解除する
+     */
+    public void disconnect(){
+        mBletia.disconenct();
+    }
+
     ///////////////////////////
     // Observer
     ///////////////////////////
+
+
+    public void addListener(KonashiListener listener) {
+        mEmitter.add(listener);
+    }
+
+    public void removeListener(KonashiListener listener) {
+        mEmitter.remove(listener);
+    }
 
     /**
      * konashiのイベントのリスナーを追加する
@@ -141,6 +172,7 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
     public void addListener(KonashiBaseListener listener){
         mNotifier.addListener(listener);
     }
+
 
     /**
      * 指定したリスナーを削除する
@@ -627,7 +659,7 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      */
     @Override
     public Promise<Integer, BletiaException, Object> getSignalStrength() {
-        return readRemoteRssi();
+        return mBletia.readRemoteRssi();
     }
 
     public static byte[] toByteArray(List<Byte> in) {
@@ -674,5 +706,26 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
         mRssi = rssi;
         
         super.onUpdateSignalSrength(rssi);
+    }
+
+    @Override
+    protected void connect(BluetoothDevice device){
+        mBletia.connect(device);
+    }
+
+    private <T> Promise<T, BletiaException, Object> execute(Action<T> action, DoneCallback<T> callback) {
+        return execute(action).then(callback);
+    }
+
+    private <T> Promise<T, BletiaException, Object> execute(Action<T> action) {
+        return mBletia.execute(action);
+    }
+
+    private BluetoothGattService getKonashiService() {
+        return mBletia.getService(KonashiUUID.KONASHI_SERVICE_UUID);
+    }
+
+    private BluetoothGattService getService(UUID uuid) {
+        return mBletia.getService(uuid);
     }
 }

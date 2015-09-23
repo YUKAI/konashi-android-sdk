@@ -62,7 +62,7 @@ import info.izumin.android.bletia.action.Action;
  * limitations under the License.
  *
  */
-public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBleDeviceSelectListener {
+public abstract class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBleDeviceSelectListener {
     
     /*************************
      * konashi constants
@@ -128,7 +128,6 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
     private Activity mActivity;
     private BleDeviceSelectionDialog mDialog;
 
-    private Bletia mBletia;
     private BluetoothGattService mGattService;
     
     /////////////////////////////////////////////////////////////
@@ -181,7 +180,6 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
             }
         };
 
-        mBletia = new Bletia(context);
         mIsInitialized = true;
     }
     
@@ -245,33 +243,7 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
         }
 
     }
-    
-    /**
-     * konashiとの接続を解除する
-     */
-    public void disconnect(){
-        mBletia.disconenct();
-    }
-    
-    /**
-     * disconnectし、変数をリセットする
-     */
-    public void close(){
-        if(mStatus.equals(BleStatus.CLOSED)){
-            return;
-        }
-        
-        // disconnect if not-disconnected & close
-        if(!mStatus.equals(BleStatus.DISCONNECTED)){
-            disconnect();
-        }
 
-        // remove all observers
-        mNotifier.removeAllObservers();
-        
-        setStatus(BleStatus.CLOSED);
-    }
-    
     /**
      * konashiと接続済みかどうか
      * @return konashiと接続済みだったらtrue
@@ -310,26 +282,6 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
      */
     public boolean isEnableAccessKonashi(){
         return mIsSupportBle && mIsInitialized && mStatus.equals(BleStatus.READY);
-    }
-
-    protected <T> Promise<T, BletiaException, Object> execute(Action<T> action, DoneCallback<T> callback) {
-        return execute(action).then(callback);
-    }
-
-    protected <T> Promise<T, BletiaException, Object> execute(Action<T> action) {
-        return mBletia.execute(action);
-    }
-
-    protected BluetoothGattService getKonashiService() {
-        return mGattService;
-    }
-
-    protected BluetoothGattService getService(UUID uuid) {
-        return mBletia.getService(uuid);
-    }
-
-    protected Promise<Integer, BletiaException, Object> readRemoteRssi() {
-        return mBletia.readRemoteRssi();
     }
 
     /****************************
@@ -415,46 +367,9 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
     /******************************************
      * BLE methods
      ******************************************/
-    
-    private void connect(BluetoothDevice device){
-        mBletia.addListener(mBletiaListener);
-        mBletia.connect(device);
-    }
 
-    private final BletiaListener mBletiaListener = new BletiaListener() {
-        @Override
-        public void onConnect(Bletia bletia) {
-            setStatus(BleStatus.CONNECTED);
-            bletia.discoverServices();
-        }
+    protected abstract void connect(BluetoothDevice device);
 
-        @Override
-        public void onDisconnect(Bletia bletia) {
-
-        }
-
-        @Override
-        public void onError(BletiaException e) {
-            KonashiUtils.log(e.getType().getName());
-        }
-
-        @Override
-        public void onServicesDiscovered(Bletia bletia, int status) {
-            if (status == BluetoothGatt.GATT_SUCCESS) {
-                mGattService = bletia.getService(KonashiUUID.KONASHI_SERVICE_UUID);
-                mBletia.enableNotification(mGattService.getCharacteristic(KonashiUUID.PIO_INPUT_NOTIFICATION_UUID), true);
-                mBletia.enableNotification(mGattService.getCharacteristic(KonashiUUID.UART_RX_NOTIFICATION_UUID), true);
-                mBletia.enableNotification(mGattService.getCharacteristic(KonashiUUID.HARDWARE_LOW_BAT_NOTIFICATION_UUID), true);
-                setStatus(BleStatus.READY);
-            }
-        }
-
-        @Override
-        public void onCharacteristicChanged(Bletia bletia, BluetoothGattCharacteristic characteristic) {
-            KonashiCharacteristic.valueOf(characteristic.getUuid()).handle(characteristic, mNotifier);
-        }
-    };
-    
     private final BluetoothGattCallback mBluetoothGattCallback = new BluetoothGattCallback() {
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
