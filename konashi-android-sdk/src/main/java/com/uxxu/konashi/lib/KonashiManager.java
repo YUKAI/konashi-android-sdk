@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.content.Context;
 
 import com.uxxu.konashi.lib.action.AioAnalogReadAction;
+import com.uxxu.konashi.lib.action.BatteryLevelReadAction;
 import com.uxxu.konashi.lib.action.I2cModeAction;
 import com.uxxu.konashi.lib.action.I2cReadAction;
 import com.uxxu.konashi.lib.action.I2cSetReadParamAction;
@@ -22,6 +23,7 @@ import com.uxxu.konashi.lib.dispatcher.I2cStoreUpdater;
 import com.uxxu.konashi.lib.dispatcher.PioStoreUpdater;
 import com.uxxu.konashi.lib.dispatcher.PwmStoreUpdater;
 import com.uxxu.konashi.lib.filter.AioAnalogReadFilter;
+import com.uxxu.konashi.lib.filter.BatteryLevelReadFilter;
 import com.uxxu.konashi.lib.filter.I2cReadFilter;
 import com.uxxu.konashi.lib.listeners.KonashiBaseListener;
 import com.uxxu.konashi.lib.stores.AioStore;
@@ -77,11 +79,7 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
     // I2C
     private I2cStore mI2cStore;
     private CharacteristicDispatcher<I2cStore, I2cStoreUpdater> mI2cDispatcher;
-    private byte mI2cSetting;
-    private byte[] mI2cReadData;
-    private int mI2cReadDataLength;
-    private byte mI2cReadAddress;
-    
+
     // UART
     private byte mUartSetting;
     private byte mUartBaudrate;
@@ -113,13 +111,6 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
         mI2cDispatcher = new CharacteristicDispatcher<>(I2cStoreUpdater.class);
         mI2cStore = new I2cStore(mI2cDispatcher);
 
-        mI2cSetting = 0;
-        mI2cReadData = new byte[Konashi.I2C_DATA_MAX_LENGTH];
-        for(i=0; i<Konashi.I2C_DATA_MAX_LENGTH; i++)
-            mI2cReadData[i] = 0;
-        mI2cReadDataLength = 0;
-        mI2cReadAddress = 0;
-            
         // UART
         mUartSetting = 0;
         mUartBaudrate = 0;
@@ -535,24 +526,16 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * @param condition コンディション。Konashi.I2C_START_CONDITION, Konashi.I2C_RESTART_CONDITION, Konashi.I2C_STOP_CONDITION を指定できる。
      */
     private Promise<BluetoothGattCharacteristic, BletiaException, Object> i2cSendCondition(int condition) {
-        return execute(new I2cSendConditionAction(getKonashiService(), condition));
+        return execute(new I2cSendConditionAction(getKonashiService(), condition, mI2cStore));
     }
-    
-    /**
-     * I2Cが有効なモードに設定しているか
-     * @return 有効なモードに設定されているならtrue
-     */
-    public boolean isEnableI2c(){
-        return (mI2cSetting==Konashi.I2C_ENABLE || mI2cSetting==Konashi.I2C_ENABLE_100K || mI2cSetting==Konashi.I2C_ENABLE_400K);
-    }
-    
+
     /**
      * I2Cを有効/無効を設定する
      * @param mode 設定するI2Cのモード。Konashi.I2C_DISABLE , Konashi.I2C_ENABLE, Konashi.I2C_ENABLE_100K, Konashi.I2C_ENABLE_400Kを指定。
      */
     @Override
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> i2cMode(int mode) {
-        return execute(new I2cModeAction(getKonashiService(), mode), mI2cDispatcher);
+        return execute(new I2cModeAction(getKonashiService(), mode, mI2cStore), mI2cDispatcher);
     }
 
     /**
@@ -587,7 +570,7 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      */
     @Override
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> i2cWrite(int length, byte[] data, byte address) {
-        return execute(new I2cWriteAction(getKonashiService(), address, data));
+        return execute(new I2cWriteAction(getKonashiService(), address, data, mI2cStore));
     }
 
     /**
@@ -597,7 +580,8 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      */
     @Override
     public Promise<byte[], BletiaException, Object> i2cRead(int length, byte address) {
-        return execute(new I2cSetReadParamAction(getKonashiService(), length, address), mI2cDispatcher)
+        return execute(new I2cSetReadParamAction(getKonashiService(), length, address, mI2cStore))
+                .then(mI2cDispatcher)
                 .then(new DonePipe<BluetoothGattCharacteristic, BluetoothGattCharacteristic, BletiaException, Object>() {
                     @Override
                     public Promise<BluetoothGattCharacteristic, BletiaException, Object> pipeDone(BluetoothGattCharacteristic result) {
@@ -626,45 +610,15 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
         
         addWriteMessage(KonashiUUID.HARDWARE_RESET_UUID, val);
     }
-    
-    /**
-     * konashi のバッテリ残量を取得するリクエストを konashi に送信
-     */
-    @Override
-    public void batteryLevelReadRequest(){
-        if(!isEnableAccessKonashi()){
-            notifyKonashiError(KonashiErrorReason.NOT_READY);
-            return;
-        }
-        
-        addReadMessage(KonashiUUID.BATTERY_SERVICE_UUID, KonashiUUID.BATTERY_LEVEL_UUID);
-    }
-    
+
     /**
      * konashi のバッテリ残量を取得
      * @return 0 〜 100 のパーセント単位でバッテリ残量が返る
      */
     @Override
-    public int getBatteryLevel(){
-        if(!isEnableAccessKonashi()){
-            notifyKonashiError(KonashiErrorReason.NOT_READY);
-            return -1;
-        }
-        
-        return mBatteryLevel;
-    }
-    
-    /**
-     * konashi の電波強度を取得するリクエストを行う
-     */
-    @Override
-    public void signalStrengthReadRequest() {
-        if(!isEnableAccessKonashi()){
-            notifyKonashiError(KonashiErrorReason.NOT_READY);
-            return;
-        }
-        
-        readRemoteRssi();
+    public Promise<Integer, BletiaException, Object> getBatteryLevel(){
+        return execute(new BatteryLevelReadAction(getService(KonashiUUID.BATTERY_SERVICE_UUID)))
+                .then(new BatteryLevelReadFilter());
     }
 
     /**
@@ -672,13 +626,8 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * @return 電波強度(単位はdb)
      */
     @Override
-    public int getSignalStrength() {
-        if(!isEnableAccessKonashi()){
-            notifyKonashiError(KonashiErrorReason.NOT_READY);
-            return -1;
-        }
-        
-        return mRssi;
+    public Promise<Integer, BletiaException, Object> getSignalStrength() {
+        return readRemoteRssi();
     }
 
     public static byte[] toByteArray(List<Byte> in) {
