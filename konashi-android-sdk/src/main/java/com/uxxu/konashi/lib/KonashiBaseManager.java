@@ -333,6 +333,10 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
         return mGattService;
     }
 
+    protected BluetoothGattService getService(UUID uuid) {
+        return mBletia.getService(uuid);
+    }
+
     /****************************
      * BLE Override methods
      ****************************/
