@@ -24,6 +24,7 @@ import com.uxxu.konashi.lib.action.UartModeAction;
 import com.uxxu.konashi.lib.action.UartWriteAction;
 import com.uxxu.konashi.lib.dispatcher.AioStoreUpdater;
 import com.uxxu.konashi.lib.dispatcher.CharacteristicDispatcher;
+import com.uxxu.konashi.lib.dispatcher.DispatcherContainer;
 import com.uxxu.konashi.lib.dispatcher.I2cStoreUpdater;
 import com.uxxu.konashi.lib.dispatcher.PioStoreUpdater;
 import com.uxxu.konashi.lib.dispatcher.PwmStoreUpdater;
@@ -103,28 +104,27 @@ public class KonashiManager extends KonashiBaseManager {
     private Bletia mBletia;
     private EventEmitter mEmitter;
     private CallbackHandler mCallbackHandler;
+    private DispatcherContainer mDispacherContainer;
 
     ///////////////////////////
     // Initialization
     ///////////////////////////
     
     private void initializeMembers(){
-        int i;
-        
         // PIO
-        mPioDispatcher = new CharacteristicDispatcher<>(PioStoreUpdater.class);
+        mPioDispatcher = mDispacherContainer.getPioDispatcher();
         mPioStore = new PioStore(mPioDispatcher);
 
         // PWM
-        mPwmDispatcher = new CharacteristicDispatcher<>(PwmStoreUpdater.class);
+        mPwmDispatcher = mDispacherContainer.getPwmDispatcher();
         mPwmStore = new PwmStore(mPwmDispatcher);
 
         // AIO
-        mAioDispatcher = new CharacteristicDispatcher<>(AioStoreUpdater.class);
+        mAioDispatcher = mDispacherContainer.getAioDispatcher();
         mAioStore = new AioStore(mAioDispatcher);
 
         // I2C
-        mI2cDispatcher = new CharacteristicDispatcher<>(I2cStoreUpdater.class);
+        mI2cDispatcher = mDispacherContainer.getI2cDispatcher();
         mI2cStore = new I2cStore(mI2cDispatcher);
 
         // UART
@@ -143,7 +143,8 @@ public class KonashiManager extends KonashiBaseManager {
 
         mBletia = new Bletia(context);
         mEmitter = new EventEmitter();
-        mCallbackHandler = new CallbackHandler(this, mEmitter);
+        mDispacherContainer = new DispatcherContainer();
+        mCallbackHandler = new CallbackHandler(this, mEmitter, mDispacherContainer);
         mBletia.addListener(mCallbackHandler);
 
         initializeMembers();

@@ -4,6 +4,8 @@ import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 
+import com.uxxu.konashi.lib.dispatcher.DispatcherContainer;
+
 import java.util.UUID;
 
 import info.izumin.android.bletia.Bletia;
@@ -17,10 +19,12 @@ class CallbackHandler implements BletiaListener {
 
     private final EventEmitter mEmitter;
     private final KonashiManager mManager;
+    private final DispatcherContainer mDispatcherContainer;
 
-    public CallbackHandler(KonashiManager manager, EventEmitter emitter) {
+    public CallbackHandler(KonashiManager manager, EventEmitter emitter, DispatcherContainer dispatcherContainer) {
         mManager = manager;
         mEmitter = emitter;
+        mDispatcherContainer = dispatcherContainer;
     }
 
     @Override
@@ -55,11 +59,11 @@ class CallbackHandler implements BletiaListener {
         UUID uuid = characteristic.getUuid();
 
         if (KonashiUUID.PIO_INPUT_NOTIFICATION_UUID.equals(uuid)) {
+            mDispatcherContainer.getPioDispatcher().onDone(characteristic);
             mEmitter.emitUpdatePioOutput(mManager, characteristic.getValue()[0]);
         } else if (KonashiUUID.UART_RX_NOTIFICATION_UUID.equals(uuid)) {
+            mDispatcherContainer.getUartDispatcher().onDone(characteristic);
             mEmitter.emitUpdateUartRx(mManager, characteristic.getValue());
-        } else if (KonashiUUID.HARDWARE_LOW_BAT_NOTIFICATION_UUID.equals(uuid)) {
-            mEmitter.emitUpdateBatteryLevel(mManager, KonashiUtils.getBatteryLevel(characteristic));
         }
     }
 }
