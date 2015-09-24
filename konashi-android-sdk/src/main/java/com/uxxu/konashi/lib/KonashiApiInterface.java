@@ -70,14 +70,13 @@ public interface KonashiApiInterface {
 //    public void analogWrite(int pin, int milliVolt);
 
     // I2C
-    public void i2cMode(int mode);
-    public void i2cStartCondition();
-    public void i2cRestartCondition();
-    public void i2cStopCondition();
-    public void i2cWrite(int length, byte[] data, byte address);
-    public void i2cReadRequest(int length, byte address);
-    public byte[] i2cRead(int length);
-    
+    public Promise<BluetoothGattCharacteristic, BletiaException, Object> i2cMode(int mode);
+    public Promise<BluetoothGattCharacteristic, BletiaException, Object> i2cStartCondition();
+    public Promise<BluetoothGattCharacteristic, BletiaException, Object> i2cRestartCondition();
+    public Promise<BluetoothGattCharacteristic, BletiaException, Object> i2cStopCondition();
+    public Promise<BluetoothGattCharacteristic, BletiaException, Object> i2cWrite(int length, byte[] data, byte address);
+    public Promise<byte[], BletiaException, Object> i2cRead(int length, byte address);
+
     // UART
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> uartMode(int mode);
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> uartBaudrate(int baudrate);
@@ -87,8 +86,6 @@ public interface KonashiApiInterface {
     
     // Hardware
     public void reset();
-    public void batteryLevelReadRequest();
-    public int getBatteryLevel();
-    public void signalStrengthReadRequest();
-    public int getSignalStrength();
+    public Promise<Integer, BletiaException, Object> getBatteryLevel();
+    public Promise<Integer, BletiaException, Object> getSignalStrength();
 }

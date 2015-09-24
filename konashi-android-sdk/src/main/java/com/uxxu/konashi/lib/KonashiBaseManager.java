@@ -303,15 +303,6 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
             return "";
         }
     }
-    
-    protected void readRemoteRssi(){
-        if(!isEnableAccessKonashi() || mBluetoothGatt==null){
-            notifyKonashiError(KonashiErrorReason.NOT_READY);
-            return;
-        }
-        
-        mBluetoothGatt.readRemoteRssi();
-    }
 
     /**
      * Konashiへのアクセスが可能かどうか
@@ -331,6 +322,14 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
 
     protected BluetoothGattService getKonashiService() {
         return mGattService;
+    }
+
+    protected BluetoothGattService getService(UUID uuid) {
+        return mBletia.getService(uuid);
+    }
+
+    protected Promise<Integer, BletiaException, Object> readRemoteRssi() {
+        return mBletia.readRemoteRssi();
     }
 
     /****************************
