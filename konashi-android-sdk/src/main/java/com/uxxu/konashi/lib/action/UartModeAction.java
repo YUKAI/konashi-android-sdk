@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothGattService;
 
 import com.uxxu.konashi.lib.Konashi;
 import com.uxxu.konashi.lib.KonashiUUID;
+import com.uxxu.konashi.lib.util.UartUtils;
 
 import java.util.UUID;
 
@@ -31,6 +32,6 @@ public class UartModeAction extends KonashiWriteCharacteristicAction{
 
     @Override
     protected boolean hasValidParams() {
-        return mMode >= Konashi.UART_DISABLE && mMode <= Konashi.UART_ENABLE;
+        return UartUtils.isValidMode(mMode);
     }
 }

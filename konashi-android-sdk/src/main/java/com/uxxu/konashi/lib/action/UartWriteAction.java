@@ -38,6 +38,6 @@ public class UartWriteAction extends KonashiWriteCharacteristicAction {
     @Override
     protected boolean hasValidParams() {
         int length = mWriteData.length;
-        return length > 0 && length <= Konashi.UART_DATA_MAX_LENGTH;
+        return UartUtils.isValidLength(length);
     }
 }
