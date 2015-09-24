@@ -1,6 +1,5 @@
 package com.uxxu.konashi.lib.dispatcher;
 
-import com.uxxu.konashi.lib.Konashi;
 import com.uxxu.konashi.lib.KonashiUUID;
 import com.uxxu.konashi.lib.stores.UartStore;
 
@@ -20,6 +19,12 @@ public enum UartStoreUpdater implements CharacteristicDispatcher.Updater<UartSto
         @Override
         public void update(UartStore store, byte[] value) {
             store.setMode(value[0]);
+        }
+    },
+    RX(KonashiUUID.UART_RX_NOTIFICATION_UUID) {
+        @Override
+        public void update(UartStore store, byte[] value) {
+            store.setData(value);
         }
     };
 

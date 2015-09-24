@@ -26,6 +26,12 @@ public enum PioStoreUpdater implements CharacteristicDispatcher.Updater<PioStore
         public void update(PioStore store, byte[] value) {
             store.setPioOutputs(value[0]);
         }
+    },
+    INPUT(KonashiUUID.PIO_INPUT_NOTIFICATION_UUID) {
+        @Override
+        public void update(PioStore store, byte[] value) {
+            store.setPioInputs(value[0]);
+        }
     };
 
     private final UUID mUuid;

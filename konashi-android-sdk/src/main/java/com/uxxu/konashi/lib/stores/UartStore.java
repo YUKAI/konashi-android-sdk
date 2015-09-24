@@ -11,6 +11,7 @@ public class UartStore implements Store {
 
     private byte mMode;
     private byte[] mBaudrate;
+    private byte[] mData;
 
     public UartStore(CharacteristicDispatcher<UartStore, UartStoreUpdater> dispatcher) {
         dispatcher.setStore(this);
@@ -34,5 +35,13 @@ public class UartStore implements Store {
 
     public void setBaudrate(byte[] baudrate) {
         mBaudrate = baudrate;
+    }
+
+    public byte[] getData() {
+        return mData;
+    }
+
+    public void setData(byte[] data) {
+        mData = data;
     }
 }
