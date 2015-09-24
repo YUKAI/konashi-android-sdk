@@ -17,7 +17,7 @@ public final class UartUtils {
     }
 
     public static boolean isValidMode(int mode) {
-        return mode >= Konashi.UART_DISABLE && mode <= Konashi.UART_ENABLE;
+        return mode == Konashi.UART_DISABLE || mode == Konashi.UART_ENABLE;
     }
 
     public static byte[] toFormattedByteArray(String baseString) {
