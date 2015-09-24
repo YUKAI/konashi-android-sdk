@@ -215,15 +215,7 @@ public abstract class KonashiBaseManager implements BluetoothAdapter.LeScanCallb
                mStatus.equals(BleStatus.READY)
         ;
     }
-    
-    /**
-     * konashiを使える状態になっているか
-     * @return konashiを使えるならtrue
-     */
-    public boolean isReady(){
-        return mStatus.equals(BleStatus.READY);
-    }
-    
+
     /**
      * 接続しているkonashiの名前を取得する
      * @return konashiの名前

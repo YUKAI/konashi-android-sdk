@@ -45,6 +45,7 @@ import org.jdeferred.Promise;
 
 import java.util.UUID;
 
+import info.izumin.android.bletia.BleState;
 import info.izumin.android.bletia.Bletia;
 import info.izumin.android.bletia.BletiaException;
 import info.izumin.android.bletia.action.Action;
@@ -143,6 +144,14 @@ public class KonashiManager extends KonashiBaseManager {
      */
     public void disconnect(){
         mBletia.disconenct();
+    }
+
+    /**
+     * konashiを使える状態になっているか
+     * @return konashiを使えるならtrue
+     */
+    public boolean isReady(){
+        return mBletia.getState() == BleState.SERVICE_DISCOVERED;
     }
 
     ///////////////////////////
