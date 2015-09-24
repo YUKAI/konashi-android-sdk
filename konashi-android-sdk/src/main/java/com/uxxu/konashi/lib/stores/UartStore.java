@@ -8,26 +8,26 @@ import com.uxxu.konashi.lib.dispatcher.UartStoreUpdater;
  */
 public class UartStore implements Store {
 
-    private byte mUartSetting;
-    private byte[] mUartBaudrate;
+    private byte mMode;
+    private byte[] mBaudrate;
 
     public UartStore(CharacteristicDispatcher<UartStore, UartStoreUpdater> dispatcher) {
         dispatcher.setStore(this);
     }
 
-    public byte getUartSetting() {
-        return mUartSetting;
+    public byte getMode() {
+        return mMode;
     }
 
-    public void setUartSetting(byte uartSetting) {
-        mUartSetting = uartSetting;
+    public void setMode(byte mode) {
+        mMode = mode;
     }
 
-    public byte[] getUartBaudrate() {
-        return mUartBaudrate;
+    public byte[] getBaudrate() {
+        return mBaudrate;
     }
 
-    public void setUartBaudrate(byte[] uartBaudrate) {
-        mUartBaudrate = uartBaudrate;
+    public void setBaudrate(byte[] baudrate) {
+        mBaudrate = baudrate;
     }
 }
