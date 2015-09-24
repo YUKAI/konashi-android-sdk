@@ -29,7 +29,6 @@ class CallbackHandler implements BletiaListener {
 
     @Override
     public void onConnect(Bletia bletia) {
-        mEmitter.emitConnect(mManager);
         bletia.discoverServices();
     }
 
@@ -51,6 +50,7 @@ class CallbackHandler implements BletiaListener {
             bletia.enableNotification(service.getCharacteristic(KonashiUUID.PIO_INPUT_NOTIFICATION_UUID), true);
             bletia.enableNotification(service.getCharacteristic(KonashiUUID.UART_RX_NOTIFICATION_UUID), true);
             bletia.enableNotification(service.getCharacteristic(KonashiUUID.HARDWARE_LOW_BAT_NOTIFICATION_UUID), true);
+            mEmitter.emitConnect(mManager);
         }
     }
 
