@@ -9,35 +9,35 @@ import com.uxxu.konashi.lib.dispatcher.PwmStoreUpdater;
 public class PwmStore implements Store {
     private static final int PWM_LENGTH = 8;
 
-    private int mPwmModes = 0;
-    private int[] mPwmPeriods = new int[PWM_LENGTH];
-    private int[] mPwmDuties = new int[PWM_LENGTH];
+    private int mModes = 0;
+    private int[] mPeriods = new int[PWM_LENGTH];
+    private int[] mDuties = new int[PWM_LENGTH];
 
     public PwmStore(CharacteristicDispatcher<PwmStore, PwmStoreUpdater> dispatcher) {
         dispatcher.setStore(this);
     }
 
-    public int getPwmModes() {
-        return mPwmModes;
+    public int getModes() {
+        return mModes;
     }
 
-    public void setPwmModes(int modes) {
-        mPwmModes = modes;
+    public void setModes(int modes) {
+        mModes = modes;
     }
 
-    public int getPwmPeriod(int pin) {
-        return mPwmPeriods[pin];
+    public int getPeriod(int pin) {
+        return mPeriods[pin];
     }
 
-    public void setPwmPeriod(int pin, int period) {
-        mPwmPeriods[pin] = period;
+    public void setPeriod(int pin, int period) {
+        mPeriods[pin] = period;
     }
 
-    public int getPwmDuty(int pin) {
-        return mPwmDuties[pin];
+    public int getDuty(int pin) {
+        return mDuties[pin];
     }
 
-    public void setPwmDuty(int pin, int duty) {
-        mPwmDuties[pin] = duty;
+    public void setDuty(int pin, int duty) {
+        mDuties[pin] = duty;
     }
 }

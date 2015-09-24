@@ -300,7 +300,7 @@ public class KonashiManager extends KonashiBaseManager {
      */
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> pwmMode(final int pin, int mode){
         Promise<BluetoothGattCharacteristic, BletiaException, Object> promise =
-                execute(new PwmPinModeAction(getKonashiService(), pin, mode, mPwmStore.getPwmModes())).then(mPwmDispatcher);
+                execute(new PwmPinModeAction(getKonashiService(), pin, mode, mPwmStore.getModes())).then(mPwmDispatcher);
 
         if (mode == Konashi.PWM_ENABLE_LED_MODE) {
             promise.then(new DonePipe<BluetoothGattCharacteristic, BluetoothGattCharacteristic, BletiaException, Object>() {
@@ -325,7 +325,7 @@ public class KonashiManager extends KonashiBaseManager {
      * @param period 周期。単位はマイクロ秒(us)で32bitで指定してください。最大2^(32)us = 71.5分。
      */
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> pwmPeriod(int pin, int period){
-        return execute(new PwmPeriodAction(getKonashiService(), pin, period, mPwmStore.getPwmDuty(pin))).then(mPwmDispatcher);
+        return execute(new PwmPeriodAction(getKonashiService(), pin, period, mPwmStore.getDuty(pin))).then(mPwmDispatcher);
     }
     
     /**
@@ -334,7 +334,7 @@ public class KonashiManager extends KonashiBaseManager {
      * @param duty デューティ。単位はマイクロ秒(us)で32bitで指定してください。最大2^(32)us = 71.5分。
      */
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> pwmDuty(int pin, int duty){
-        return execute(new PwmDutyAction(getKonashiService(), pin, duty, mPwmStore.getPwmPeriod(pin))).then(mPwmDispatcher);
+        return execute(new PwmDutyAction(getKonashiService(), pin, duty, mPwmStore.getPeriod(pin))).then(mPwmDispatcher);
     }
     
     /**
@@ -343,7 +343,7 @@ public class KonashiManager extends KonashiBaseManager {
      * @param dutyRatio LEDの明るさ。0.0F〜100.0F をしてしてください。
      */
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> pwmLedDrive(int pin, float dutyRatio){
-        return execute(new PwmLedDriveAction(getKonashiService(), pin, dutyRatio, mPwmStore.getPwmPeriod(pin))).then(mPwmDispatcher);
+        return execute(new PwmLedDriveAction(getKonashiService(), pin, dutyRatio, mPwmStore.getPeriod(pin))).then(mPwmDispatcher);
     }
     
     /**
