@@ -12,25 +12,25 @@ public enum PioStoreUpdater implements CharacteristicDispatcher.Updater<PioStore
     MODE(KonashiUUID.PIO_SETTING_UUID) {
         @Override
         public void update(PioStore store, byte[] value) {
-            store.setPioModes(value[0]);
+            store.setModes(value[0]);
         }
     },
     PULLUP(KonashiUUID.PIO_PULLUP_UUID) {
         @Override
         public void update(PioStore store, byte[] value) {
-            store.setPioPullups(value[0]);
+            store.setPullups(value[0]);
         }
     },
     OUTPUT(KonashiUUID.PIO_OUTPUT_UUID) {
         @Override
         public void update(PioStore store, byte[] value) {
-            store.setPioOutputs(value[0]);
+            store.setOutputs(value[0]);
         }
     },
     INPUT(KonashiUUID.PIO_INPUT_NOTIFICATION_UUID) {
         @Override
         public void update(PioStore store, byte[] value) {
-            store.setPioInputs(value[0]);
+            store.setInputs(value[0]);
         }
     };
 

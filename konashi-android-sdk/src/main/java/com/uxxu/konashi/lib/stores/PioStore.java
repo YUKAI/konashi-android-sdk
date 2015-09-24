@@ -7,48 +7,48 @@ import com.uxxu.konashi.lib.dispatcher.PioStoreUpdater;
  * Created by izumin on 8/18/15.
  */
 public class PioStore implements Store {
-    private int mPioModes = 0;
-    private int mPioPullups = 0;
-    private int mPioInputs = 0;
-    private int mPioOutputs = 0;
+    private int mModes = 0;
+    private int mPullups = 0;
+    private int mInputs = 0;
+    private int mOutputs = 0;
 
     public PioStore(CharacteristicDispatcher<PioStore, PioStoreUpdater> dispatcher) {
         dispatcher.setStore(this);
     }
 
-    public byte getPioInput(int pin) {
-        return (byte) ((mPioInputs >> pin) & 0x01);
+    public byte getInput(int pin) {
+        return (byte) ((mInputs >> pin) & 0x01);
     }
 
-    public int getPioModes() {
-        return mPioModes;
+    public int getModes() {
+        return mModes;
     }
 
-    public void setPioModes(int pioModes) {
-        mPioModes = pioModes;
+    public void setModes(int modes) {
+        mModes = modes;
     }
 
-    public int getPioPullups() {
-        return mPioPullups;
+    public int getPullups() {
+        return mPullups;
     }
 
-    public void setPioPullups(int pioPullups) {
-        mPioPullups = pioPullups;
+    public void setPullups(int pullups) {
+        mPullups = pullups;
     }
 
-    public int getPioInputs() {
-        return mPioInputs;
+    public int getInputs() {
+        return mInputs;
     }
 
-    public void setPioInputs(int pioInputs) {
-        mPioInputs = pioInputs;
+    public void setInputs(int inputs) {
+        mInputs = inputs;
     }
 
-    public int getPioOutputs() {
-        return mPioOutputs;
+    public int getOutputs() {
+        return mOutputs;
     }
 
-    public void setPioOutputs(int pioOutputs) {
-        mPioOutputs = pioOutputs;
+    public void setOutputs(int outputs) {
+        mOutputs = outputs;
     }
 }

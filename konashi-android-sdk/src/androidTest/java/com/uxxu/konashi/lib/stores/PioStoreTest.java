@@ -33,7 +33,7 @@ public class PioStoreTest {
 
     @Test
     public void testGetPioInput() throws Exception {
-        assertThat(mPioStore.getPioInput(Konashi.PIO1)).isEqualTo((byte) Konashi.HIGH);
-        assertThat(mPioStore.getPioInput(Konashi.PIO5)).isEqualTo((byte) Konashi.LOW);
+        assertThat(mPioStore.getInput(Konashi.PIO1)).isEqualTo((byte) Konashi.HIGH);
+        assertThat(mPioStore.getInput(Konashi.PIO5)).isEqualTo((byte) Konashi.LOW);
     }
 }

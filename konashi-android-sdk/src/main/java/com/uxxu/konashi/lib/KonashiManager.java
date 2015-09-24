@@ -39,13 +39,11 @@ import com.uxxu.konashi.lib.stores.I2cStore;
 import com.uxxu.konashi.lib.stores.PioStore;
 import com.uxxu.konashi.lib.stores.PwmStore;
 import com.uxxu.konashi.lib.stores.UartStore;
-import com.uxxu.konashi.lib.util.AioUtils;
 
 import org.jdeferred.DoneCallback;
 import org.jdeferred.DonePipe;
 import org.jdeferred.Promise;
 
-import java.util.List;
 import java.util.UUID;
 
 import info.izumin.android.bletia.Bletia;
@@ -228,7 +226,7 @@ public class KonashiManager extends KonashiBaseManager {
      * @param mode ピンに設定するモード。INPUT か OUTPUT が設定できます。
      */
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> pinMode(int pin, int mode){
-        return execute(new PioPinModeAction(getKonashiService(), pin, mode, mPioStore.getPioModes()), mPioDispatcher);
+        return execute(new PioPinModeAction(getKonashiService(), pin, mode, mPioStore.getModes()), mPioDispatcher);
     }
     
     /**
@@ -245,7 +243,7 @@ public class KonashiManager extends KonashiBaseManager {
      * @param pullup ピンをプルアップするかの設定。PULLUP か NO_PULLS が設定できます。
      */
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> pinPullup(int pin, int pullup){
-        return execute(new PioPinPullupAction(getKonashiService(), pin, pullup, mPioStore.getPioPullups()), mPioDispatcher);
+        return execute(new PioPinPullupAction(getKonashiService(), pin, pullup, mPioStore.getPullups()), mPioDispatcher);
     }
     
     /**
@@ -262,7 +260,7 @@ public class KonashiManager extends KonashiBaseManager {
      * @return HIGH(1) もしくは LOW(0)
      */
     public int digitalRead(int pin){
-        return mPioStore.getPioInput(pin);
+        return mPioStore.getInput(pin);
     }
     
     /**
@@ -270,7 +268,7 @@ public class KonashiManager extends KonashiBaseManager {
      * @return PIOの状態(PIO0〜PIO7の入力状態が8bit(1byte)で表現)
      */
     public int digitalReadAll(){
-        return mPioStore.getPioInputs();
+        return mPioStore.getInputs();
     }
     
     /**
@@ -279,7 +277,7 @@ public class KonashiManager extends KonashiBaseManager {
      * @param output 設定するPIOの出力状態。HIGH もしくは LOW が指定可能
      */
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> digitalWrite(int pin, int output){
-        return execute(new PioDigitalWriteAction(getKonashiService(), pin, output, mPioStore.getPioOutputs()), mPioDispatcher);
+        return execute(new PioDigitalWriteAction(getKonashiService(), pin, output, mPioStore.getOutputs()), mPioDispatcher);
     }
     
     /**
