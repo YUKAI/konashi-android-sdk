@@ -15,11 +15,13 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.uxxu.konashi.lib.Konashi;
+import com.uxxu.konashi.lib.KonashiListener;
 import com.uxxu.konashi.lib.KonashiManager;
-import com.uxxu.konashi.lib.KonashiObserver;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import info.izumin.android.bletia.BletiaException;
 
 /**
  * Created by kiryu on 7/27/15.
@@ -29,7 +31,6 @@ public final class PioFragment extends Fragment {
     public static final String TITLE = "PIO";
 
     private final KonashiManager mKonashiManager = Konashi.getManager();
-    private KonashiObserver mInputObserver;
 
     private TableLayout mTableLayout;
     private List<PioTableRow> mRows = new ArrayList<>();
@@ -39,13 +40,7 @@ public final class PioFragment extends Fragment {
         super.onCreate(savedInstanceState);
         getActivity().setTitle(TITLE);
 
-        mInputObserver = new KonashiObserver(getActivity()) {
-            @Override
-            public void onUpdatePioInput(byte value) {
-                mRows.get(0).setInputValue(value);
-            }
-        };
-        mKonashiManager.addObserver(mInputObserver);
+        mKonashiManager.addListener(mKonashiListener);
     }
 
     @Override
@@ -79,9 +74,23 @@ public final class PioFragment extends Fragment {
                 }
             }).start();
         }
-        mKonashiManager.removeObserver(mInputObserver);
+        mKonashiManager.removeListener(mKonashiListener);
         super.onDestroy();
     }
+
+    private final KonashiListener mKonashiListener = new KonashiListener() {
+        @Override public void onConnect(KonashiManager manager) {}
+        @Override public void onDisconnect(KonashiManager manager) {}
+        @Override public void onError(KonashiManager manager, BletiaException e) {}
+
+        @Override
+        public void onUpdatePioOutput(KonashiManager manager, int value) {
+            mRows.get(0).setInputValue(value);
+        }
+
+        @Override public void onUpdateUartRx(KonashiManager manager, byte[] value) {}
+        @Override public void onUpdateBatteryLevel(KonashiManager manager, int level) {}
+    };
 
     public static final class PioTableRow extends TableRow {
 
