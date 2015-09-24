@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 
 import com.uxxu.konashi.lib.Konashi;
+import com.uxxu.konashi.lib.KonashiUtils;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -53,10 +54,26 @@ public class UartBaudrateActionTest {
     }
 
     @Test
-    public void setValue() throws Exception {
+    public void setValue_SingleByte() throws Exception {
         mAction = new UartBaudrateAction(mService, Konashi.UART_RATE_9K6);
         mAction.setValue();
         verify(mCharacteristic, times(1)).setValue(mValueCaptor.capture());
-        assertThat(mValueCaptor.getValue()[0]).isEqualTo((byte) Konashi.UART_RATE_9K6);
+        byte[] value = mValueCaptor.getValue();
+        byte[] expect = KonashiUtils.int2bytes(Konashi.UART_RATE_9K6);
+        for(int i = 0; i < value.length; i++) {
+            assertThat(value[i]).isEqualTo(expect[i]);
+        }
+    }
+
+    @Test
+    public void setValue_MultiByte() throws Exception {
+        mAction = new UartBaudrateAction(mService, Konashi.UART_RATE_115K2);
+        mAction.setValue();
+        verify(mCharacteristic, times(1)).setValue(mValueCaptor.capture());
+        byte[] value = mValueCaptor.getValue();
+        byte[] expect = KonashiUtils.int2bytes(Konashi.UART_RATE_115K2);
+        for(int i = 0; i < value.length; i++) {
+            assertThat(value[i]).isEqualTo(expect[i]);
+        }
     }
 }
