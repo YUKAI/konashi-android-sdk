@@ -1,5 +1,6 @@
 package com.uxxu.konashi.lib.stores;
 
+import com.uxxu.konashi.lib.Konashi;
 import com.uxxu.konashi.lib.dispatcher.CharacteristicDispatcher;
 import com.uxxu.konashi.lib.dispatcher.UartStoreUpdater;
 
@@ -21,6 +22,10 @@ public class UartStore implements Store {
 
     public void setMode(byte mode) {
         mMode = mode;
+    }
+
+    public boolean isEnabled() {
+        return mMode == Konashi.UART_ENABLE;
     }
 
     public byte[] getBaudrate() {
