@@ -74,8 +74,6 @@ import info.izumin.android.bletia.action.Action;
  *
  */
 public class KonashiManager extends KonashiBaseManager {
-    private static final int AIO_LENGTH = 3;
-    
     // konashi members
     // PIO
     private PioStore mPioStore;
@@ -96,10 +94,6 @@ public class KonashiManager extends KonashiBaseManager {
     // UART
     private UartStore mUartStore;
     private CharacteristicDispatcher<UartStore, UartStoreUpdater> mUartDispatcher;
-    
-    // Hardware
-    private int mBatteryLevel;
-    private int mRssi;
 
     private Bletia mBletia;
     private EventEmitter mEmitter;
@@ -130,11 +124,6 @@ public class KonashiManager extends KonashiBaseManager {
         // UART
         mUartDispatcher = new CharacteristicDispatcher<>(UartStoreUpdater.class);
         mUartStore = new UartStore(mUartDispatcher);
-            
-        // Hardware
-        mBatteryLevel = 0;
-        mRssi = 0;
-
     }
 
     @Override
@@ -569,52 +558,6 @@ public class KonashiManager extends KonashiBaseManager {
      */
     public Promise<Integer, BletiaException, Object> getSignalStrength() {
         return mBletia.readRemoteRssi();
-    }
-
-    public static byte[] toByteArray(List<Byte> in) {
-        final int n = in.size();
-        byte ret[] = new byte[n];
-        for (int i = 0; i < n; i++) {
-            ret[i] = in.get(i);
-        }
-        return ret;
-    }
-    
-    ////////////////////////////////
-    // Notification event handler 
-    ////////////////////////////////
-
-    @Override
-    protected void onRecieveUart(byte[] data) {
-        int length = Integer.valueOf(data[0]);
-        byte[] uartData = new byte[length];
-        for(int i=0;i<length;i++){
-            uartData[i] = data[i+1];
-        }
-        super.onRecieveUart(uartData);
-    }
-
-//    /**
-//     * for konashi v1(old codes)
-//     * @param data
-//     */
-//    @Override
-//    protected void onRecieveUart(byte data) {
-//        super.onRecieveUart(data);
-//    }
-
-    @Override
-    protected void onUpdateBatteryLevel(int level) {
-        mBatteryLevel = level;
-                
-        super.onUpdateBatteryLevel(level);
-    }
-
-    @Override
-    protected void onUpdateSignalSrength(int rssi) {
-        mRssi = rssi;
-        
-        super.onUpdateSignalSrength(rssi);
     }
 
     @Override
