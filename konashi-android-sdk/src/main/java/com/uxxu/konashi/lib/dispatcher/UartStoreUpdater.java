@@ -13,7 +13,7 @@ public enum UartStoreUpdater implements CharacteristicDispatcher.Updater<UartSto
     BAUDRATE(KonashiUUID.UART_BAUDRATE_UUID) {
         @Override
         public void update(UartStore store, byte[] value) {
-            store.setUartBaudrate(value[0]);
+            store.setUartBaudrate(value);
         }
     },
     CONFIG(KonashiUUID.UART_CONFIG_UUID) {

@@ -147,6 +147,15 @@ public class KonashiUtils {
         return value;
     }
 
+    public static byte[] int2bytes(int a) {
+        byte[] bytes = new byte[4];
+        bytes[3] = (byte) (0x000000ff & (a));
+        bytes[2] = (byte) (0x000000ff & (a >>> 8));
+        bytes[1] = (byte) (0x000000ff & (a >>> 16));
+        bytes[0] = (byte) (0x000000ff & (a >>> 24));
+        return bytes;
+    }
+
     //TODO: pwmModeをPWM_ENABLE_LEDにした時にpwmModeが反映されなくなるので応急処置的に遅延．要変更
     public static void sleep(int millis) {
         try {

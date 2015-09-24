@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothGattService;
 import com.uxxu.konashi.lib.Konashi;
 import com.uxxu.konashi.lib.KonashiErrorReason;
 import com.uxxu.konashi.lib.KonashiUUID;
+import com.uxxu.konashi.lib.KonashiUtils;
 import com.uxxu.konashi.lib.util.UartUtils;
 
 import java.util.UUID;
@@ -24,7 +25,7 @@ public class UartBaudrateAction extends KonashiWriteCharacteristicAction {
 
     @Override
     protected void setValue() {
-        getCharacteristic().setValue(new byte[]{(byte) mBaudrate});
+        getCharacteristic().setValue(KonashiUtils.int2bytes(mBaudrate));
     }
 
     @Override
