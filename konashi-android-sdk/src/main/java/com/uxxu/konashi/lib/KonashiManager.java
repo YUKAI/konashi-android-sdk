@@ -272,20 +272,6 @@ public class KonashiManager extends KonashiBaseManager {
      * @return HIGH(1) もしくは LOW(0)
      */
     public int digitalRead(int pin){
-        if(!isEnableAccessKonashi()){
-            notifyKonashiError(KonashiErrorReason.NOT_READY);
-            return -1;
-        }
-
-        if ((pin != Konashi.PIO0) && (pin != Konashi.PIO1) && (pin != Konashi.PIO2) &&
-                (pin != Konashi.PIO3) && (pin != Konashi.PIO4) && (pin != Konashi.PIO5) &&
-                (pin != Konashi.PIO6) && (pin != Konashi.PIO7)) {
-            notifyKonashiError(KonashiErrorReason.INVALID_PARAMETER);
-            return -1;
-        } else {
-            notifyKonashiError(KonashiErrorReason.INVALID_PARAMETER);
-        }
-
         return mPioStore.getPioInput(pin);
     }
     
@@ -294,11 +280,6 @@ public class KonashiManager extends KonashiBaseManager {
      * @return PIOの状態(PIO0〜PIO7の入力状態が8bit(1byte)で表現)
      */
     public int digitalReadAll(){
-        if(!isEnableAccessKonashi()){
-            notifyKonashiError(KonashiErrorReason.NOT_READY);
-            return -1;
-        }
-        
         return mPioStore.getPioInputs();
     }
     
