@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
-import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
@@ -14,32 +13,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.Message;
 import android.widget.Toast;
 
-import com.uxxu.konashi.lib.entities.KonashiMessage;
-import com.uxxu.konashi.lib.entities.KonashiReadMessage;
-import com.uxxu.konashi.lib.entities.KonashiWriteMessage;
-import com.uxxu.konashi.lib.events.KonashiAnalogEvent;
 import com.uxxu.konashi.lib.events.KonashiConnectionEvent;
-import com.uxxu.konashi.lib.events.KonashiDeviceInfoEvent;
-import com.uxxu.konashi.lib.events.KonashiDigitalEvent;
 import com.uxxu.konashi.lib.events.KonashiEvent;
-import com.uxxu.konashi.lib.events.KonashiUartEvent;
 import com.uxxu.konashi.lib.ui.BleDeviceListAdapter;
 import com.uxxu.konashi.lib.ui.BleDeviceSelectionDialog;
 import com.uxxu.konashi.lib.ui.BleDeviceSelectionDialog.OnBleDeviceSelectListener;
 
-import org.jdeferred.DoneCallback;
-import org.jdeferred.Promise;
-
 import java.util.UUID;
-
-import info.izumin.android.bletia.Bletia;
-import info.izumin.android.bletia.BletiaException;
-import info.izumin.android.bletia.BletiaListener;
-import info.izumin.android.bletia.action.Action;
 
 /**
  * konashiのベース部分(BLEまわり)を管理するクラス
@@ -104,9 +87,6 @@ public abstract class KonashiBaseManager implements BluetoothAdapter.LeScanCallb
     /*****************************
      * Members
      *****************************/
-    
-    // FIFO buffer
-    private KonashiMessageHandler mKonashiMessageHandler;
 
     // BLE members
     private BleStatus mStatus = BleStatus.DISCONNECTED;
@@ -421,26 +401,6 @@ public abstract class KonashiBaseManager implements BluetoothAdapter.LeScanCallb
     }
     
     
-    /*********************************
-     * FIFO send buffer
-     *********************************/
-
-    protected void addWriteMessage(UUID uuid, byte[] value){
-        sendMessage(KonashiWriteMessage.obtain(uuid, value));
-    }
-
-    protected void addReadMessage(UUID characteristicUuid){
-        addReadMessage(KonashiUUID.KONASHI_SERVICE_UUID, characteristicUuid);
-    }
-    
-    protected void addReadMessage(UUID serviceUuid, UUID characteristicUuid){
-        sendMessage(KonashiReadMessage.obtain(serviceUuid, characteristicUuid));
-    }
-
-    private void sendMessage(Message message) {
-        mKonashiMessageHandler.sendMessage(message);
-    }
-
     /******************************
      * Konashi observer methods
      ******************************/
@@ -478,39 +438,5 @@ public abstract class KonashiBaseManager implements BluetoothAdapter.LeScanCallb
      */
     protected void notifyKonashiError(KonashiErrorReason errorReason){
         mNotifier.notifyKonashiError(errorReason);
-    }
-    
-    
-    /***************************************
-     * Konashi notification event handler
-     ***************************************/
-
-    /**
-     * のRxからデータを受信した時
-     * @param data 受信データ
-     */
-    protected void onRecieveUart(byte[] data){
-        notifyKonashiEvent(KonashiUartEvent.UART_RX_COMPLETE, data);
-    }
-
-//     for konashi v1 (old codes)
-//    protected void onRecieveUart(byte data){
-//        notifyKonashiEvent(KonashiEvent.UART_RX_COMPLETE, data);
-//    }
-    
-    /**
-     * konashiのバッテリーのレベルを取得できた時
-     * @param level バッテリー(%)
-     */
-    protected void onUpdateBatteryLevel(int level){
-        notifyKonashiEvent(KonashiDeviceInfoEvent.UPDATE_BATTERY_LEVEL, level);
-    }
-    
-    /**
-     * konashiの電波強度を取得できた時
-     * @param rssi 電波強度(db) 距離が近いと-40db, 距離が遠いと-90db程度になる
-     */
-    protected void onUpdateSignalSrength(int rssi){
-        notifyKonashiEvent(KonashiDeviceInfoEvent.UPDATE_SIGNAL_STRENGTH, rssi);
     }
 }
