@@ -7,6 +7,7 @@ import android.content.Context;
 
 import com.uxxu.konashi.lib.action.AioAnalogReadAction;
 import com.uxxu.konashi.lib.action.BatteryLevelReadAction;
+import com.uxxu.konashi.lib.action.HardwareResetAction;
 import com.uxxu.konashi.lib.action.I2cModeAction;
 import com.uxxu.konashi.lib.action.I2cReadAction;
 import com.uxxu.konashi.lib.action.I2cSetReadParamAction;
@@ -531,16 +532,8 @@ public class KonashiManager extends KonashiBaseManager {
     /**
      * konashiをリセットする
      */
-    public void reset(){
-        if(!isEnableAccessKonashi()){
-            notifyKonashiError(KonashiErrorReason.NOT_READY);
-            return;
-        }
-        
-        byte[] val = new byte[1];
-        val[0] = 1;
-        
-        addWriteMessage(KonashiUUID.HARDWARE_RESET_UUID, val);
+    public Promise<BluetoothGattCharacteristic, BletiaException, Object> reset(){
+        return execute(new HardwareResetAction(getKonashiService()));
     }
 
     /**
