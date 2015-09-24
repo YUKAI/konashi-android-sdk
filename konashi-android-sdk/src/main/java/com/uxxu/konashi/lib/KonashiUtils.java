@@ -3,6 +3,7 @@ package com.uxxu.konashi.lib;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.util.Log;
 
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 /**
@@ -145,6 +146,12 @@ public class KonashiUtils {
             value = (value << 8) | (b & 0xff);
         }
         return value;
+    }
+
+    public static byte[] int2bytes(int a) {
+        int arraySize = Integer.SIZE / Byte.SIZE;
+        ByteBuffer buffer = ByteBuffer.allocate(arraySize);
+        return buffer.putInt(a).array();
     }
 
     //TODO: pwmModeをPWM_ENABLE_LEDにした時にpwmModeが反映されなくなるので応急処置的に遅延．要変更

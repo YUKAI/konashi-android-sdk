@@ -8,6 +8,8 @@ import com.uxxu.konashi.lib.listeners.KonashiBaseListener;
 
 import org.jdeferred.Promise;
 
+import java.util.Objects;
+
 import info.izumin.android.bletia.BletiaException;
 
 /**
@@ -76,9 +78,10 @@ public interface KonashiApiInterface {
     public Promise<byte[], BletiaException, Object> i2cRead(int length, byte address);
 
     // UART
-    public void uartMode(int mode);
-    public void uartBaudrate(int baudrate);
-    public void uartWrite(byte[] data);
+    public Promise<BluetoothGattCharacteristic, BletiaException, Object> uartMode(int mode);
+    public Promise<BluetoothGattCharacteristic, BletiaException, Object> uartBaudrate(int baudrate);
+    public Promise<BluetoothGattCharacteristic, BletiaException, Object> uartWrite(String string);
+    public Promise<BluetoothGattCharacteristic, BletiaException, Object> uartWrite(byte[] bytes);
     //public void uartWrite(byte data); //for konashi v1(old code)
     
     // Hardware
