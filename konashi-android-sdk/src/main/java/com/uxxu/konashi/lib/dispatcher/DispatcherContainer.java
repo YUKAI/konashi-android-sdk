@@ -1,0 +1,46 @@
+package com.uxxu.konashi.lib.dispatcher;
+
+import com.uxxu.konashi.lib.stores.AioStore;
+import com.uxxu.konashi.lib.stores.I2cStore;
+import com.uxxu.konashi.lib.stores.PioStore;
+import com.uxxu.konashi.lib.stores.PwmStore;
+import com.uxxu.konashi.lib.stores.UartStore;
+
+/**
+ * Created by izumin on 9/23/15.
+ */
+public class DispatcherContainer {
+    private CharacteristicDispatcher<PioStore, PioStoreUpdater> mPioDispatcher;
+    private CharacteristicDispatcher<PwmStore, PwmStoreUpdater> mPwmDispatcher;
+    private CharacteristicDispatcher<AioStore, AioStoreUpdater> mAioDispatcher;
+    private CharacteristicDispatcher<I2cStore, I2cStoreUpdater> mI2cDispatcher;
+    private CharacteristicDispatcher<UartStore, UartStoreUpdater> mUartDispatcher;
+
+    public DispatcherContainer() {
+        mPioDispatcher = new CharacteristicDispatcher<>(PioStoreUpdater.class);
+        mPwmDispatcher = new CharacteristicDispatcher<>(PwmStoreUpdater.class);
+        mAioDispatcher = new CharacteristicDispatcher<>(AioStoreUpdater.class);
+        mUartDispatcher = new CharacteristicDispatcher<>(UartStoreUpdater.class);
+        mI2cDispatcher = new CharacteristicDispatcher<>(I2cStoreUpdater.class);
+    }
+
+    public CharacteristicDispatcher<PioStore, PioStoreUpdater> getPioDispatcher() {
+        return mPioDispatcher;
+    }
+
+    public CharacteristicDispatcher<PwmStore, PwmStoreUpdater> getPwmDispatcher() {
+        return mPwmDispatcher;
+    }
+
+    public CharacteristicDispatcher<AioStore, AioStoreUpdater> getAioDispatcher() {
+        return mAioDispatcher;
+    }
+
+    public CharacteristicDispatcher<UartStore, UartStoreUpdater> getUartDispatcher() {
+        return mUartDispatcher;
+    }
+
+    public CharacteristicDispatcher<I2cStore, I2cStoreUpdater> getI2cDispatcher() {
+        return mI2cDispatcher;
+    }
+}
