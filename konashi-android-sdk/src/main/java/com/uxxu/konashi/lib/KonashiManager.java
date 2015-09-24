@@ -11,6 +11,9 @@ import com.uxxu.konashi.lib.action.PwmDutyAction;
 import com.uxxu.konashi.lib.action.PwmLedDriveAction;
 import com.uxxu.konashi.lib.action.PwmPeriodAction;
 import com.uxxu.konashi.lib.action.PwmPinModeAction;
+import com.uxxu.konashi.lib.action.UartBaudrateAction;
+import com.uxxu.konashi.lib.action.UartModeAction;
+import com.uxxu.konashi.lib.action.UartWriteAction;
 import com.uxxu.konashi.lib.dispatcher.AioStoreUpdater;
 import com.uxxu.konashi.lib.dispatcher.CharacteristicDispatcher;
 import com.uxxu.konashi.lib.dispatcher.PioStoreUpdater;
@@ -419,7 +422,7 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      */
     @Override
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> uartMode(int mode){
-        return uartMode(mode);
+        return execute(new UartModeAction(getKonashiService(), mode), mUartDispatcher);
     }
     
     /**
@@ -428,7 +431,7 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      */
     @Override
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> uartBaudrate(int baudrate){
-        return uartBaudrate(baudrate);
+        return execute(new UartBaudrateAction(getKonashiService(), baudrate), mUartDispatcher);
     }
 
     /**
@@ -437,7 +440,7 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      */
     @Override
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> uartWrite(byte[] bytes) {
-        return uartWrite(bytes);
+        return execute(new UartWriteAction(getKonashiService(), bytes), mUartDispatcher);
     }
 
     /**
@@ -446,7 +449,7 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      */
     @Override
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> uartWrite(String string) {
-        return uartWrite(string);
+        return execute(new UartWriteAction(getKonashiService(), string), mUartDispatcher);
     }
 
     /**
