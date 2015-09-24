@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 
 import com.uxxu.konashi.lib.Konashi;
+import com.uxxu.konashi.lib.KonashiUtils;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -58,6 +59,10 @@ public class UartModeActionTest {
         mAction = new UartModeAction(mService, Konashi.UART_ENABLE);
         mAction.setValue();
         verify(mCharacteristic, times(1)).setValue(mValueCaptor.capture());
-        assertThat(mValueCaptor.getValue()[0]).isEqualTo((byte) Konashi.UART_ENABLE);
+        byte[] value = mValueCaptor.getValue();
+        byte[] expect = KonashiUtils.int2bytes(Konashi.UART_ENABLE);
+        for(int i = 0; i < value.length; i++) {
+            assertThat(value[i]).isEqualTo(expect[i]);
+        }
     }
 }
