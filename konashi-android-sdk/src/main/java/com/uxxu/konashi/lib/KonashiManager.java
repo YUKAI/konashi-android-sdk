@@ -422,7 +422,7 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      */
     @Override
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> uartMode(int mode){
-        return execute(new UartModeAction(getKonashiService(), mode), mUartDispatcher);
+        return execute(new UartModeAction(getKonashiService(), mode, mUartStore), mUartDispatcher);
     }
     
     /**
@@ -431,7 +431,7 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      */
     @Override
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> uartBaudrate(int baudrate){
-        return execute(new UartBaudrateAction(getKonashiService(), baudrate), mUartDispatcher);
+        return execute(new UartBaudrateAction(getKonashiService(), baudrate, mUartStore), mUartDispatcher);
     }
 
     /**
@@ -440,7 +440,7 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      */
     @Override
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> uartWrite(byte[] bytes) {
-        return execute(new UartWriteAction(getKonashiService(), bytes), mUartDispatcher);
+        return execute(new UartWriteAction(getKonashiService(), bytes, mUartStore), mUartDispatcher);
     }
 
     /**
@@ -449,7 +449,7 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      */
     @Override
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> uartWrite(String string) {
-        return execute(new UartWriteAction(getKonashiService(), string), mUartDispatcher);
+        return execute(new UartWriteAction(getKonashiService(), string, mUartStore), mUartDispatcher);
     }
 
     /**
