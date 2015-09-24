@@ -41,6 +41,6 @@ public enum AioStoreUpdater implements CharacteristicDispatcher.Updater<AioStore
     }
 
     protected void updateAioValue(AioStore store, int pin, byte[] value) {
-        store.setAnalogValue(pin, AioUtils.getAnalogValue(pin, value));
+        store.setValue(pin, AioUtils.getAnalogValue(pin, value));
     }
 }
