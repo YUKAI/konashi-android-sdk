@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothGattService;
 
 import com.uxxu.konashi.lib.Konashi;
 import com.uxxu.konashi.lib.KonashiUtils;
+import com.uxxu.konashi.lib.stores.UartStore;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -27,9 +28,10 @@ public class UartModeActionTest {
     private static final String TAG = UartModeActionTest.class.getSimpleName();
     private final UartModeActionTest self = this;
 
-    @Mock
-    private BluetoothGattService mService;
+    @Mock private BluetoothGattService mService;
     @Mock private BluetoothGattCharacteristic mCharacteristic;
+    @Mock private UartStore mStore;
+
 
     private UartModeAction mAction;
 
@@ -40,23 +42,24 @@ public class UartModeActionTest {
         MockitoAnnotations.initMocks(this);
         mValueCaptor = ArgumentCaptor.forClass(byte[].class);
         when(mService.getCharacteristic(any(UUID.class))).thenReturn(mCharacteristic);
+        when(mStore.isEnabled()).thenReturn(true);
     }
 
     @Test
     public void hasValidParams_ForValidValue() throws Exception {
-        mAction = new UartModeAction(mService, Konashi.UART_ENABLE);
+        mAction = new UartModeAction(mService, Konashi.UART_ENABLE, mStore);
         assertThat(mAction.hasValidParams()).isTrue();
     }
 
     @Test
     public void hasValidParams_FotInvalidValue() throws Exception {
-        mAction = new UartModeAction(mService, 100);
+        mAction = new UartModeAction(mService, 100, mStore);
         assertThat(mAction.hasValidParams()).isFalse();
     }
 
     @Test
     public void setValue() throws Exception {
-        mAction = new UartModeAction(mService, Konashi.UART_ENABLE);
+        mAction = new UartModeAction(mService, Konashi.UART_ENABLE, mStore);
         mAction.setValue();
         verify(mCharacteristic, times(1)).setValue(mValueCaptor.capture());
         byte[] value = mValueCaptor.getValue();

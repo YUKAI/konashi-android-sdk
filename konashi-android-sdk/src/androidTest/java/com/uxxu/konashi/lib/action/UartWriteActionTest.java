@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 
 import com.uxxu.konashi.lib.Konashi;
+import com.uxxu.konashi.lib.stores.UartStore;
 import com.uxxu.konashi.lib.util.UartUtils;
 
 import org.junit.Before;
@@ -29,6 +30,7 @@ public class UartWriteActionTest {
 
     @Mock private BluetoothGattService mService;
     @Mock private BluetoothGattCharacteristic mCharacteristic;
+    @Mock private UartStore mStore;
 
     private UartWriteAction mAction;
 
@@ -39,17 +41,18 @@ public class UartWriteActionTest {
         MockitoAnnotations.initMocks(this);
         mValueCaptor = ArgumentCaptor.forClass(byte[].class);
         when(mService.getCharacteristic(any(UUID.class))).thenReturn(mCharacteristic);
+        when(mStore.isEnabled()).thenReturn(true);
     }
 
     @Test
     public void hasValidParams_ForValidValue_String() throws Exception {
-        mAction = new UartWriteAction(mService, "Test");
+        mAction = new UartWriteAction(mService, "Test", mStore);
         assertThat(mAction.hasValidParams()).isTrue();
     }
 
     @Test
     public void hasValidParams_FotInvalidValue_TooLong() throws Exception {
-        mAction = new UartWriteAction(mService, "TooLongStringHogeHogeHoge");
+        mAction = new UartWriteAction(mService, "TooLongStringHogeHogeHoge", mStore);
         assertThat(mAction.hasValidParams()).isFalse();
     }
 
@@ -57,7 +60,7 @@ public class UartWriteActionTest {
     public void setValue() throws Exception {
         byte[] testByteArray = UartUtils.toFormattedByteArray("Test");
 
-        mAction = new UartWriteAction(mService, "Test");
+        mAction = new UartWriteAction(mService, "Test", mStore);
         mAction.setValue();
         verify(mCharacteristic, times(1)).setValue(mValueCaptor.capture());
         assertThat(mValueCaptor.getValue()).isEqualTo(testByteArray);

@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothGattService;
 
 import com.uxxu.konashi.lib.Konashi;
 import com.uxxu.konashi.lib.KonashiUtils;
+import com.uxxu.konashi.lib.stores.UartStore;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -29,6 +30,7 @@ public class UartBaudrateActionTest {
 
     @Mock private BluetoothGattService mService;
     @Mock private BluetoothGattCharacteristic mCharacteristic;
+    @Mock private UartStore mStore;
 
     private UartBaudrateAction mAction;
 
@@ -39,23 +41,24 @@ public class UartBaudrateActionTest {
         MockitoAnnotations.initMocks(this);
         mValueCaptor = ArgumentCaptor.forClass(byte[].class);
         when(mService.getCharacteristic(any(UUID.class))).thenReturn(mCharacteristic);
+        when(mStore.isEnabled()).thenReturn(true);
     }
 
     @Test
     public void hasValidParams_ForValidValue() throws Exception {
-        mAction = new UartBaudrateAction(mService, Konashi.UART_RATE_9K6);
+        mAction = new UartBaudrateAction(mService, Konashi.UART_RATE_9K6, mStore);
         assertThat(mAction.hasValidParams()).isTrue();
     }
 
     @Test
     public void hasValidParams_FotInvalidValue() throws Exception {
-        mAction = new UartBaudrateAction(mService, 0x00);
+        mAction = new UartBaudrateAction(mService, 0x00, mStore);
         assertThat(mAction.hasValidParams()).isFalse();
     }
 
     @Test
     public void setValue_SingleByte() throws Exception {
-        mAction = new UartBaudrateAction(mService, Konashi.UART_RATE_9K6);
+        mAction = new UartBaudrateAction(mService, Konashi.UART_RATE_9K6, mStore);
         mAction.setValue();
         verify(mCharacteristic, times(1)).setValue(mValueCaptor.capture());
         byte[] value = mValueCaptor.getValue();
@@ -67,7 +70,7 @@ public class UartBaudrateActionTest {
 
     @Test
     public void setValue_MultiByte() throws Exception {
-        mAction = new UartBaudrateAction(mService, Konashi.UART_RATE_115K2);
+        mAction = new UartBaudrateAction(mService, Konashi.UART_RATE_115K2, mStore);
         mAction.setValue();
         verify(mCharacteristic, times(1)).setValue(mValueCaptor.capture());
         byte[] value = mValueCaptor.getValue();
