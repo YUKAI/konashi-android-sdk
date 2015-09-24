@@ -102,7 +102,14 @@ public class KonashiManager extends KonashiBaseManager {
     ///////////////////////////
     // Initialization
     ///////////////////////////
-    
+
+
+    public KonashiManager() {
+        mEmitter = new EventEmitter();
+        mDispacherContainer = new DispatcherContainer();
+        mCallbackHandler = new CallbackHandler(this, mEmitter, mDispacherContainer);
+    }
+
     private void initializeMembers(){
         // PIO
         mPioDispatcher = mDispacherContainer.getPioDispatcher();
@@ -130,9 +137,6 @@ public class KonashiManager extends KonashiBaseManager {
         super.initialize(context);
 
         mBletia = new Bletia(context);
-        mEmitter = new EventEmitter();
-        mDispacherContainer = new DispatcherContainer();
-        mCallbackHandler = new CallbackHandler(this, mEmitter, mDispacherContainer);
         mBletia.addListener(mCallbackHandler);
 
         initializeMembers();
