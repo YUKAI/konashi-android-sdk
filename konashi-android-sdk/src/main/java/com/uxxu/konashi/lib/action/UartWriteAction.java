@@ -21,8 +21,7 @@ public class UartWriteAction extends KonashiWriteCharacteristicAction {
     private byte[] mWriteData = new byte[Konashi.UART_DATA_MAX_LENGTH + 1];
 
     public UartWriteAction(BluetoothGattService service, String writeDataString) {
-        super(service, UUID);
-        mWriteData = UartUtils.toFormattedByteArray(writeDataString);
+        this(service, writeDataString.getBytes());
     }
 
     public UartWriteAction(BluetoothGattService service, byte[] writeData) {
