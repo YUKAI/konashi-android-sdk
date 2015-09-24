@@ -1,10 +1,10 @@
 package com.uxxu.konashi.lib.dispatcher;
 
-import com.uxxu.konashi.lib.stores.AioStore;
-import com.uxxu.konashi.lib.stores.I2cStore;
-import com.uxxu.konashi.lib.stores.PioStore;
-import com.uxxu.konashi.lib.stores.PwmStore;
-import com.uxxu.konashi.lib.stores.UartStore;
+import com.uxxu.konashi.lib.store.AioStore;
+import com.uxxu.konashi.lib.store.I2cStore;
+import com.uxxu.konashi.lib.store.PioStore;
+import com.uxxu.konashi.lib.store.PwmStore;
+import com.uxxu.konashi.lib.store.UartStore;
 
 /**
  * Created by izumin on 9/23/15.

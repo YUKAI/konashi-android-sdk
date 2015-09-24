@@ -3,8 +3,7 @@ package com.uxxu.konashi.lib.action;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 
-import com.uxxu.konashi.lib.Konashi;
-import com.uxxu.konashi.lib.stores.UartStore;
+import com.uxxu.konashi.lib.store.UartStore;
 import com.uxxu.konashi.lib.util.UartUtils;
 
 import org.junit.Before;

@@ -2,7 +2,7 @@ package com.uxxu.konashi.lib.dispatcher;
 
 import com.uxxu.konashi.lib.Konashi;
 import com.uxxu.konashi.lib.KonashiUUID;
-import com.uxxu.konashi.lib.stores.AioStore;
+import com.uxxu.konashi.lib.store.AioStore;
 import com.uxxu.konashi.lib.util.AioUtils;
 
 import java.util.UUID;

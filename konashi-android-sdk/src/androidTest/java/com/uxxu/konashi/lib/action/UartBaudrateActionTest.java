@@ -5,7 +5,7 @@ import android.bluetooth.BluetoothGattService;
 
 import com.uxxu.konashi.lib.Konashi;
 import com.uxxu.konashi.lib.KonashiUtils;
-import com.uxxu.konashi.lib.stores.UartStore;
+import com.uxxu.konashi.lib.store.UartStore;
 
 import org.junit.Before;
 import org.junit.Test;

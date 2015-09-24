@@ -1,7 +1,7 @@
 package com.uxxu.konashi.lib.dispatcher;
 
 import com.uxxu.konashi.lib.KonashiUUID;
-import com.uxxu.konashi.lib.stores.UartStore;
+import com.uxxu.konashi.lib.store.UartStore;
 
 import java.util.UUID;
 

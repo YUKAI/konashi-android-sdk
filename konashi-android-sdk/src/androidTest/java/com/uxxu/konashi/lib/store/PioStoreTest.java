@@ -1,4 +1,4 @@
-package com.uxxu.konashi.lib.stores;
+package com.uxxu.konashi.lib.store;
 
 import android.support.test.runner.AndroidJUnit4;
 

@@ -1,4 +1,4 @@
-package com.uxxu.konashi.lib.stores;
+package com.uxxu.konashi.lib.store;
 
 /**
  * Created by izumin on 9/18/15.

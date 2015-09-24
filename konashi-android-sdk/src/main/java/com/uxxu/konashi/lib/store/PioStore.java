@@ -1,4 +1,4 @@
-package com.uxxu.konashi.lib.stores;
+package com.uxxu.konashi.lib.store;
 
 import com.uxxu.konashi.lib.dispatcher.CharacteristicDispatcher;
 import com.uxxu.konashi.lib.dispatcher.PioStoreUpdater;
