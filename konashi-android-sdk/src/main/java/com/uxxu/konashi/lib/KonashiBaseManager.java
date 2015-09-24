@@ -4,11 +4,7 @@ import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
-import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattDescriptor;
-import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
-import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -16,13 +12,10 @@ import android.os.Handler;
 import android.os.Message;
 import android.widget.Toast;
 
-import com.uxxu.konashi.lib.events.KonashiConnectionEvent;
-import com.uxxu.konashi.lib.events.KonashiEvent;
 import com.uxxu.konashi.lib.ui.BleDeviceListAdapter;
 import com.uxxu.konashi.lib.ui.BleDeviceSelectionDialog;
 import com.uxxu.konashi.lib.ui.BleDeviceSelectionDialog.OnBleDeviceSelectListener;
 
-import java.util.UUID;
 
 /**
  * konashiのベース部分(BLEまわり)を管理するクラス
@@ -100,22 +93,17 @@ public abstract class KonashiBaseManager implements BluetoothAdapter.LeScanCallb
     private boolean mIsSupportBle = false;
     private boolean mIsInitialized = false;
     private String mKonashiName;
-    
-    // konashi event listenr
-    protected KonashiNotifier mNotifier;
-    
+
     // UI members
     private Activity mActivity;
     private BleDeviceSelectionDialog mDialog;
 
-    private BluetoothGattService mGattService;
-    
+
     /////////////////////////////////////////////////////////////
     // Public methods
     ///////////////////////////////////////////////////////////// 
     
     public KonashiBaseManager(){
-        mNotifier = new KonashiNotifier();
     }
     
     /**
@@ -146,15 +134,8 @@ public abstract class KonashiBaseManager implements BluetoothAdapter.LeScanCallb
                     mBluetoothAdapter.stopLeScan(KonashiBaseManager.this);
                     setStatus(BleStatus.SCAN_END);
                     
-                    if(mKonashiName!=null){
-                        // called findWithName. dispatch PERIPHERAL_NOT_FOUND event
-                        notifyKonashiEvent(KonashiConnectionEvent.PERIPHERAL_NOT_FOUND);
-                    } else {
+                    if(mKonashiName == null){
                         mDialog.finishFinding();
-                        
-                        if(mBleDeviceListAdapter.getCount()==0){
-                            notifyKonashiEvent(KonashiConnectionEvent.PERIPHERAL_NOT_FOUND);
-                        }
                     }
                 }
             }
@@ -192,7 +173,6 @@ public abstract class KonashiBaseManager implements BluetoothAdapter.LeScanCallb
     private void find(Activity activity, boolean isShowKonashiOnly, String name){
         // check initialized
         if(!mIsInitialized || mStatus.equals(BleStatus.READY)){
-            notifyKonashiError(KonashiErrorReason.ALREADY_READY);
             return;
         }
         
@@ -312,8 +292,6 @@ public abstract class KonashiBaseManager implements BluetoothAdapter.LeScanCallb
 
     @Override
     public void onCancelSelectingBleDevice() {
-        notifyKonashiEvent(KonashiConnectionEvent.CANCEL_SELECT_KONASHI);
-
         if(mStatus.equals(BleStatus.SCANNING)){
             stopFindHandler();
             mBluetoothAdapter.stopLeScan(KonashiBaseManager.this);
@@ -333,110 +311,16 @@ public abstract class KonashiBaseManager implements BluetoothAdapter.LeScanCallb
     private void stopFindHandler(){
         mFindHandler.removeCallbacks(mFindRunnable);
     }
-    
+
     private void setStatus(BleStatus status) {
         mStatus = status;
         KonashiUtils.log("konashi_status: " + mStatus.name());
-
-        if (status == BleStatus.READY) {
-            notifyKonashiEvent(KonashiConnectionEvent.READY);
-        }
     }
-    
-    
+
+
     /******************************************
      * BLE methods
      ******************************************/
 
     protected abstract void connect(BluetoothDevice device);
-
-    private BluetoothGattCharacteristic getCharacteristic(UUID serviceUuid, UUID characteristicUuid){
-        if(mBluetoothGatt!=null){
-            BluetoothGattService service = mBluetoothGatt.getService(serviceUuid);
-            return service.getCharacteristic(characteristicUuid);
-        } else {
-            return null;
-        }        
-    }
-    
-    private boolean isAvailableCharacteristic(UUID serviceUuid, UUID characteristicUuid){
-        KonashiUtils.log("check characteristic service: " + serviceUuid.toString() + ", chara: " + characteristicUuid.toString());
-
-        return getCharacteristic(serviceUuid, characteristicUuid) != null;
-    }
-    
-    private boolean enableNotification(UUID uuid){
-        KonashiUtils.log("try enable notification: " + uuid.toString());
-        
-        BluetoothGattCharacteristic characteristic = getCharacteristic(KonashiUUID.KONASHI_SERVICE_UUID, uuid);
-        if(mBluetoothGatt!=null && characteristic!=null){
-            boolean registered = mBluetoothGatt.setCharacteristicNotification(characteristic, true);
-            BluetoothGattDescriptor descriptor = characteristic.getDescriptor(KonashiUUID.CLIENT_CHARACTERISTIC_CONFIG);
-            // HACK descriptorを呼び出すのはいいけど対象のcharacteristicがdescriptorを備えていない（処理スキップで動くっちゃ動く）
-            if(descriptor!=null){
-                descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-                mBluetoothGatt.writeDescriptor(descriptor);
-            }else{
-                KonashiUtils.log("Descriptor is null!");
-            }
-            return registered;
-        } else {
-            return false;
-        }
-    }
-    
-    private String connectionStatus2string(int status){
-        switch(status){
-            case BluetoothProfile.STATE_CONNECTED:
-                return "CONNECTED";
-            case BluetoothProfile.STATE_CONNECTING:
-                return "CONNECTING";
-            case BluetoothProfile.STATE_DISCONNECTED:
-                return "DISCONNECTED";
-            case BluetoothProfile.STATE_DISCONNECTING:
-                return "DISCONNECTING";
-            default:
-                return "UNKNOWN";
-        }
-    }
-    
-    
-    /******************************
-     * Konashi observer methods
-     ******************************/
-    
-    /**
-     * オブザーバにイベントを通知する（パラメータ2つ）
-     * @param event 通知するイベント名
-     * @param param0 パラメータその1
-     * @param param1 パラメータその2
-     */
-    protected void notifyKonashiEvent(KonashiEvent event, Object param0, Object param1){
-        mNotifier.notifyKonashiEvent(event, param0, param1);
-    }
-    
-    /**
-     * オブザーバにイベントを通知する（パラメータ1つ）
-     * @param event 通知するイベント名
-     * @param param0 パラメータその1
-     */
-    protected void notifyKonashiEvent(KonashiEvent event, Object param0){
-        mNotifier.notifyKonashiEvent(event, param0, null);
-    }
-    
-    /**
-     * オブザーバにイベントを通知する（パラメータなし）
-     * @param event 通知するイベント名
-     */
-    protected void notifyKonashiEvent(KonashiEvent event){
-        mNotifier.notifyKonashiEvent(event, null, null);
-    }
-    
-    /**
-     * オブザーバにエラーイベントを通知する
-     * @param errorReason 通知するエラーの原因
-     */
-    protected void notifyKonashiError(KonashiErrorReason errorReason){
-        mNotifier.notifyKonashiError(errorReason);
-    }
 }

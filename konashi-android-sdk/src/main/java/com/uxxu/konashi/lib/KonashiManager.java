@@ -33,7 +33,6 @@ import com.uxxu.konashi.lib.dispatcher.UartStoreUpdater;
 import com.uxxu.konashi.lib.filter.AioAnalogReadFilter;
 import com.uxxu.konashi.lib.filter.BatteryLevelReadFilter;
 import com.uxxu.konashi.lib.filter.I2cReadFilter;
-import com.uxxu.konashi.lib.listeners.KonashiBaseListener;
 import com.uxxu.konashi.lib.store.AioStore;
 import com.uxxu.konashi.lib.store.I2cStore;
 import com.uxxu.konashi.lib.store.PioStore;
@@ -151,71 +150,30 @@ public class KonashiManager extends KonashiBaseManager {
     ///////////////////////////
 
 
-    public void addListener(KonashiListener listener) {
-        mEmitter.add(listener);
-    }
-
-    public void removeListener(KonashiListener listener) {
-        mEmitter.remove(listener);
-    }
-
     /**
      * konashiのイベントのリスナーを追加する
      * @param listener 追加するリスナー
      */
-    public void addListener(KonashiBaseListener listener){
-        mNotifier.addListener(listener);
+    public void addListener(KonashiListener listener) {
+        mEmitter.add(listener);
     }
-
 
     /**
      * 指定したリスナーを削除する
      * @param listener 削除するリスナー
      */
-    public void removeListener(KonashiBaseListener listener){
-        mNotifier.removeListener(listener);
+    public void removeListener(KonashiListener listener) {
+        mEmitter.remove(listener);
     }
 
     /**
      * すべてのリスナーを削除する
      */
     public void removeAllListeners() {
-        mNotifier.removeAllListeners();
+        mEmitter.clear();
     }
 
 
-    /**
-     * konashiのイベントのオブザーバを追加する
-     * @param observer 追加するオブザーバ
-     * @deprecated This method deprecated in 0.5.0.
-     * Use {@link #addListener(KonashiBaseListener)} instead.
-     */
-    @Deprecated
-    public void addObserver(KonashiObserver observer){
-        mNotifier.addObserver(observer);
-    }
-
-    /**
-     * 指定したオブザーバを削除する
-     * @param observer 削除するオブザーバ
-     * @deprecated This method deprecated in 0.5.0.
-     * Use {@link #removeListener(KonashiBaseListener)} instead.
-     */
-    @Deprecated
-    public void removeObserver(KonashiObserver observer){
-        mNotifier.removeObserver(observer);
-    }
-    
-    /**
-     * すべてのオブザーバを削除する
-     * @deprecated This method deprecated in 0.5.0.
-     * Use {@link #removeAllListeners()} instead.
-     */
-    @Deprecated
-    public void removeAllObservers(){
-        mNotifier.removeAllObservers();
-    }
-    
     ///////////////////////////
     // PIO
     ///////////////////////////
