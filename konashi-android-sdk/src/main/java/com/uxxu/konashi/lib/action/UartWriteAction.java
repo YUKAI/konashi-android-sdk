@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothGattService;
 
 import com.uxxu.konashi.lib.Konashi;
 import com.uxxu.konashi.lib.KonashiUUID;
+import com.uxxu.konashi.lib.stores.UartStore;
 import com.uxxu.konashi.lib.util.UartUtils;
 
 import java.util.UUID;
@@ -12,7 +13,7 @@ import java.util.UUID;
 /**
  * Created by e10dokup on 2015/09/23
  **/
-public class UartWriteAction extends KonashiWriteCharacteristicAction {
+public class UartWriteAction extends UartAction {
     private static final String TAG = UartWriteAction.class.getSimpleName();
     private final UartWriteAction self = this;
 
@@ -20,12 +21,12 @@ public class UartWriteAction extends KonashiWriteCharacteristicAction {
 
     private byte[] mWriteData = new byte[Konashi.UART_DATA_MAX_LENGTH + 1];
 
-    public UartWriteAction(BluetoothGattService service, String writeDataString) {
-        this(service, writeDataString.getBytes());
+    public UartWriteAction(BluetoothGattService service, String writeDataString, UartStore store) {
+        this(service, writeDataString.getBytes(), store);
     }
 
-    public UartWriteAction(BluetoothGattService service, byte[] writeData) {
-        super(service, UUID);
+    public UartWriteAction(BluetoothGattService service, byte[] writeData, UartStore store) {
+        super(service, UUID, store);
         mWriteData = UartUtils.toFormattedByteArray(writeData);
     }
 
