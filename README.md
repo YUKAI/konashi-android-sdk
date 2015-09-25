@@ -2,10 +2,6 @@
 [![wercker status](https://app.wercker.com/status/6617295015c7f7518afc67a3182bd241/s/master "wercker status")](https://app.wercker.com/project/bykey/6617295015c7f7518afc67a3182bd241)
 [![Download](https://api.bintray.com/packages/konashi-dev/maven/konashi-android-sdk/images/download.svg)](https://bintray.com/konashi-dev/maven/konashi-android-sdk/_latestVersion)
 
-master | develop
------- | ----
-[![wercker status](https://app.wercker.com/status/6617295015c7f7518afc67a3182bd241/m/master "wercker status")](https://app.wercker.com/project/bykey/6617295015c7f7518afc67a3182bd241) | [![wercker status](https://app.wercker.com/status/6617295015c7f7518afc67a3182bd241/m/develop "wercker status")](https://app.wercker.com/project/bykey/6617295015c7f7518afc67a3182bd241)
-
 ---
 
 <img src="http://konashi.ux-xu.com/img/documents/i2c.png" width="600" />
