@@ -19,7 +19,7 @@ public class I2cWriteAction extends I2cAction {
     private final byte[] mData;
 
     public I2cWriteAction(BluetoothGattService service, byte address, byte[] data, I2cStore store) {
-        super(service, UUID, store);
+        super(service, UUID, store, false);
         mAddress = address;
         mData = data;
     }

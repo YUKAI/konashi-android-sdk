@@ -18,7 +18,7 @@ public class I2cSendConditionAction extends I2cAction {
     private final int mCondition;
 
     public I2cSendConditionAction(BluetoothGattService service, int condition, I2cStore store) {
-        super(service, UUID, store);
+        super(service, UUID, store, false);
         mCondition = condition;
     }
 

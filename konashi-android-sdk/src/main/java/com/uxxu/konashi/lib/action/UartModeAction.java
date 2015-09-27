@@ -21,7 +21,7 @@ public class UartModeAction extends UartAction {
     private int mMode;
 
     public UartModeAction(BluetoothGattService service, int mode, UartStore store) {
-        super(service, UUID, store);
+        super(service, UUID, store, true);
         mMode = mode;
     }
 

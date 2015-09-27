@@ -18,7 +18,7 @@ public class I2cModeAction extends I2cAction {
     private final int mMode;
 
     public I2cModeAction(BluetoothGattService service, int mode, I2cStore store) {
-        super(service, UUID, store);
+        super(service, UUID, store, true);
         mMode = mode;
     }
 

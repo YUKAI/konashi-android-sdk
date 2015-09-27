@@ -18,7 +18,7 @@ public class UartBaudrateAction extends UartAction {
     private int mBaudrate;
 
     public UartBaudrateAction(BluetoothGattService service, int baudrate, UartStore store) {
-        super(service, UUID, store);
+        super(service, UUID, store, false);
         mBaudrate = baudrate;
     }
 
