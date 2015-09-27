@@ -2,7 +2,7 @@ package com.uxxu.konashi.lib.dispatcher;
 
 import android.bluetooth.BluetoothGattCharacteristic;
 
-import com.uxxu.konashi.lib.stores.Store;
+import com.uxxu.konashi.lib.store.Store;
 
 import org.jdeferred.DoneCallback;
 

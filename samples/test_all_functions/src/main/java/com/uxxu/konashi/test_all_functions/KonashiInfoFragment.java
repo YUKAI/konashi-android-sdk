@@ -2,6 +2,7 @@ package com.uxxu.konashi.test_all_functions;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +12,8 @@ import android.widget.TextView;
 
 import com.uxxu.konashi.lib.Konashi;
 import com.uxxu.konashi.lib.KonashiManager;
-import com.uxxu.konashi.lib.KonashiObserver;
+
+import org.jdeferred.DoneCallback;
 
 /**
  * Created by kiryu on 7/27/15.
@@ -21,7 +23,6 @@ public final class KonashiInfoFragment extends Fragment {
     public static final String TITLE = "Konashi Info";
 
     private final KonashiManager mKonashiManager = Konashi.getManager();
-    private KonashiObserver mInformationObserver;
 
     private TextView mNameTextView;
     private TextView mRssiTextView;
@@ -29,42 +30,13 @@ public final class KonashiInfoFragment extends Fragment {
     private TextView mBatteryTextView;
     private ProgressBar mBatteryProgressBar;
     private Button mReloadButton;
+    private Handler mHandler;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getActivity().setTitle(TITLE);
-
-        mInformationObserver = new KonashiObserver(getActivity()) {
-
-            @Override
-            public void onReady() {
-                reload();
-            }
-
-            @Override
-            public void onUpdateBatteryLevel(final int level) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mBatteryTextView.setText(String.format("%d%%", level));
-                        mBatteryProgressBar.setProgress(level);
-                    }
-                });
-            }
-
-            @Override
-            public void onUpdateSignalStrength(final int rssi) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mRssiTextView.setText(String.format("%ddb", rssi));
-                        mRssiProgressBar.setProgress(Math.abs(rssi));
-                    }
-                });
-            }
-        };
-        mKonashiManager.addObserver(mInformationObserver);
+        mHandler = new Handler(getActivity().getMainLooper());
     }
 
     @Override
@@ -94,7 +66,6 @@ public final class KonashiInfoFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        mKonashiManager.removeObserver(mInformationObserver);
         super.onDestroy();
     }
 
@@ -109,12 +80,24 @@ public final class KonashiInfoFragment extends Fragment {
             }
         });
 
-        new Thread(new Runnable() {
+        mKonashiManager.getBatteryLevel().then(new DoneCallback<Integer>() {
             @Override
-            public void run() {
-                mKonashiManager.batteryLevelReadRequest();
-                mKonashiManager.signalStrengthReadRequest();
+            public void onDone(final Integer result) {
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mBatteryTextView.setText(String.format("%d%%", result));
+                        mBatteryProgressBar.setProgress(result);
+                    }
+                });
             }
-        }).start();
+        });
+        mKonashiManager.getSignalStrength().then(new DoneCallback<Integer>() {
+            @Override
+            public void onDone(Integer result) {
+                mRssiTextView.setText(String.format("%ddb", result));
+                mRssiProgressBar.setProgress(Math.abs(result));
+            }
+        });
     }
 }

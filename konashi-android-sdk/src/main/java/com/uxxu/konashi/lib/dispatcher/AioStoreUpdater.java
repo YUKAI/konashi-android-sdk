@@ -2,7 +2,7 @@ package com.uxxu.konashi.lib.dispatcher;
 
 import com.uxxu.konashi.lib.Konashi;
 import com.uxxu.konashi.lib.KonashiUUID;
-import com.uxxu.konashi.lib.stores.AioStore;
+import com.uxxu.konashi.lib.store.AioStore;
 import com.uxxu.konashi.lib.util.AioUtils;
 
 import java.util.UUID;
@@ -41,6 +41,6 @@ public enum AioStoreUpdater implements CharacteristicDispatcher.Updater<AioStore
     }
 
     protected void updateAioValue(AioStore store, int pin, byte[] value) {
-        store.setAnalogValue(pin, AioUtils.getAnalogValue(pin, value));
+        store.setValue(pin, AioUtils.getAnalogValue(pin, value));
     }
 }

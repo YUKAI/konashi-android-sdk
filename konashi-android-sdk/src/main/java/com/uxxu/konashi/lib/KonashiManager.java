@@ -1,10 +1,13 @@
 package com.uxxu.konashi.lib;
 
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattService;
 import android.content.Context;
 
 import com.uxxu.konashi.lib.action.AioAnalogReadAction;
 import com.uxxu.konashi.lib.action.BatteryLevelReadAction;
+import com.uxxu.konashi.lib.action.HardwareResetAction;
 import com.uxxu.konashi.lib.action.I2cModeAction;
 import com.uxxu.konashi.lib.action.I2cReadAction;
 import com.uxxu.konashi.lib.action.I2cSetReadParamAction;
@@ -22,6 +25,7 @@ import com.uxxu.konashi.lib.action.UartModeAction;
 import com.uxxu.konashi.lib.action.UartWriteAction;
 import com.uxxu.konashi.lib.dispatcher.AioStoreUpdater;
 import com.uxxu.konashi.lib.dispatcher.CharacteristicDispatcher;
+import com.uxxu.konashi.lib.dispatcher.DispatcherContainer;
 import com.uxxu.konashi.lib.dispatcher.I2cStoreUpdater;
 import com.uxxu.konashi.lib.dispatcher.PioStoreUpdater;
 import com.uxxu.konashi.lib.dispatcher.PwmStoreUpdater;
@@ -29,20 +33,22 @@ import com.uxxu.konashi.lib.dispatcher.UartStoreUpdater;
 import com.uxxu.konashi.lib.filter.AioAnalogReadFilter;
 import com.uxxu.konashi.lib.filter.BatteryLevelReadFilter;
 import com.uxxu.konashi.lib.filter.I2cReadFilter;
-import com.uxxu.konashi.lib.listeners.KonashiBaseListener;
-import com.uxxu.konashi.lib.stores.AioStore;
-import com.uxxu.konashi.lib.stores.I2cStore;
-import com.uxxu.konashi.lib.stores.PioStore;
-import com.uxxu.konashi.lib.stores.PwmStore;
-import com.uxxu.konashi.lib.stores.UartStore;
-import com.uxxu.konashi.lib.util.AioUtils;
+import com.uxxu.konashi.lib.store.AioStore;
+import com.uxxu.konashi.lib.store.I2cStore;
+import com.uxxu.konashi.lib.store.PioStore;
+import com.uxxu.konashi.lib.store.PwmStore;
+import com.uxxu.konashi.lib.store.UartStore;
 
+import org.jdeferred.DoneCallback;
 import org.jdeferred.DonePipe;
 import org.jdeferred.Promise;
 
-import java.util.List;
+import java.util.UUID;
 
+import info.izumin.android.bletia.BleState;
+import info.izumin.android.bletia.Bletia;
 import info.izumin.android.bletia.BletiaException;
+import info.izumin.android.bletia.action.Action;
 
 
 /**
@@ -66,9 +72,7 @@ import info.izumin.android.bletia.BletiaException;
  * limitations under the License.
  *
  */
-public class KonashiManager extends KonashiBaseManager implements KonashiApiInterface {
-    private static final int AIO_LENGTH = 3;
-    
+public class KonashiManager extends KonashiBaseManager {
     // konashi members
     // PIO
     private PioStore mPioStore;
@@ -89,118 +93,100 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
     // UART
     private UartStore mUartStore;
     private CharacteristicDispatcher<UartStore, UartStoreUpdater> mUartDispatcher;
-    
-    // Hardware
-    private int mBatteryLevel;
-    private int mRssi;
+
+    private Bletia mBletia;
+    private EventEmitter mEmitter;
+    private CallbackHandler mCallbackHandler;
+    private DispatcherContainer mDispacherContainer;
 
     ///////////////////////////
     // Initialization
     ///////////////////////////
-    
+
+
+    public KonashiManager() {
+        mEmitter = new EventEmitter();
+        mDispacherContainer = new DispatcherContainer();
+        mCallbackHandler = new CallbackHandler(this, mEmitter, mDispacherContainer);
+    }
+
     private void initializeMembers(){
-        int i;
-        
         // PIO
-        mPioDispatcher = new CharacteristicDispatcher<>(PioStoreUpdater.class);
+        mPioDispatcher = mDispacherContainer.getPioDispatcher();
         mPioStore = new PioStore(mPioDispatcher);
 
         // PWM
-        mPwmDispatcher = new CharacteristicDispatcher<>(PwmStoreUpdater.class);
+        mPwmDispatcher = mDispacherContainer.getPwmDispatcher();
         mPwmStore = new PwmStore(mPwmDispatcher);
 
         // AIO
-        mAioDispatcher = new CharacteristicDispatcher<>(AioStoreUpdater.class);
+        mAioDispatcher = mDispacherContainer.getAioDispatcher();
         mAioStore = new AioStore(mAioDispatcher);
 
         // I2C
-        mI2cDispatcher = new CharacteristicDispatcher<>(I2cStoreUpdater.class);
+        mI2cDispatcher = mDispacherContainer.getI2cDispatcher();
         mI2cStore = new I2cStore(mI2cDispatcher);
 
         // UART
         mUartDispatcher = new CharacteristicDispatcher<>(UartStoreUpdater.class);
         mUartStore = new UartStore(mUartDispatcher);
-            
-        // Hardware
-        mBatteryLevel = 0;
-        mRssi = 0;
-
     }
 
     @Override
     public void initialize(Context context) {
         super.initialize(context);
 
+        mBletia = new Bletia(context);
+        mBletia.addListener(mCallbackHandler);
+
         initializeMembers();
     }
-    
-    
+
+
+    /**
+     * konashiとの接続を解除する
+     */
+    public void disconnect(){
+        mBletia.disconenct();
+    }
+
+    /**
+     * konashiを使える状態になっているか
+     * @return konashiを使えるならtrue
+     */
+    public boolean isReady(){
+        return mBletia.getState() == BleState.SERVICE_DISCOVERED;
+    }
+
     ///////////////////////////
     // Observer
     ///////////////////////////
+
 
     /**
      * konashiのイベントのリスナーを追加する
      * @param listener 追加するリスナー
      */
-    @Override
-    public void addListener(KonashiBaseListener listener){
-        mNotifier.addListener(listener);
+    public void addListener(KonashiListener listener) {
+        mEmitter.add(listener);
     }
 
     /**
      * 指定したリスナーを削除する
      * @param listener 削除するリスナー
      */
-    @Override
-    public void removeListener(KonashiBaseListener listener){
-        mNotifier.removeListener(listener);
+    public void removeListener(KonashiListener listener) {
+        mEmitter.remove(listener);
     }
 
     /**
      * すべてのリスナーを削除する
      */
-    @Override
     public void removeAllListeners() {
-        mNotifier.removeAllListeners();
+        mEmitter.clear();
     }
 
 
-    /**
-     * konashiのイベントのオブザーバを追加する
-     * @param observer 追加するオブザーバ
-     * @deprecated This method deprecated in 0.5.0.
-     * Use {@link #addListener(KonashiBaseListener)} instead.
-     */
-    @Deprecated
-    @Override
-    public void addObserver(KonashiObserver observer){
-        mNotifier.addObserver(observer);
-    }
-
-    /**
-     * 指定したオブザーバを削除する
-     * @param observer 削除するオブザーバ
-     * @deprecated This method deprecated in 0.5.0.
-     * Use {@link #removeListener(KonashiBaseListener)} instead.
-     */
-    @Deprecated
-    @Override
-    public void removeObserver(KonashiObserver observer){
-        mNotifier.removeObserver(observer);
-    }
-    
-    /**
-     * すべてのオブザーバを削除する
-     * @deprecated This method deprecated in 0.5.0.
-     * Use {@link #removeAllListeners()} instead.
-     */
-    @Deprecated
-    @Override
-    public void removeAllObservers(){
-        mNotifier.removeAllObservers();
-    }
-    
     ///////////////////////////
     // PIO
     ///////////////////////////
@@ -210,16 +196,14 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * @param pin 設定するPIOのピン名。
      * @param mode ピンに設定するモード。INPUT か OUTPUT が設定できます。
      */
-    @Override
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> pinMode(int pin, int mode){
-        return execute(new PioPinModeAction(getKonashiService(), pin, mode, mPioStore.getPioModes()), mPioDispatcher);
+        return execute(new PioPinModeAction(getKonashiService(), pin, mode, mPioStore.getModes()), mPioDispatcher);
     }
     
     /**
      * PIOのピンを入力として使うか、出力として使うかの設定を行う
      * @param modes PIO0 〜 PIO7 の計8ピンの設定
      */
-    @Override
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> pinModeAll(int modes){
         return execute(new PioPinModeAction(getKonashiService(), modes), mPioDispatcher);
     }
@@ -229,16 +213,14 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * @param pin 設定するPIOのピン名
      * @param pullup ピンをプルアップするかの設定。PULLUP か NO_PULLS が設定できます。
      */
-    @Override
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> pinPullup(int pin, int pullup){
-        return execute(new PioPinPullupAction(getKonashiService(), pin, pullup, mPioStore.getPioPullups()), mPioDispatcher);
+        return execute(new PioPinPullupAction(getKonashiService(), pin, pullup, mPioStore.getPullups()), mPioDispatcher);
     }
     
     /**
      * PIOのピンをプルアップするかの設定を行う
      * @param pullups PIO0 〜 PIO7 の計8ピンのプルアップの設定
      */
-    @Override
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> pinPullupAll(int pullups){
         return execute(new PioPinPullupAction(getKonashiService(), pullups), mPioDispatcher);
     }
@@ -248,37 +230,16 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * @param pin PIOのピン名
      * @return HIGH(1) もしくは LOW(0)
      */
-    @Override
     public int digitalRead(int pin){
-        if(!isEnableAccessKonashi()){
-            notifyKonashiError(KonashiErrorReason.NOT_READY);
-            return -1;
-        }
-
-        if ((pin != Konashi.PIO0) && (pin != Konashi.PIO1) && (pin != Konashi.PIO2) &&
-                (pin != Konashi.PIO3) && (pin != Konashi.PIO4) && (pin != Konashi.PIO5) &&
-                (pin != Konashi.PIO6) && (pin != Konashi.PIO7)) {
-            notifyKonashiError(KonashiErrorReason.INVALID_PARAMETER);
-            return -1;
-        } else {
-            notifyKonashiError(KonashiErrorReason.INVALID_PARAMETER);
-        }
-
-        return mPioStore.getPioInput(pin);
+        return mPioStore.getInput(pin);
     }
     
     /**
      * PIOのすべてのピンの状態を取得する
      * @return PIOの状態(PIO0〜PIO7の入力状態が8bit(1byte)で表現)
      */
-    @Override
     public int digitalReadAll(){
-        if(!isEnableAccessKonashi()){
-            notifyKonashiError(KonashiErrorReason.NOT_READY);
-            return -1;
-        }
-        
-        return mPioStore.getPioInputs();
+        return mPioStore.getInputs();
     }
     
     /**
@@ -286,16 +247,14 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * @param pin 設定するPIOのピン名
      * @param output 設定するPIOの出力状態。HIGH もしくは LOW が指定可能
      */
-    @Override
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> digitalWrite(int pin, int output){
-        return execute(new PioDigitalWriteAction(getKonashiService(), pin, output, mPioStore.getPioOutputs()), mPioDispatcher);
+        return execute(new PioDigitalWriteAction(getKonashiService(), pin, output, mPioStore.getOutputs()), mPioDispatcher);
     }
     
     /**
      * PIOの特定のピンの出力状態を設定する
      * @param outputs PIOの出力状態。PIO0〜PIO7の出力状態が8bit(1byte)で表現
      */
-    @Override
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> digitalWriteAll(int outputs){
         return execute(new PioDigitalWriteAction(getKonashiService(), outputs), mPioDispatcher);
     }
@@ -310,10 +269,9 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * @param pin PWMモードの設定をするPIOのピン番号。Konashi.PIO0 〜 Konashi.PIO7。
      * @param mode 設定するPWMのモード。Konashi.PWM_DISABLE, Konashi.PWM_ENABLE, Konashi.PWM_ENABLE_LED_MODE のいずれかをセットする。
      */
-    @Override
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> pwmMode(final int pin, int mode){
         Promise<BluetoothGattCharacteristic, BletiaException, Object> promise =
-                execute(new PwmPinModeAction(getKonashiService(), pin, mode, mPwmStore.getPwmModes())).then(mPwmDispatcher);
+                execute(new PwmPinModeAction(getKonashiService(), pin, mode, mPwmStore.getModes())).then(mPwmDispatcher);
 
         if (mode == Konashi.PWM_ENABLE_LED_MODE) {
             promise.then(new DonePipe<BluetoothGattCharacteristic, BluetoothGattCharacteristic, BletiaException, Object>() {
@@ -337,9 +295,8 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * @param pin PWMモードの設定をするPIOのピン番号。Konashi.PIO0 〜 Konashi.PIO7。
      * @param period 周期。単位はマイクロ秒(us)で32bitで指定してください。最大2^(32)us = 71.5分。
      */
-    @Override
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> pwmPeriod(int pin, int period){
-        return execute(new PwmPeriodAction(getKonashiService(), pin, period, mPwmStore.getPwmDuty(pin))).then(mPwmDispatcher);
+        return execute(new PwmPeriodAction(getKonashiService(), pin, period, mPwmStore.getDuty(pin))).then(mPwmDispatcher);
     }
     
     /**
@@ -347,9 +304,8 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * @param pin PWMモードの設定をするPIOのピン番号。Konashi.PIO0 〜 Konashi.PIO7。
      * @param duty デューティ。単位はマイクロ秒(us)で32bitで指定してください。最大2^(32)us = 71.5分。
      */
-    @Override
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> pwmDuty(int pin, int duty){
-        return execute(new PwmDutyAction(getKonashiService(), pin, duty, mPwmStore.getPwmPeriod(pin))).then(mPwmDispatcher);
+        return execute(new PwmDutyAction(getKonashiService(), pin, duty, mPwmStore.getPeriod(pin))).then(mPwmDispatcher);
     }
     
     /**
@@ -357,9 +313,8 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * @param pin PWMモードの設定をするPIOのピン番号。Konashi.PIO0 〜 Konashi.PIO7。
      * @param dutyRatio LEDの明るさ。0.0F〜100.0F をしてしてください。
      */
-    @Override
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> pwmLedDrive(int pin, float dutyRatio){
-        return execute(new PwmLedDriveAction(getKonashiService(), pin, dutyRatio, mPwmStore.getPwmPeriod(pin))).then(mPwmDispatcher);
+        return execute(new PwmLedDriveAction(getKonashiService(), pin, dutyRatio, mPwmStore.getPeriod(pin))).then(mPwmDispatcher);
     }
     
     /**
@@ -367,7 +322,6 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * @param pin PWMモードの設定をするPIOのピン番号。Konashi.PIO0 〜 Konashi.PIO7。
      * @param dutyRatio LEDの明るさ。0.0〜100.0 をしてしてください。
      */
-    @Override
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> pwmLedDrive(int pin, double dutyRatio){
         return pwmLedDrive(pin, (float) dutyRatio);
     }
@@ -381,7 +335,6 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * AIO の指定のピンの入力電圧を取得する
      * @param pin AIOのピン名。指定可能なピン名は AIO0, AIO1, AIO2
      */
-    @Override
     public Promise<Integer, BletiaException, Object> analogRead(final int pin) {
         return execute(new AioAnalogReadAction(getKonashiService(), pin))
                 .then(mAioDispatcher)
@@ -422,7 +375,6 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * UART の有効/無効を設定する
      * @param mode 設定するUARTのモード。Konashi.UART_DISABLE, Konashi.UART_ENABLE を指定
      */
-    @Override
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> uartMode(int mode){
         return execute(new UartModeAction(getKonashiService(), mode, mUartStore), mUartDispatcher);
     }
@@ -431,7 +383,6 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * UART の通信速度を設定する
      * @param baudrate UARTの通信速度。Konashi.UART_RATE_2K4 か Konashi.UART_RATE_9K6 を指定
      */
-    @Override
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> uartBaudrate(int baudrate){
         return execute(new UartBaudrateAction(getKonashiService(), baudrate, mUartStore), mUartDispatcher);
     }
@@ -440,7 +391,6 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * UART でデータを送信する
      * @param bytes 送信するデータ(byte[])
      */
-    @Override
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> uartWrite(byte[] bytes) {
         return execute(new UartWriteAction(getKonashiService(), bytes, mUartStore), mUartDispatcher);
     }
@@ -449,7 +399,6 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * UART でデータを送信する
      * @param string 送信するデータ(string)
      */
-    @Override
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> uartWrite(String string) {
         return execute(new UartWriteAction(getKonashiService(), string, mUartStore), mUartDispatcher);
     }
@@ -493,7 +442,6 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * I2Cを有効/無効を設定する
      * @param mode 設定するI2Cのモード。Konashi.I2C_DISABLE , Konashi.I2C_ENABLE, Konashi.I2C_ENABLE_100K, Konashi.I2C_ENABLE_400Kを指定。
      */
-    @Override
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> i2cMode(int mode) {
         return execute(new I2cModeAction(getKonashiService(), mode, mI2cStore), mI2cDispatcher);
     }
@@ -501,7 +449,6 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
     /**
      * I2Cのスタートコンディションを発行する
      */
-    @Override
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> i2cStartCondition() {
         return i2cSendCondition(Konashi.I2C_START_CONDITION);
     }
@@ -509,7 +456,6 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
     /**
      * I2Cのリスタートコンディションを発行する
      */
-    @Override
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> i2cRestartCondition() {
         return i2cSendCondition(Konashi.I2C_RESTART_CONDITION);
     }
@@ -517,7 +463,6 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
     /**
      * I2Cのストップコンディションを発行する
      */
-    @Override
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> i2cStopCondition() {
         return i2cSendCondition(Konashi.I2C_STOP_CONDITION);
     }
@@ -528,7 +473,6 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * @param data 書き込むデータの配列
      * @param address 書き込み先アドレス
      */
-    @Override
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> i2cWrite(int length, byte[] data, byte address) {
         return execute(new I2cWriteAction(getKonashiService(), address, data, mI2cStore));
     }
@@ -538,7 +482,6 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * @param length 読み込むデータの長さ。最大 Konashi.I2C_DATA_MAX_LENGTHs (19)
      * @param address 読み込み先のアドレス
      */
-    @Override
     public Promise<byte[], BletiaException, Object> i2cRead(int length, byte address) {
         return execute(new I2cSetReadParamAction(getKonashiService(), length, address, mI2cStore))
                 .then(mI2cDispatcher)
@@ -558,24 +501,14 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
     /**
      * konashiをリセットする
      */
-    @Override
-    public void reset(){
-        if(!isEnableAccessKonashi()){
-            notifyKonashiError(KonashiErrorReason.NOT_READY);
-            return;
-        }
-        
-        byte[] val = new byte[1];
-        val[0] = 1;
-        
-        addWriteMessage(KonashiUUID.HARDWARE_RESET_UUID, val);
+    public Promise<BluetoothGattCharacteristic, BletiaException, Object> reset(){
+        return execute(new HardwareResetAction(getKonashiService()));
     }
 
     /**
      * konashi のバッテリ残量を取得
      * @return 0 〜 100 のパーセント単位でバッテリ残量が返る
      */
-    @Override
     public Promise<Integer, BletiaException, Object> getBatteryLevel(){
         return execute(new BatteryLevelReadAction(getService(KonashiUUID.BATTERY_SERVICE_UUID)))
                 .then(new BatteryLevelReadFilter());
@@ -585,54 +518,28 @@ public class KonashiManager extends KonashiBaseManager implements KonashiApiInte
      * konashi の電波強度を取得
      * @return 電波強度(単位はdb)
      */
-    @Override
     public Promise<Integer, BletiaException, Object> getSignalStrength() {
-        return readRemoteRssi();
-    }
-
-    public static byte[] toByteArray(List<Byte> in) {
-        final int n = in.size();
-        byte ret[] = new byte[n];
-        for (int i = 0; i < n; i++) {
-            ret[i] = in.get(i);
-        }
-        return ret;
-    }
-    
-    ////////////////////////////////
-    // Notification event handler 
-    ////////////////////////////////
-
-    @Override
-    protected void onRecieveUart(byte[] data) {
-        int length = Integer.valueOf(data[0]);
-        byte[] uartData = new byte[length];
-        for(int i=0;i<length;i++){
-            uartData[i] = data[i+1];
-        }
-        super.onRecieveUart(uartData);
-    }
-
-//    /**
-//     * for konashi v1(old codes)
-//     * @param data
-//     */
-//    @Override
-//    protected void onRecieveUart(byte data) {
-//        super.onRecieveUart(data);
-//    }
-
-    @Override
-    protected void onUpdateBatteryLevel(int level) {
-        mBatteryLevel = level;
-                
-        super.onUpdateBatteryLevel(level);
+        return mBletia.readRemoteRssi();
     }
 
     @Override
-    protected void onUpdateSignalSrength(int rssi) {
-        mRssi = rssi;
-        
-        super.onUpdateSignalSrength(rssi);
+    protected void connect(BluetoothDevice device){
+        mBletia.connect(device);
+    }
+
+    private <T> Promise<T, BletiaException, Object> execute(Action<T> action, DoneCallback<T> callback) {
+        return execute(action).then(callback);
+    }
+
+    private <T> Promise<T, BletiaException, Object> execute(Action<T> action) {
+        return mBletia.execute(action);
+    }
+
+    private BluetoothGattService getKonashiService() {
+        return mBletia.getService(KonashiUUID.KONASHI_SERVICE_UUID);
+    }
+
+    private BluetoothGattService getService(UUID uuid) {
+        return mBletia.getService(uuid);
     }
 }

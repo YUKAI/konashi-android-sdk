@@ -16,11 +16,12 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.uxxu.konashi.lib.Konashi;
-import com.uxxu.konashi.lib.KonashiErrorReason;
+import com.uxxu.konashi.lib.KonashiListener;
 import com.uxxu.konashi.lib.KonashiManager;
-import com.uxxu.konashi.lib.listeners.KonashiDigitalListener;
 
 import org.jdeferred.DoneCallback;
+
+import info.izumin.android.bletia.BletiaException;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -86,30 +87,45 @@ public class MainActivityFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mCallback.getKonashiManager().addListener(mKonashiDigitalListener);
+        mCallback.getKonashiManager().addListener(mKonashiListener);
     }
 
     @Override
     public void onDestroyView() {
-        mCallback.getKonashiManager().removeListener(mKonashiDigitalListener);
+        mCallback.getKonashiManager().removeListener(mKonashiListener);
         super.onDestroyView();
     }
 
-    private final KonashiDigitalListener mKonashiDigitalListener = new KonashiDigitalListener() {
-        @Override public void onUpdatePioSetting(int modes) {}
-        @Override public void onUpdatePioPullup(int pullups) {}
+    private final KonashiListener mKonashiListener = new KonashiListener() {
+        @Override
+        public void onConnect(KonashiManager manager) {
+
+        }
 
         @Override
-        public void onUpdatePioInput(byte value) {
+        public void onDisconnect(KonashiManager manager) {
+
+        }
+
+        @Override
+        public void onError(KonashiManager manager, BletiaException e) {
+
+        }
+
+        @Override
+        public void onUpdatePioOutput(KonashiManager manager, int value) {
             mViewHolders[0].setInputValue(value);
         }
 
         @Override
-        public void onUpdatePioOutput(byte value) {
+        public void onUpdateUartRx(KonashiManager manager, byte[] value) {
 
         }
 
-        @Override public void onError(KonashiErrorReason errorReason, String message) {}
+        @Override
+        public void onUpdateBatteryLevel(KonashiManager manager, int level) {
+
+        }
     };
 
     public interface Callback {
@@ -183,8 +199,13 @@ public class MainActivityFragment extends Fragment {
             }
         }
 
-        public void setInputValue(byte value) {
-            mPioInputText.setText(value == Konashi.HIGH ? "HIGH" : "LOW");
+        public void setInputValue(final int value) {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mPioInputText.setText(value == Konashi.HIGH ? "HIGH" : "LOW");
+                }
+            });
         }
     }
 }

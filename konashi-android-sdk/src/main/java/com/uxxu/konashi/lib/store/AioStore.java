@@ -1,4 +1,4 @@
-package com.uxxu.konashi.lib.stores;
+package com.uxxu.konashi.lib.store;
 
 import android.util.SparseArray;
 
@@ -11,21 +11,21 @@ import com.uxxu.konashi.lib.dispatcher.CharacteristicDispatcher;
  */
 public class AioStore implements Store {
     private static final int[] PINS = {Konashi.AIO0, Konashi.AIO1, Konashi.AIO2};
-    private SparseArray<Integer> mAioValues;
+    private SparseArray<Integer> mValues;
 
     public AioStore(CharacteristicDispatcher<AioStore, AioStoreUpdater> dispatcher) {
         dispatcher.setStore(this);
-        mAioValues = new SparseArray<>();
+        mValues = new SparseArray<>();
         for (int pin : PINS) {
-            mAioValues.put(pin, 0);
+            mValues.put(pin, 0);
         }
     }
 
-    public int getAnalogValue(int pin) {
-        return mAioValues.get(pin);
+    public int getValue(int pin) {
+        return mValues.get(pin);
     }
 
-    public void setAnalogValue(int pin, int value) {
-        mAioValues.put(pin, value);
+    public void setValue(int pin, int value) {
+        mValues.put(pin, value);
     }
 }

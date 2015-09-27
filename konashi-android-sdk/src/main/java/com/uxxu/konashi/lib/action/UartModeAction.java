@@ -2,10 +2,9 @@ package com.uxxu.konashi.lib.action;
 
 import android.bluetooth.BluetoothGattService;
 
-import com.uxxu.konashi.lib.Konashi;
 import com.uxxu.konashi.lib.KonashiUUID;
 import com.uxxu.konashi.lib.KonashiUtils;
-import com.uxxu.konashi.lib.stores.UartStore;
+import com.uxxu.konashi.lib.store.UartStore;
 import com.uxxu.konashi.lib.util.UartUtils;
 
 import java.util.UUID;

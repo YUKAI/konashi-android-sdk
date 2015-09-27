@@ -1,7 +1,7 @@
 package com.uxxu.konashi.lib.dispatcher;
 
 import com.uxxu.konashi.lib.KonashiUUID;
-import com.uxxu.konashi.lib.stores.PwmStore;
+import com.uxxu.konashi.lib.store.PwmStore;
 import com.uxxu.konashi.lib.util.PwmUtils;
 
 import java.util.UUID;
@@ -13,7 +13,7 @@ public enum PwmStoreUpdater implements CharacteristicDispatcher.Updater<PwmStore
     MODE(KonashiUUID.PWM_CONFIG_UUID) {
         @Override
         public void update(PwmStore store, byte[] value) {
-            store.setPwmModes(value[0]);
+            store.setModes(value[0]);
         }
     },
     PERIOD(KonashiUUID.PWM_PARAM_UUID) {
@@ -21,7 +21,7 @@ public enum PwmStoreUpdater implements CharacteristicDispatcher.Updater<PwmStore
         public void update(PwmStore store, byte[] value) {
             int pin = value[0];
             int period = PwmUtils.getPwmPeriod(value);
-            store.setPwmPeriod(pin, period);
+            store.setPeriod(pin, period);
         }
     },
     DUTY(KonashiUUID.PWM_DUTY_UUID) {
@@ -29,7 +29,7 @@ public enum PwmStoreUpdater implements CharacteristicDispatcher.Updater<PwmStore
         public void update(PwmStore store, byte[] value) {
             int pin = value[0];
             int duty = PwmUtils.getPwmDuty(value);
-            store.setPwmDuty(pin, duty);
+            store.setDuty(pin, duty);
         }
     };
 
