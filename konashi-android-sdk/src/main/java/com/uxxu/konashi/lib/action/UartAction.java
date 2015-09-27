@@ -19,15 +19,17 @@ public abstract class UartAction extends KonashiWriteCharacteristicAction{
     private final UartAction self = this;
 
     private final UartStore mStore;
+    private final boolean mIsTypeMode;
 
-    public UartAction(BluetoothGattService service, UUID uuid, UartStore store) {
+    public UartAction(BluetoothGattService service, UUID uuid, UartStore store, boolean isTypeMode) {
         super(service, uuid);
         mStore = store;
+        mIsTypeMode = isTypeMode;
     }
 
     @Override
     public void execute(BluetoothGattWrapper gattWrapper) {
-        if(mStore.getMode() == Konashi.UART_ENABLE) {
+        if(mStore.getMode() == Konashi.UART_ENABLE || mIsTypeMode) {
             super.execute(gattWrapper);
         } else {
             getDeferred().reject(new BletiaException(KonashiErrorType.NOT_ENABLED_UART));

@@ -16,10 +16,12 @@ import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
 public abstract class I2cAction extends KonashiWriteCharacteristicAction {
 
     private final I2cStore mStore;
+    private final boolean mIsTypeMode;
 
-    public I2cAction(BluetoothGattService service, UUID uuid, I2cStore store) {
+    public I2cAction(BluetoothGattService service, UUID uuid, I2cStore store, boolean isTypeMode) {
         super(service, uuid);
         mStore = store;
+        mIsTypeMode = isTypeMode;
     }
 
     @Override
