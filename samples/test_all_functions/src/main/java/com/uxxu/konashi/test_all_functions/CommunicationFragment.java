@@ -228,7 +228,7 @@ public final class CommunicationFragment extends Fragment {
             });
         } else {
             mKonashiManager.uartMode(Konashi.UART_DISABLE)
-           .then(new DoneCallback<BluetoothGattCharacteristic>() {
+            .then(new DoneCallback<BluetoothGattCharacteristic>() {
                 @Override
                 public void onDone(BluetoothGattCharacteristic result) {
                     setEnableUartViews(false);
