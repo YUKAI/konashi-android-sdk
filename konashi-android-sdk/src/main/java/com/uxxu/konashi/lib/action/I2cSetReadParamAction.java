@@ -19,7 +19,7 @@ public class I2cSetReadParamAction extends I2cAction {
     private final byte mAddress;
 
     public I2cSetReadParamAction(BluetoothGattService service, int length, byte address, I2cStore store) {
-        super(service, UUID, store);
+        super(service, UUID, store, false);
         mLength = length;
         mAddress = address;
     }

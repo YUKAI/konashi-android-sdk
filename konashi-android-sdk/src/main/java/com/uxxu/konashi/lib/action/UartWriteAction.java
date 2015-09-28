@@ -25,7 +25,7 @@ public class UartWriteAction extends UartAction {
     }
 
     public UartWriteAction(BluetoothGattService service, byte[] writeData, UartStore store) {
-        super(service, UUID, store);
+        super(service, UUID, store, false);
         mWriteData = UartUtils.toFormattedByteArray(writeData);
     }
 

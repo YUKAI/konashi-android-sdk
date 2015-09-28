@@ -21,14 +21,14 @@ public class UartModeAction extends UartAction {
     private int mMode;
 
     public UartModeAction(BluetoothGattService service, int mode, UartStore store) {
-        super(service, UUID, store);
+        super(service, UUID, store, true);
         mMode = mode;
     }
 
 
     @Override
     protected void setValue() {
-        getCharacteristic().setValue(KonashiUtils.int2bytes(mMode));
+        getCharacteristic().setValue(new byte[]{KonashiUtils.int2bytes(mMode)[0]});
     }
 
     @Override

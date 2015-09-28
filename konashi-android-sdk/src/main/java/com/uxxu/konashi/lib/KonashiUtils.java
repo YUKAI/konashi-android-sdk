@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.util.Log;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.Arrays;
 
 /**
@@ -151,6 +152,7 @@ public class KonashiUtils {
     public static byte[] int2bytes(int a) {
         int arraySize = Integer.SIZE / Byte.SIZE;
         ByteBuffer buffer = ByteBuffer.allocate(arraySize);
+        buffer.order(ByteOrder.LITTLE_ENDIAN);
         return buffer.putInt(a).array();
     }
 

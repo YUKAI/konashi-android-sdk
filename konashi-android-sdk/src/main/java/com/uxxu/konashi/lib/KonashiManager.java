@@ -128,7 +128,7 @@ public class KonashiManager extends KonashiBaseManager {
         mI2cStore = new I2cStore(mI2cDispatcher);
 
         // UART
-        mUartDispatcher = new CharacteristicDispatcher<>(UartStoreUpdater.class);
+        mUartDispatcher = mDispacherContainer.getUartDispatcher();
         mUartStore = new UartStore(mUartDispatcher);
     }
 
