@@ -3,6 +3,7 @@ package com.uxxu.konashi.test_all_functions;
 import android.app.Fragment;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,6 +52,8 @@ public final class CommunicationFragment extends Fragment {
     private EditText mI2cResultEditText;
     private Button mI2cResultReadButton;
     private Button mI2cResultClearButton;
+
+    private byte[] mValue;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -223,7 +226,12 @@ public final class CommunicationFragment extends Fragment {
             .then(new DoneCallback<BluetoothGattCharacteristic>() {
                 @Override
                 public void onDone(BluetoothGattCharacteristic result) {
-                    setEnableUartViews(true);
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            setEnableUartViews(true);
+                        }
+                    });
                 }
             });
         } else {
@@ -231,7 +239,12 @@ public final class CommunicationFragment extends Fragment {
             .then(new DoneCallback<BluetoothGattCharacteristic>() {
                 @Override
                 public void onDone(BluetoothGattCharacteristic result) {
-                    setEnableUartViews(false);
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            setEnableUartViews(false);
+                        }
+                    });
                 }
             });
         }
@@ -248,7 +261,12 @@ public final class CommunicationFragment extends Fragment {
                 .then(new DoneCallback<BluetoothGattCharacteristic>() {
                     @Override
                     public void onDone(BluetoothGattCharacteristic result) {
-                        setEnableI2cViews(true);
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                setEnableI2cViews(true);
+                            }
+                        });
                     }
                 });
             } else {
@@ -256,7 +274,12 @@ public final class CommunicationFragment extends Fragment {
                 .then(new DoneCallback<BluetoothGattCharacteristic>() {
                     @Override
                     public void onDone(BluetoothGattCharacteristic result) {
-                        setEnableI2cViews(true);
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                setEnableI2cViews(true);
+                            }
+                        });
                     }
                 });
             }
@@ -265,7 +288,12 @@ public final class CommunicationFragment extends Fragment {
             .then(new DoneCallback<BluetoothGattCharacteristic>() {
                 @Override
                 public void onDone(BluetoothGattCharacteristic result) {
-                    setEnableI2cViews(false);
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            setEnableI2cViews(false);
+                        }
+                    });
                 }
             });
         }
@@ -292,7 +320,14 @@ public final class CommunicationFragment extends Fragment {
 
         @Override
         public void onUpdateUartRx(KonashiManager manager, byte[] value) {
-            mUartResultEditText.append(new String(value));
+            mValue = value;
+
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mUartResultEditText.append(new String(mValue));
+                }
+            });
         }
 
         @Override public void onUpdateBatteryLevel(KonashiManager manager, int level) {}
