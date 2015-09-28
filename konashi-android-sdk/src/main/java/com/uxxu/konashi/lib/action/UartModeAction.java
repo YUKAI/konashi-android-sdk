@@ -28,7 +28,7 @@ public class UartModeAction extends UartAction {
 
     @Override
     protected void setValue() {
-        getCharacteristic().setValue(KonashiUtils.int2bytes(mMode));
+        getCharacteristic().setValue(new byte[]{KonashiUtils.int2bytes(mMode)[0]});
     }
 
     @Override
