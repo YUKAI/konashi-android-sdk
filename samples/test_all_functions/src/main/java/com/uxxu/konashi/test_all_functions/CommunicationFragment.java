@@ -223,17 +223,17 @@ public final class CommunicationFragment extends Fragment {
             .then(new DoneCallback<BluetoothGattCharacteristic>() {
                 @Override
                 public void onDone(BluetoothGattCharacteristic result) {
+                    setEnableUartViews(true);
                 }
             });
-            setEnableUartViews(true);
         } else {
             mKonashiManager.uartMode(Konashi.UART_DISABLE)
-            .then(new DoneCallback<BluetoothGattCharacteristic>() {
+           .then(new DoneCallback<BluetoothGattCharacteristic>() {
                 @Override
                 public void onDone(BluetoothGattCharacteristic result) {
+                    setEnableUartViews(false);
                 }
             });
-            setEnableUartViews(false);
         }
     }
 
@@ -248,6 +248,7 @@ public final class CommunicationFragment extends Fragment {
                 .then(new DoneCallback<BluetoothGattCharacteristic>() {
                     @Override
                     public void onDone(BluetoothGattCharacteristic result) {
+                        setEnableI2cViews(true);
                     }
                 });
             } else {
@@ -255,18 +256,18 @@ public final class CommunicationFragment extends Fragment {
                 .then(new DoneCallback<BluetoothGattCharacteristic>() {
                     @Override
                     public void onDone(BluetoothGattCharacteristic result) {
+                        setEnableI2cViews(true);
                     }
                 });
             }
-            setEnableI2cViews(true);
         } else {
             mKonashiManager.i2cMode(Konashi.I2C_DISABLE)
             .then(new DoneCallback<BluetoothGattCharacteristic>() {
                 @Override
                 public void onDone(BluetoothGattCharacteristic result) {
+                    setEnableI2cViews(false);
                 }
             });
-            setEnableI2cViews(false);
         }
     }
 
