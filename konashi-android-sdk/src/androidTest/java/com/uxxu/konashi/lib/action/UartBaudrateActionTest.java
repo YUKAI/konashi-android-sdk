@@ -62,7 +62,8 @@ public class UartBaudrateActionTest {
         mAction.setValue();
         verify(mCharacteristic, times(1)).setValue(mValueCaptor.capture());
         byte[] value = mValueCaptor.getValue();
-        byte[] expect = KonashiUtils.int2bytes(Konashi.UART_RATE_9K6);
+        byte[] expectBase = KonashiUtils.int2bytes(Konashi.UART_RATE_9K6);
+        byte[] expect = new byte[]{expectBase[1], expectBase[0]};
         for(int i = 0; i < value.length; i++) {
             assertThat(value[i]).isEqualTo(expect[i]);
         }
@@ -74,7 +75,8 @@ public class UartBaudrateActionTest {
         mAction.setValue();
         verify(mCharacteristic, times(1)).setValue(mValueCaptor.capture());
         byte[] value = mValueCaptor.getValue();
-        byte[] expect = KonashiUtils.int2bytes(Konashi.UART_RATE_115K2);
+        byte[] expectBase = KonashiUtils.int2bytes(Konashi.UART_RATE_115K2);
+        byte[] expect = new byte[]{expectBase[1], expectBase[0]};
         for(int i = 0; i < value.length; i++) {
             assertThat(value[i]).isEqualTo(expect[i]);
         }

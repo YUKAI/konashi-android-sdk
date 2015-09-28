@@ -24,7 +24,8 @@ public class UartBaudrateAction extends UartAction {
 
     @Override
     protected void setValue() {
-        getCharacteristic().setValue(KonashiUtils.int2bytes(mBaudrate));
+        byte[] baseValue = KonashiUtils.int2bytes(mBaudrate);
+        getCharacteristic().setValue(new byte[]{baseValue[1], baseValue[0]});
     }
 
     @Override
