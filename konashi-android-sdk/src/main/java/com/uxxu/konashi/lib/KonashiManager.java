@@ -392,7 +392,7 @@ public class KonashiManager extends KonashiBaseManager {
      * @param bytes 送信するデータ(byte[])
      */
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> uartWrite(byte[] bytes) {
-        return execute(new UartWriteAction(getKonashiService(), bytes, mUartStore), mUartDispatcher);
+        return execute(new UartWriteAction(getKonashiService(), bytes, mUartStore));
     }
 
     /**
