@@ -7,9 +7,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.uxxu.konashi.lib.KonashiErrorReason;
+import com.uxxu.konashi.lib.KonashiListener;
 import com.uxxu.konashi.lib.KonashiManager;
-import com.uxxu.konashi.lib.listeners.KonashiConnectionListener;
+
+import info.izumin.android.bletia.BletiaException;
 
 public class MainActivity extends AppCompatActivity implements MainActivityFragment.Callback {
     public static final String TAG = MainActivity.class.getSimpleName();
@@ -32,13 +33,13 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
     @Override
     protected void onResume() {
         super.onResume();
-        mKonashiManager.addListener(mKonashiConnectionListener);
+        mKonashiManager.addListener(mKonashiListener);
         mKonashiManager.initialize(this);
     }
 
     @Override
     protected void onPause() {
-        mKonashiManager.removeListener(mKonashiConnectionListener);
+        mKonashiManager.removeListener(mKonashiListener);
         super.onPause();
     }
 
@@ -47,7 +48,6 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
         if (mKonashiManager != null) {
             mKonashiManager.reset();
             mKonashiManager.disconnect();
-            mKonashiManager.close();
             mKonashiManager = null;
         }
         super.onDestroy();
@@ -91,21 +91,36 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
         });
     }
 
-    private final KonashiConnectionListener mKonashiConnectionListener = new KonashiConnectionListener() {
+    private final KonashiListener mKonashiListener = new KonashiListener() {
         @Override
-        public void onReady() {
+        public void onConnect(KonashiManager manager) {
             refreshViews();
         }
 
         @Override
-        public void onDisconnected() {
+        public void onDisconnect(KonashiManager manager) {
             refreshViews();
         }
 
-        @Override public void onNotFoundPeripheral() {}
-        @Override public void onConnected() {}
-        @Override public void onCancelSelectKonashi() {}
-        @Override public void onError(KonashiErrorReason errorReason, String message) {}
+        @Override
+        public void onError(KonashiManager manager, BletiaException e) {
+
+        }
+
+        @Override
+        public void onUpdatePioOutput(KonashiManager manager, int value) {
+
+        }
+
+        @Override
+        public void onUpdateUartRx(KonashiManager manager, byte[] value) {
+
+        }
+
+        @Override
+        public void onUpdateBatteryLevel(KonashiManager manager, int level) {
+
+        }
     };
 }
 
