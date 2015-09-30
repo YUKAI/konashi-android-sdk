@@ -1,6 +1,7 @@
 package com.uxxu.konashi.test_all_functions;
 
 import android.app.Fragment;
+import android.bluetooth.BluetoothGattCharacteristic;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -20,6 +21,8 @@ import android.widget.TextView;
 
 import com.uxxu.konashi.lib.Konashi;
 import com.uxxu.konashi.lib.KonashiManager;
+
+import org.jdeferred.DoneCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,14 +73,9 @@ public final class PwmFragment extends Fragment {
     @Override
     public void onDestroy() {
         if (mKonashiManager.isReady()) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    for (int pinNumber : Utils.PWM_PINS) {
-                        mKonashiManager.pwmMode(pinNumber, Konashi.PWM_DISABLE);
-                    }
-                }
-            }).start();
+            for (int pinNumber : Utils.PWM_PINS) {
+                mKonashiManager.pwmMode(pinNumber, Konashi.PWM_DISABLE);
+            }
         }
         super.onDestroy();
     }
@@ -140,18 +138,23 @@ public final class PwmFragment extends Fragment {
             mPwmSwitch = new Switch(context);
             mPwmSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                public void onCheckedChanged(CompoundButton compoundButton, final boolean b) {
                     final int pwmMode = b ? Konashi.PWM_ENABLE_LED_MODE : Konashi.PWM_DISABLE;
-                    new Thread(new Runnable() {
+                    mKonashiManager.pwmMode(mPinNumber, pwmMode)
+                    .then(new DoneCallback<BluetoothGattCharacteristic>() {
                         @Override
-                        public void run() {
-                            mKonashiManager.pwmMode(mPinNumber, pwmMode);
+                        public void onDone(BluetoothGattCharacteristic result) {
+                            mDutySeekBar.setEnabled(b);
+                        }
+                    })
+                    .then(new DoneCallback<BluetoothGattCharacteristic>() {
+                        @Override
+                        public void onDone(BluetoothGattCharacteristic result) {
                             if (pwmMode == Konashi.PWM_ENABLE_LED_MODE) {
                                 mKonashiManager.pwmLedDrive(mPinNumber, mDutySeekBar.getProgress());
                             }
                         }
-                    }).start();
-                    mDutySeekBar.setEnabled(b);
+                    });
                 }
             });
             addView(mPwmSwitch, Utils.createTableRowLayoutParamsWithWeight(1));
@@ -164,12 +167,7 @@ public final class PwmFragment extends Fragment {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                     final int drive = i;
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mKonashiManager.pwmLedDrive(mPinNumber, drive);
-                        }
-                    }).start();
+                    mKonashiManager.pwmLedDrive(mPinNumber, drive);
                 }
 
                 @Override
@@ -189,14 +187,13 @@ public final class PwmFragment extends Fragment {
         }
 
         public void setValues(final int period, final int duty) {
-            new Thread(new Runnable() {
+            mKonashiManager.pwmPeriod(mPinNumber, period)
+            .then(new DoneCallback<BluetoothGattCharacteristic>() {
                 @Override
-                public void run() {
-                    mKonashiManager.pwmPeriod(mPinNumber, period);
-                    Utils.sleepShort();
+                public void onDone(BluetoothGattCharacteristic result) {
                     mKonashiManager.pwmDuty(mPinNumber, duty);
                 }
-            }).start();
+            });
         }
     }
 }

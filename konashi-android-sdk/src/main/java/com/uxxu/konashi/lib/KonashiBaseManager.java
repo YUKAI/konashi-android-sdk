@@ -4,34 +4,18 @@ import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
-import android.bluetooth.BluetoothGattCallback;
-import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattDescriptor;
-import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
-import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.Message;
 import android.widget.Toast;
 
-import com.uxxu.konashi.lib.entities.KonashiMessage;
-import com.uxxu.konashi.lib.entities.KonashiReadMessage;
-import com.uxxu.konashi.lib.entities.KonashiWriteMessage;
-import com.uxxu.konashi.lib.events.KonashiAnalogEvent;
-import com.uxxu.konashi.lib.events.KonashiConnectionEvent;
-import com.uxxu.konashi.lib.events.KonashiDeviceInfoEvent;
-import com.uxxu.konashi.lib.events.KonashiDigitalEvent;
-import com.uxxu.konashi.lib.events.KonashiEvent;
-import com.uxxu.konashi.lib.events.KonashiUartEvent;
 import com.uxxu.konashi.lib.ui.BleDeviceListAdapter;
 import com.uxxu.konashi.lib.ui.BleDeviceSelectionDialog;
 import com.uxxu.konashi.lib.ui.BleDeviceSelectionDialog.OnBleDeviceSelectListener;
 
-import java.util.UUID;
 
 /**
  * konashiのベース部分(BLEまわり)を管理するクラス
@@ -54,7 +38,7 @@ import java.util.UUID;
  * limitations under the License.
  *
  */
-public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBleDeviceSelectListener {
+public abstract class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBleDeviceSelectListener {
     
     /*************************
      * konashi constants
@@ -96,9 +80,6 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
     /*****************************
      * Members
      *****************************/
-    
-    // FIFO buffer
-    private KonashiMessageHandler mKonashiMessageHandler;
 
     // BLE members
     private BleStatus mStatus = BleStatus.DISCONNECTED;
@@ -112,21 +93,17 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
     private boolean mIsSupportBle = false;
     private boolean mIsInitialized = false;
     private String mKonashiName;
-    
-    // konashi event listenr
-    protected KonashiNotifier mNotifier;
-    
+
     // UI members
     private Activity mActivity;
     private BleDeviceSelectionDialog mDialog;
 
-    
+
     /////////////////////////////////////////////////////////////
     // Public methods
     ///////////////////////////////////////////////////////////// 
     
     public KonashiBaseManager(){
-        mNotifier = new KonashiNotifier();
     }
     
     /**
@@ -157,20 +134,13 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
                     mBluetoothAdapter.stopLeScan(KonashiBaseManager.this);
                     setStatus(BleStatus.SCAN_END);
                     
-                    if(mKonashiName!=null){
-                        // called findWithName. dispatch PERIPHERAL_NOT_FOUND event
-                        notifyKonashiEvent(KonashiConnectionEvent.PERIPHERAL_NOT_FOUND);
-                    } else {
+                    if(mKonashiName == null){
                         mDialog.finishFinding();
-                        
-                        if(mBleDeviceListAdapter.getCount()==0){
-                            notifyKonashiEvent(KonashiConnectionEvent.PERIPHERAL_NOT_FOUND);
-                        }
                     }
                 }
             }
         };
-        
+
         mIsInitialized = true;
     }
     
@@ -203,7 +173,6 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
     private void find(Activity activity, boolean isShowKonashiOnly, String name){
         // check initialized
         if(!mIsInitialized || mStatus.equals(BleStatus.READY)){
-            notifyKonashiError(KonashiErrorReason.ALREADY_READY);
             return;
         }
         
@@ -234,35 +203,7 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
         }
 
     }
-    
-    /**
-     * konashiとの接続を解除する
-     */
-    public void disconnect(){
-        if(mBluetoothGatt!=null){
-            mBluetoothGatt.disconnect();
-        }
-    }
-    
-    /**
-     * disconnectし、変数をリセットする
-     */
-    public void close(){
-        if(mStatus.equals(BleStatus.CLOSED)){
-            return;
-        }
-        
-        // disconnect if not-disconnected & close
-        if(!mStatus.equals(BleStatus.DISCONNECTED)){
-            disconnect();
-        }
 
-        // remove all observers
-        mNotifier.removeAllObservers();
-        
-        setStatus(BleStatus.CLOSED);
-    }
-    
     /**
      * konashiと接続済みかどうか
      * @return konashiと接続済みだったらtrue
@@ -274,15 +215,7 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
                mStatus.equals(BleStatus.READY)
         ;
     }
-    
-    /**
-     * konashiを使える状態になっているか
-     * @return konashiを使えるならtrue
-     */
-    public boolean isReady(){
-        return mStatus.equals(BleStatus.READY);
-    }
-    
+
     /**
      * 接続しているkonashiの名前を取得する
      * @return konashiの名前
@@ -293,15 +226,6 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
         } else {
             return "";
         }
-    }
-    
-    protected void readRemoteRssi(){
-        if(!isEnableAccessKonashi() || mBluetoothGatt==null){
-            notifyKonashiError(KonashiErrorReason.NOT_READY);
-            return;
-        }
-        
-        mBluetoothGatt.readRemoteRssi();
     }
 
     /**
@@ -360,8 +284,6 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
 
     @Override
     public void onCancelSelectingBleDevice() {
-        notifyKonashiEvent(KonashiConnectionEvent.CANCEL_SELECT_KONASHI);
-
         if(mStatus.equals(BleStatus.SCANNING)){
             stopFindHandler();
             mBluetoothAdapter.stopLeScan(KonashiBaseManager.this);
@@ -381,321 +303,16 @@ public class KonashiBaseManager implements BluetoothAdapter.LeScanCallback, OnBl
     private void stopFindHandler(){
         mFindHandler.removeCallbacks(mFindRunnable);
     }
-    
+
     private void setStatus(BleStatus status) {
         mStatus = status;
         KonashiUtils.log("konashi_status: " + mStatus.name());
-
-        if (status == BleStatus.READY) {
-            notifyKonashiEvent(KonashiConnectionEvent.READY);
-        }
     }
-    
-    
+
+
     /******************************************
      * BLE methods
      ******************************************/
-    
-    private void connect(BluetoothDevice device){
-        mBluetoothGatt = device.connectGatt(mActivity.getApplicationContext(), false, mBluetoothGattCallback);
-        HandlerThread thread = new HandlerThread(device.getName());
-        thread.start();
-        mKonashiMessageHandler = new KonashiMessageHandler(thread);
-        mKonashiMessageHandler.setBluetoothGatt(mBluetoothGatt);
-    }
-    
-    private final BluetoothGattCallback mBluetoothGattCallback = new BluetoothGattCallback() {
-        @Override
-        public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
-            KonashiUtils.log("onCharacteristicChanged: " + characteristic.getUuid());
 
-            KonashiCharacteristic
-                    .valueOf(characteristic.getUuid())
-                    .handle(characteristic, mNotifier);
-        }
-
-        @Override
-        public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
-            KonashiUtils.log("onCharacteristicRead: " + characteristic.getUuid());
-            
-            if (status == BluetoothGatt.GATT_SUCCESS) {
-                KonashiCharacteristic
-                        .valueOf(characteristic.getUuid())
-                        .handle(characteristic, mNotifier);
-            } else {
-                KonashiUtils.log("onCharacteristicRead GATT_FAILURE");
-            }
-        }
-
-        @Override
-        public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
-            KonashiCharacteristic
-                    .valueOf(characteristic.getUuid())
-                    .handle(characteristic, mNotifier);
-        }
-
-        @Override
-        public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
-            KonashiUtils.log("onConnectionStateChange: " + connectionStatus2string(status) + " -> " + connectionStatus2string(newState));
-            
-            if(newState == BluetoothProfile.STATE_CONNECTED){
-                setStatus(BleStatus.CONNECTED);
-                
-                notifyKonashiEvent(KonashiConnectionEvent.CONNECTED);
-                
-                gatt.discoverServices();
-            }
-            else if(newState == BluetoothProfile.STATE_DISCONNECTED){
-                if (mBluetoothGatt != null) {
-                    mBluetoothGatt.close();
-                    mBluetoothGatt = null;
-                }
-
-                if (mKonashiMessageHandler != null) {
-                    mKonashiMessageHandler.stop();
-                    mKonashiMessageHandler = null;
-                }
-
-                setStatus(BleStatus.DISCONNECTED);
-                
-                notifyKonashiEvent(KonashiConnectionEvent.DISCONNECTED);
-            }
-        }
-
-        @Override
-        public void onDescriptorRead(BluetoothGatt gatt, BluetoothGattDescriptor descriptor, int status) {
-            // TODO Auto-generated method stub
-            super.onDescriptorRead(gatt, descriptor, status);
-        }
-
-        @Override
-        public void onDescriptorWrite(BluetoothGatt gatt, BluetoothGattDescriptor descriptor, int status) {
-            // TODO Auto-generated method stub
-            super.onDescriptorWrite(gatt, descriptor, status);
-        }
-
-        @Override
-        public void onReadRemoteRssi(BluetoothGatt gatt, int rssi, int status) {
-            if(status==BluetoothGatt.GATT_SUCCESS){
-                onUpdateSignalSrength(rssi);
-            }
-        }
-
-        @Override
-        public void onReliableWriteCompleted(BluetoothGatt gatt, int status) {
-            // TODO Auto-generated method stub
-            super.onReliableWriteCompleted(gatt, status);
-        }
-
-        @Override
-        public void onServicesDiscovered(BluetoothGatt gatt, int status) {
-            KonashiUtils.log("onServicesDiscovered start");
-            
-            if(status == BluetoothGatt.GATT_SUCCESS){
-                BluetoothGattService service = gatt.getService(KonashiUUID.KONASHI_SERVICE_UUID);
-
-                // Check konashi service
-                if (service == null) {
-                    setStatus(BleStatus.SERVICE_NOT_FOUND);
-                    return;
-                }
-                
-                setStatus(BleStatus.SERVICE_FOUND);
-                    
-                // Check the characteristics
-                if(!isAvailableCharacteristic(KonashiUUID.BATTERY_SERVICE_UUID, KonashiUUID.BATTERY_LEVEL_UUID) ||
-                   !isAvailableCharacteristic(KonashiUUID.KONASHI_SERVICE_UUID, KonashiUUID.PIO_SETTING_UUID) ||
-                   !isAvailableCharacteristic(KonashiUUID.KONASHI_SERVICE_UUID, KonashiUUID.PIO_PULLUP_UUID) ||
-                   !isAvailableCharacteristic(KonashiUUID.KONASHI_SERVICE_UUID, KonashiUUID.PIO_OUTPUT_UUID) ||
-                   !isAvailableCharacteristic(KonashiUUID.KONASHI_SERVICE_UUID, KonashiUUID.PIO_INPUT_NOTIFICATION_UUID) ||
-                   !isAvailableCharacteristic(KonashiUUID.KONASHI_SERVICE_UUID, KonashiUUID.PWM_CONFIG_UUID) ||
-                   !isAvailableCharacteristic(KonashiUUID.KONASHI_SERVICE_UUID, KonashiUUID.PWM_PARAM_UUID) ||
-                   !isAvailableCharacteristic(KonashiUUID.KONASHI_SERVICE_UUID, KonashiUUID.PWM_DUTY_UUID) ||
-                   !isAvailableCharacteristic(KonashiUUID.KONASHI_SERVICE_UUID, KonashiUUID.ANALOG_DRIVE_UUID) ||
-                   !isAvailableCharacteristic(KonashiUUID.KONASHI_SERVICE_UUID, KonashiUUID.ANALOG_READ0_UUID) ||
-                   !isAvailableCharacteristic(KonashiUUID.KONASHI_SERVICE_UUID, KonashiUUID.ANALOG_READ1_UUID) ||
-                   !isAvailableCharacteristic(KonashiUUID.KONASHI_SERVICE_UUID, KonashiUUID.ANALOG_READ2_UUID) ||
-                   !isAvailableCharacteristic(KonashiUUID.KONASHI_SERVICE_UUID, KonashiUUID.I2C_CONFIG_UUID) ||
-                   !isAvailableCharacteristic(KonashiUUID.KONASHI_SERVICE_UUID, KonashiUUID.I2C_START_STOP_UUID) ||
-                   !isAvailableCharacteristic(KonashiUUID.KONASHI_SERVICE_UUID, KonashiUUID.I2C_WRITE_UUID) ||
-                   !isAvailableCharacteristic(KonashiUUID.KONASHI_SERVICE_UUID, KonashiUUID.I2C_READ_PARAM_UUID) ||
-                   !isAvailableCharacteristic(KonashiUUID.KONASHI_SERVICE_UUID, KonashiUUID.I2C_READ_UUID) ||
-                   !isAvailableCharacteristic(KonashiUUID.KONASHI_SERVICE_UUID, KonashiUUID.UART_CONFIG_UUID) ||
-                   !isAvailableCharacteristic(KonashiUUID.KONASHI_SERVICE_UUID, KonashiUUID.UART_BAUDRATE_UUID) ||
-                   !isAvailableCharacteristic(KonashiUUID.KONASHI_SERVICE_UUID, KonashiUUID.UART_TX_UUID) ||
-                   !isAvailableCharacteristic(KonashiUUID.KONASHI_SERVICE_UUID, KonashiUUID.UART_RX_NOTIFICATION_UUID) ||
-                   !isAvailableCharacteristic(KonashiUUID.KONASHI_SERVICE_UUID, KonashiUUID.HARDWARE_RESET_UUID) ||
-                   !isAvailableCharacteristic(KonashiUUID.KONASHI_SERVICE_UUID, KonashiUUID.HARDWARE_LOW_BAT_NOTIFICATION_UUID)
-                ){
-                    setStatus(BleStatus.CHARACTERISTICS_NOT_FOUND);
-                    return;
-                }
-        
-                // available all konashi characteristics
-                setStatus(BleStatus.CHARACTERISTICS_FOUND);
-                
-                // enable notifications
-                if(!enableNotification(KonashiUUID.PIO_INPUT_NOTIFICATION_UUID)){
-                    setStatus(BleStatus.CHARACTERISTICS_NOT_FOUND);
-                    return;
-                }
-                
-                if(!enableNotification(KonashiUUID.UART_RX_NOTIFICATION_UUID)){
-                    setStatus(BleStatus.CHARACTERISTICS_NOT_FOUND);
-                    return;
-                }
-                
-                if(!enableNotification(KonashiUUID.HARDWARE_LOW_BAT_NOTIFICATION_UUID)){
-                    setStatus(BleStatus.CHARACTERISTICS_NOT_FOUND);
-                    return;
-                }
-                
-                setStatus(BleStatus.READY);
-            }
-        }
-    };
-    
-    private BluetoothGattCharacteristic getCharacteristic(UUID serviceUuid, UUID characteristicUuid){
-        if(mBluetoothGatt!=null){
-            BluetoothGattService service = mBluetoothGatt.getService(serviceUuid);
-            return service.getCharacteristic(characteristicUuid);
-        } else {
-            return null;
-        }        
-    }
-    
-    private boolean isAvailableCharacteristic(UUID serviceUuid, UUID characteristicUuid){
-        KonashiUtils.log("check characteristic service: " + serviceUuid.toString() + ", chara: " + characteristicUuid.toString());
-
-        return getCharacteristic(serviceUuid, characteristicUuid) != null;
-    }
-    
-    private boolean enableNotification(UUID uuid){
-        KonashiUtils.log("try enable notification: " + uuid.toString());
-        
-        BluetoothGattCharacteristic characteristic = getCharacteristic(KonashiUUID.KONASHI_SERVICE_UUID, uuid);
-        if(mBluetoothGatt!=null && characteristic!=null){
-            boolean registered = mBluetoothGatt.setCharacteristicNotification(characteristic, true);
-            BluetoothGattDescriptor descriptor = characteristic.getDescriptor(KonashiUUID.CLIENT_CHARACTERISTIC_CONFIG);
-            // HACK descriptorを呼び出すのはいいけど対象のcharacteristicがdescriptorを備えていない（処理スキップで動くっちゃ動く）
-            if(descriptor!=null){
-                descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-                mBluetoothGatt.writeDescriptor(descriptor);
-            }else{
-                KonashiUtils.log("Descriptor is null!");
-            }
-            return registered;
-        } else {
-            return false;
-        }
-    }
-    
-    private String connectionStatus2string(int status){
-        switch(status){
-            case BluetoothProfile.STATE_CONNECTED:
-                return "CONNECTED";
-            case BluetoothProfile.STATE_CONNECTING:
-                return "CONNECTING";
-            case BluetoothProfile.STATE_DISCONNECTED:
-                return "DISCONNECTED";
-            case BluetoothProfile.STATE_DISCONNECTING:
-                return "DISCONNECTING";
-            default:
-                return "UNKNOWN";
-        }
-    }
-    
-    
-    /*********************************
-     * FIFO send buffer
-     *********************************/
-
-    protected void addWriteMessage(UUID uuid, byte[] value){
-        sendMessage(KonashiWriteMessage.obtain(uuid, value));
-    }
-
-    protected void addReadMessage(UUID characteristicUuid){
-        addReadMessage(KonashiUUID.KONASHI_SERVICE_UUID, characteristicUuid);
-    }
-    
-    protected void addReadMessage(UUID serviceUuid, UUID characteristicUuid){
-        sendMessage(KonashiReadMessage.obtain(serviceUuid, characteristicUuid));
-    }
-
-    private void sendMessage(Message message) {
-        mKonashiMessageHandler.sendMessage(message);
-    }
-
-    /******************************
-     * Konashi observer methods
-     ******************************/
-    
-    /**
-     * オブザーバにイベントを通知する（パラメータ2つ）
-     * @param event 通知するイベント名
-     * @param param0 パラメータその1
-     * @param param1 パラメータその2
-     */
-    protected void notifyKonashiEvent(KonashiEvent event, Object param0, Object param1){
-        mNotifier.notifyKonashiEvent(event, param0, param1);
-    }
-    
-    /**
-     * オブザーバにイベントを通知する（パラメータ1つ）
-     * @param event 通知するイベント名
-     * @param param0 パラメータその1
-     */
-    protected void notifyKonashiEvent(KonashiEvent event, Object param0){
-        mNotifier.notifyKonashiEvent(event, param0, null);
-    }
-    
-    /**
-     * オブザーバにイベントを通知する（パラメータなし）
-     * @param event 通知するイベント名
-     */
-    protected void notifyKonashiEvent(KonashiEvent event){
-        mNotifier.notifyKonashiEvent(event, null, null);
-    }
-    
-    /**
-     * オブザーバにエラーイベントを通知する
-     * @param errorReason 通知するエラーの原因
-     */
-    protected void notifyKonashiError(KonashiErrorReason errorReason){
-        mNotifier.notifyKonashiError(errorReason);
-    }
-    
-    
-    /***************************************
-     * Konashi notification event handler
-     ***************************************/
-
-    /**
-     * のRxからデータを受信した時
-     * @param data 受信データ
-     */
-    protected void onRecieveUart(byte[] data){
-        notifyKonashiEvent(KonashiUartEvent.UART_RX_COMPLETE, data);
-    }
-
-//     for konashi v1 (old codes)
-//    protected void onRecieveUart(byte data){
-//        notifyKonashiEvent(KonashiEvent.UART_RX_COMPLETE, data);
-//    }
-    
-    /**
-     * konashiのバッテリーのレベルを取得できた時
-     * @param level バッテリー(%)
-     */
-    protected void onUpdateBatteryLevel(int level){
-        notifyKonashiEvent(KonashiDeviceInfoEvent.UPDATE_BATTERY_LEVEL, level);
-    }
-    
-    /**
-     * konashiの電波強度を取得できた時
-     * @param rssi 電波強度(db) 距離が近いと-40db, 距離が遠いと-90db程度になる
-     */
-    protected void onUpdateSignalSrength(int rssi){
-        notifyKonashiEvent(KonashiDeviceInfoEvent.UPDATE_SIGNAL_STRENGTH, rssi);
-    }
+    protected abstract void connect(BluetoothDevice device);
 }

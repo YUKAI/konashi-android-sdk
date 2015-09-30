@@ -45,7 +45,6 @@ public class KonashiActivity extends Activity {
     protected void onDestroy() {
         if(mKonashiManager!=null){
             mKonashiManager.disconnect();
-            mKonashiManager.close();
             mKonashiManager = null;
         }
         

@@ -1,8 +1,12 @@
 package com.uxxu.konashi.sample.piosample;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothGattCharacteristic;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,9 +16,12 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.uxxu.konashi.lib.Konashi;
-import com.uxxu.konashi.lib.KonashiErrorReason;
+import com.uxxu.konashi.lib.KonashiListener;
 import com.uxxu.konashi.lib.KonashiManager;
-import com.uxxu.konashi.lib.listeners.KonashiDigitalListener;
+
+import org.jdeferred.DoneCallback;
+
+import info.izumin.android.bletia.BletiaException;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -80,30 +87,45 @@ public class MainActivityFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mCallback.getKonashiManager().addListener(mKonashiDigitalListener);
+        mCallback.getKonashiManager().addListener(mKonashiListener);
     }
 
     @Override
     public void onDestroyView() {
-        mCallback.getKonashiManager().removeListener(mKonashiDigitalListener);
+        mCallback.getKonashiManager().removeListener(mKonashiListener);
         super.onDestroyView();
     }
 
-    private final KonashiDigitalListener mKonashiDigitalListener = new KonashiDigitalListener() {
-        @Override public void onUpdatePioSetting(int modes) {}
-        @Override public void onUpdatePioPullup(int pullups) {}
+    private final KonashiListener mKonashiListener = new KonashiListener() {
+        @Override
+        public void onConnect(KonashiManager manager) {
+
+        }
 
         @Override
-        public void onUpdatePioInput(byte value) {
+        public void onDisconnect(KonashiManager manager) {
+
+        }
+
+        @Override
+        public void onError(KonashiManager manager, BletiaException e) {
+
+        }
+
+        @Override
+        public void onUpdatePioOutput(KonashiManager manager, int value) {
             mViewHolders[0].setInputValue(value);
         }
 
         @Override
-        public void onUpdatePioOutput(byte value) {
+        public void onUpdateUartRx(KonashiManager manager, byte[] value) {
 
         }
 
-        @Override public void onError(KonashiErrorReason errorReason, String message) {}
+        @Override
+        public void onUpdateBatteryLevel(KonashiManager manager, int level) {
+
+        }
     };
 
     public interface Callback {
@@ -117,6 +139,7 @@ public class MainActivityFragment extends Fragment {
         private final ToggleButton mPioOutputButton;
         private final TextView mPioInputText;
         private final CheckBox mPioPullupCheckbox;
+        private final Handler mHandler;
 
         public ViewHolder(int pin, Callback callback,
                           ToggleButton pioModeButton, ToggleButton pioOutputButton,
@@ -131,25 +154,58 @@ public class MainActivityFragment extends Fragment {
             mPioModeButton.setOnCheckedChangeListener(this);
             mPioOutputButton.setOnCheckedChangeListener(this);
             mPioPullupCheckbox.setOnCheckedChangeListener(this);
+
+            mHandler = new Handler(Looper.getMainLooper());
         }
 
         @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
             if (buttonView.equals(mPioModeButton)) {
-                mCallback.getKonashiManager().pinMode(mPin, isChecked ? Konashi.OUTPUT : Konashi.INPUT);
-                mPioOutputButton.setEnabled(isChecked);
-                mPioInputText.setEnabled(!isChecked);
+                mCallback.getKonashiManager()
+                        .pinMode(mPin, isChecked ? Konashi.OUTPUT : Konashi.INPUT)
+                        .then(new DoneCallback<BluetoothGattCharacteristic>() {
+                                  @Override
+                                  public void onDone(BluetoothGattCharacteristic result) {
+                                      mHandler.post(new Runnable() {
+                                          @Override
+                                          public void run() {
+                                              mPioOutputButton.setEnabled(isChecked);
+                                              mPioInputText.setEnabled(!isChecked);
+                                          }
+                                      });
+                                  }
+                              }
+                        );
             }
             if (buttonView.equals(mPioOutputButton)) {
-                mCallback.getKonashiManager().digitalWrite(mPin, isChecked ? Konashi.HIGH : Konashi.LOW);
+                mCallback.getKonashiManager()
+                        .digitalWrite(mPin, isChecked ? Konashi.HIGH : Konashi.LOW)
+                        .then(new DoneCallback<BluetoothGattCharacteristic>() {
+                            @Override
+                            public void onDone(BluetoothGattCharacteristic result) {
+                                Log.d(MainActivityFragment.class.getSimpleName(), "digitalWrite().then()");
+                            }
+                        });
             }
             if (buttonView.equals(mPioPullupCheckbox)) {
-                mCallback.getKonashiManager().pinPullup(mPin, isChecked ? Konashi.PULLUP : Konashi.NO_PULLS);
+                mCallback.getKonashiManager()
+                        .pinPullup(mPin, isChecked ? Konashi.PULLUP : Konashi.NO_PULLS)
+                        .then(new DoneCallback<BluetoothGattCharacteristic>() {
+                            @Override
+                            public void onDone(BluetoothGattCharacteristic result) {
+                                Log.d(MainActivityFragment.class.getSimpleName(), "pinPullup().then()");
+                            }
+                        });
             }
         }
 
-        public void setInputValue(byte value) {
-            mPioInputText.setText(value == Konashi.HIGH ? "HIGH" : "LOW");
+        public void setInputValue(final int value) {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mPioInputText.setText(value == Konashi.HIGH ? "HIGH" : "LOW");
+                }
+            });
         }
     }
 }
