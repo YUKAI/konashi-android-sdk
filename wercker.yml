@@ -25,3 +25,17 @@ build:
           cp -r ./konashi-android-sdk/build/outputs/* ${WERCKER_REPORT_ARTIFACTS_DIR}
           REPORT_INDEX=/pipeline/build/konashi-android-sdk/build/reports/androidTests/connected/index.html
           python .wercker/report.py $REPORT_INDEX
+deploy:
+  steps:
+    - script:
+        name: show base information
+        code: |
+          gradle -v
+    - script:
+        name: build with gradle
+        code: |
+          gradle build
+    - script:
+        name: upload to bintray
+        code: |
+          gradle bintrayUpload
