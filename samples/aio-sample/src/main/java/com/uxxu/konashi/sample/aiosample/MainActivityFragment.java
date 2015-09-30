@@ -3,6 +3,7 @@ package com.uxxu.konashi.sample.aiosample;
 import android.app.Activity;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,9 +11,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.uxxu.konashi.lib.Konashi;
-import com.uxxu.konashi.lib.KonashiErrorReason;
 import com.uxxu.konashi.lib.KonashiManager;
-import com.uxxu.konashi.lib.listeners.KonashiAnalogListener;
+
+import org.jdeferred.DoneCallback;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -63,18 +64,6 @@ public class MainActivityFragment extends Fragment {
         return v;
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        mCallback.getKonashiManager().addListener(mKonashiAnalogListener);
-    }
-
-    @Override
-    public void onDestroyView() {
-        mCallback.getKonashiManager().removeListener(mKonashiAnalogListener);
-        super.onDestroyView();
-    }
-
     private void setVoltage(final int pin, final int value) {
         getActivity().runOnUiThread(new Runnable() {
             @Override
@@ -95,35 +84,18 @@ public class MainActivityFragment extends Fragment {
         public void onClick(View v) {
             for (int i = 0; i < READ_BUTTON_IDS.length; i++) {
                 if (READ_BUTTON_IDS[i] == v.getId()) {
-                    mCallback.getKonashiManager().analogReadRequest(AIO_PINS[i]);
-                    break;
+                    final int finalI = i;
+                    mCallback.getKonashiManager().analogRead(AIO_PINS[i])
+                            .then(new DoneCallback<Integer>() {
+                                @Override
+                                public void onDone(Integer result) {
+                                    Log.d(MainActivityFragment.class.getSimpleName(), String.valueOf(finalI) + ": " + result);
+                                    setVoltage(AIO_PINS[finalI], result);
+                                }
+                            });
                 }
             }
         }
-    };
-
-    private final KonashiAnalogListener mKonashiAnalogListener = new KonashiAnalogListener() {
-        @Override
-        public void onUpdateAnalogValue(int pin, int value) {
-            setVoltage(pin, value);
-        }
-
-        @Override
-        public void onUpdateAnalogValueAio0(int value) {
-            setVoltage(AIO_PINS[0], value);
-        }
-
-        @Override
-        public void onUpdateAnalogValueAio1(int value) {
-            setVoltage(AIO_PINS[1], value);
-        }
-
-        @Override
-        public void onUpdateAnalogValueAio2(int value) {
-            setVoltage(AIO_PINS[2], value);
-        }
-
-        @Override public void onError(KonashiErrorReason errorReason, String message) {}
     };
 
     public interface Callback {

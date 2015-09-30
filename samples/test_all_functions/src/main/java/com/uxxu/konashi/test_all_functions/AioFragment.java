@@ -3,6 +3,8 @@ package com.uxxu.konashi.test_all_functions;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +18,8 @@ import android.widget.TextView;
 
 import com.uxxu.konashi.lib.Konashi;
 import com.uxxu.konashi.lib.KonashiManager;
-import com.uxxu.konashi.lib.KonashiObserver;
+
+import org.jdeferred.DoneCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +32,6 @@ public final class AioFragment extends Fragment {
     public static final String TITLE = "Analog I/O";
 
     private final KonashiManager mKonashiManager = Konashi.getManager();
-    private KonashiObserver mAnalogReadObserver;
 
     private TableLayout mTableLayout;
     private List<AioTableRow> mRows = new ArrayList<>();
@@ -38,24 +40,6 @@ public final class AioFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getActivity().setTitle(TITLE);
-
-        mAnalogReadObserver = new KonashiObserver(getActivity()) {
-            @Override
-            public void onUpdateAnalogValueAio0(int value) {
-                mRows.get(0).setVoltage(value / 1000.0f);
-            }
-
-            @Override
-            public void onUpdateAnalogValueAio1(int value) {
-                mRows.get(1).setVoltage(value / 1000.0f);
-            }
-
-            @Override
-            public void onUpdateAnalogValueAio2(int value) {
-                mRows.get(2).setVoltage(value / 1000.0f);
-            }
-        };
-        mKonashiManager.addObserver(mAnalogReadObserver);
     }
 
     @Override
@@ -78,7 +62,6 @@ public final class AioFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        mKonashiManager.removeObserver(mAnalogReadObserver);
         super.onDestroy();
     }
 
@@ -90,6 +73,7 @@ public final class AioFragment extends Fragment {
         private final Button mReadButton;
         private final KonashiManager mKonashiManager = Konashi.getManager();
         private int mPinNumber;
+        private Handler mHandler;
 
         public static AioTableRow createWithPinNumber(Context context, final int pinNumber) {
             AioTableRow row = new AioTableRow(context);
@@ -99,6 +83,7 @@ public final class AioFragment extends Fragment {
 
         public AioTableRow(final Context context) {
             super(context);
+            mHandler = new Handler(context.getMainLooper());
 
             setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 
@@ -121,7 +106,18 @@ public final class AioFragment extends Fragment {
             mReadButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mKonashiManager.analogReadRequest(mPinNumber);
+                    mKonashiManager.analogRead(mPinNumber)
+                            .then(new DoneCallback<Integer>() {
+                                @Override
+                                public void onDone(final Integer result) {
+                                    mHandler.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            setVoltage(result / 1000.0f);
+                                        }
+                                    });
+                                }
+                            });
                 }
             });
             addView(mReadButton, Utils.createTableRowLayoutParamsWithWeight(2));

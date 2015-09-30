@@ -106,4 +106,11 @@ public class KonashiUtilsTest {
         Mockito.when(mCharacteristic.getValue()).thenReturn(values);
         assertThat(KonashiUtils.getI2cWriteData(mCharacteristic)).isEqualTo(new byte[]{0x74, 0x65, 0x73, 0x74});
     }
+
+    @Test
+    public void testInt2bytes() {
+        int value = Konashi.UART_ENABLE;
+        assertThat(KonashiUtils.int2bytes(Konashi.UART_ENABLE)[0]).isEqualTo((byte)value);
+
+    }
 }

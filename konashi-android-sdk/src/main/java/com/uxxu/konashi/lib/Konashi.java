@@ -274,7 +274,6 @@ public class Konashi {
     public static void close(){
         if(sKonashiManager!=null){
             sKonashiManager.disconnect();
-            sKonashiManager.close();
         }
     }
     

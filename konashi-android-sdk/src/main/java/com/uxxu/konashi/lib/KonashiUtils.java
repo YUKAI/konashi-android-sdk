@@ -3,6 +3,8 @@ package com.uxxu.konashi.lib;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.util.Log;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.Arrays;
 
 /**
@@ -139,11 +141,27 @@ public class KonashiUtils {
         return Arrays.copyOfRange(bytes, 2, bytes[0] + 1);
     }
 
-    private static int bytes2int(byte[] bytes) {
+    public static int bytes2int(byte[] bytes) {
         int value = 0;
         for (byte b : bytes) {
             value = (value << 8) | (b & 0xff);
         }
         return value;
+    }
+
+    public static byte[] int2bytes(int a) {
+        int arraySize = Integer.SIZE / Byte.SIZE;
+        ByteBuffer buffer = ByteBuffer.allocate(arraySize);
+        buffer.order(ByteOrder.LITTLE_ENDIAN);
+        return buffer.putInt(a).array();
+    }
+
+    //TODO: pwmModeをPWM_ENABLE_LEDにした時にpwmModeが反映されなくなるので応急処置的に遅延．要変更
+    public static void sleep(int millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
