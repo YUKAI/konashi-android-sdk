@@ -28,7 +28,7 @@ public class PioStoreTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         mPioStore = new PioStore(mDispatcher);
-        Whitebox.setInternalState(mPioStore, "mPioInputs", (byte) 0x17);
+        Whitebox.setInternalState(mPioStore, "mInputs", (byte) 0x17);
     }
 
     @Test
