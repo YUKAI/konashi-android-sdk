@@ -15,7 +15,7 @@ build:
     - script:
         name: run gradle connectedAndroidTest
         code: |
-          gradle --full-stacktrace -q --project-cache-dir=$WERCKER_CACHE_DIR connectedAndroidTest
+          gradle --full-stacktrace -q --project-cache-dir=$WERCKER_CACHE_DIR :konashi-android-sdk:connectedAndroidTest
   after-steps:
     - script:
         name: inspect build result
