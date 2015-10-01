@@ -28,8 +28,8 @@ public class I2cWriteAction extends I2cAction {
 
     @Override
     protected void setValue() {
-        byte[] value;
-        value = ((mData.length < Konashi.I2C_DATA_MAX_LENGTH) ? new byte[mData.length + 2] : new byte[MAX_VALUE_SIZE]);
+        int size = (mData.length < Konashi.I2C_DATA_MAX_LENGTH) ? mData.length + 2 : Konashi.MAX_VALUE_SIZE;
+        byte[] value = new byte[size];
         value[0] = (byte) (mData.length + 1);
         value[1] = (byte) ((mAddress << 1) & 0xfe);
         System.arraycopy(mData, 0, value, 2, mData.length);
