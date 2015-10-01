@@ -211,7 +211,7 @@ public class Konashi {
     /**
      * I2Cで一度に送受信できる最大バイト数
      */
-    public static final int I2C_DATA_MAX_LENGTH = 19;
+    public static final int I2C_DATA_MAX_LENGTH = 16;
     /**
      * I2Cを無効にする
      */
