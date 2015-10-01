@@ -27,7 +27,8 @@ public class I2cWriteAction extends I2cAction {
     @Override
     protected void setValue() {
         byte[] value = new byte[20];
-        value[0] = (byte) mData.length;
+        if(mData.length < 20) value = new byte[mData.length + 2];
+        value[0] = (byte) (mData.length + 1);
         value[1] = (byte) ((mAddress << 1) & 0xfe);
         System.arraycopy(mData, 0, value, 2, mData.length);
         getCharacteristic().setValue(value);
