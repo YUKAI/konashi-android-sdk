@@ -18,7 +18,7 @@
 
 ```groovy
 dependencies {
-    compile 'com.uxxu.konashi:konashi-android-sdk:0.5.1'
+    compile 'com.uxxu.konashi:konashi-android-sdk:1.0.0'
 }
 ```
 

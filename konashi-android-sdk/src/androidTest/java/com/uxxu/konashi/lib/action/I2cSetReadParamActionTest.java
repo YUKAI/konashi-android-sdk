@@ -63,7 +63,7 @@ public class I2cSetReadParamActionTest {
         mAction = new I2cSetReadParamAction(mService, 5, (byte) 0x53, mStore);
         mAction.setValue();
         verify(mCharacteristic, times(1)).setValue(mValueCaptor.capture());
-        assertThat(mValueCaptor.getValue()[0]).isEqualTo(5);
-        assertThat(mValueCaptor.getValue()[0]).isEqualTo(0xa7);
+        assertThat(mValueCaptor.getValue()[0]).isEqualTo((byte) 5);
+        assertThat(mValueCaptor.getValue()[1]).isEqualTo((byte) 0xa7);
     }
 }
