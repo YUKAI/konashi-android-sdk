@@ -16,7 +16,6 @@ public class I2cWriteAction extends I2cAction {
 
     private static final UUID UUID = KonashiUUID.I2C_WRITE_UUID;
 
-
     private final byte mAddress;
     private final byte[] mData;
 
