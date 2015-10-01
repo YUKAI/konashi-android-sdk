@@ -213,6 +213,10 @@ public class Konashi {
      */
     public static final int I2C_DATA_MAX_LENGTH = 16;
     /**
+     * i2cWriteでsetValue()する際のbyte配列の最大バイト数
+     */
+    public static final int MAX_VALUE_SIZE = 20;
+    /**
      * I2Cを無効にする
      */
     public static final int I2C_DISABLE = 0;

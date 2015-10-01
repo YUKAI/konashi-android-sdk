@@ -15,7 +15,6 @@ import java.util.UUID;
 public class I2cWriteAction extends I2cAction {
 
     private static final UUID UUID = KonashiUUID.I2C_WRITE_UUID;
-    private static final int MAX_VALUE_SIZE = 20;
 
 
     private final byte mAddress;
