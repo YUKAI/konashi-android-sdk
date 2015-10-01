@@ -161,54 +161,11 @@ public final class CommunicationFragment extends Fragment {
                 .then(new DonePipe<BluetoothGattCharacteristic, BluetoothGattCharacteristic, BletiaException, Object>() {
                     @Override
                     public Promise<BluetoothGattCharacteristic, BletiaException, Object> pipeDone(BluetoothGattCharacteristic result) {
-                        /*String text = mI2cDataEditText.getText().toString().trim();
+                        String text = mI2cDataEditText.getText().toString().trim();
                         if (Konashi.I2C_DATA_MAX_LENGTH < text.length()) {
                             text = text.substring(0, Konashi.I2C_DATA_MAX_LENGTH);
-                        }*/
-                        byte[] data0 = {0x31,0x00};
-                        return mKonashiManager.i2cWrite(2,data0, (byte) 0x53);
-                    }
-                })
-                .then(new DoneCallback<BluetoothGattCharacteristic>() {
-                    @Override
-                    public void onDone(BluetoothGattCharacteristic result) {
-                        mKonashiManager.i2cStopCondition();
-                    }
-                })
-                .then(new DoneCallback<BluetoothGattCharacteristic>() {
-                    @Override
-                    public void onDone(BluetoothGattCharacteristic result) {
-                        mKonashiManager.i2cStartCondition();
-                    }
-                })
-                .then(new DonePipe<BluetoothGattCharacteristic, BluetoothGattCharacteristic, BletiaException, Object>() {
-                    @Override
-                    public Promise<BluetoothGattCharacteristic, BletiaException, Object> pipeDone(BluetoothGattCharacteristic result) {
-                /*String text = mI2cDataEditText.getText().toString().trim();
-                if (Konashi.I2C_DATA_MAX_LENGTH < text.length()) {
-                    text = text.substring(0, Konashi.I2C_DATA_MAX_LENGTH);
-                }*/
-                        byte[] data1 = {0x2d, 0x08};
-                        return mKonashiManager.i2cWrite(2, data1, (byte) 0x53);
-                    }
-                })
-                .then(new DoneCallback<BluetoothGattCharacteristic>() {
-                    @Override
-                    public void onDone(BluetoothGattCharacteristic result) {
-                        mKonashiManager.i2cStopCondition();
-                    }
-                })
-                .then(new DoneCallback<BluetoothGattCharacteristic>() {
-                    @Override
-                    public void onDone(BluetoothGattCharacteristic result) {
-                        mKonashiManager.i2cStartCondition();
-                    }
-                })
-                .then(new DonePipe<BluetoothGattCharacteristic, BluetoothGattCharacteristic, BletiaException, Object>() {
-                    @Override
-                    public Promise<BluetoothGattCharacteristic, BletiaException, Object> pipeDone(BluetoothGattCharacteristic result) {
-                        byte[] data2 = {0x32};
-                        return mKonashiManager.i2cWrite(1, data2, (byte) 0x53);
+                        }
+                        return mKonashiManager.i2cWrite(text.length(), text.getBytes(), (byte) 0x1f);
                     }
                 })
                 .then(new DoneCallback<BluetoothGattCharacteristic>() {
