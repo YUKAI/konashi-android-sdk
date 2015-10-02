@@ -8,7 +8,14 @@ import info.izumin.android.bletia.BletiaErrorType;
 public enum KonashiErrorType implements BletiaErrorType{
     INVALID_PARAMETER,
     NOT_ENABLED_UART,
-    NOT_ENABLED_I2C;
+    NOT_ENABLED_I2C,
+    INVALID_PIN_NUMBER,
+    INVALID_MODE,
+    INVALID_PULLUP_PARAM,
+    INVALID_OUTPUT_PARAM,
+    DATA_SIZE_TOO_LONG,
+    INVALID_BAUDRATE,
+    NO_ERROR;
 
     @Override
     public int getCode() {
