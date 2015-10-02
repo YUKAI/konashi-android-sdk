@@ -7,7 +7,6 @@ import com.uxxu.konashi.lib.KonashiErrorType;
 
 import java.util.UUID;
 
-import info.izumin.android.bletia.BleErrorType;
 import info.izumin.android.bletia.BletiaErrorType;
 import info.izumin.android.bletia.BletiaException;
 import info.izumin.android.bletia.action.WriteCharacteristicAction;
