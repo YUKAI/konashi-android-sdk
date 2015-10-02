@@ -8,6 +8,7 @@ import com.uxxu.konashi.lib.KonashiErrorType;
 import java.util.UUID;
 
 import info.izumin.android.bletia.BleErrorType;
+import info.izumin.android.bletia.BletiaErrorType;
 import info.izumin.android.bletia.BletiaException;
 import info.izumin.android.bletia.action.WriteCharacteristicAction;
 import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
@@ -27,7 +28,7 @@ public abstract class KonashiWriteCharacteristicAction extends WriteCharacterist
 
     @Override
     public void execute(BluetoothGattWrapper gattWrapper) {
-        KonashiErrorType errorType = validate();
+        BletiaErrorType errorType = validate();
         if (errorType == KonashiErrorType.NO_ERROR) {
             setValue();
             super.execute(gattWrapper);
@@ -36,10 +37,10 @@ public abstract class KonashiWriteCharacteristicAction extends WriteCharacterist
         }
     }
 
-    protected void rejectIfParamsAreInvalid(KonashiErrorType errorType) {
+    protected void rejectIfParamsAreInvalid(BletiaErrorType errorType) {
         getDeferred().reject(new BletiaException(errorType, getCharacteristic()));
     }
 
     protected abstract void setValue();
-    protected abstract KonashiErrorType validate();
+    protected abstract BletiaErrorType validate();
 }
