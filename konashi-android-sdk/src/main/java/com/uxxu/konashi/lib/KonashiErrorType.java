@@ -14,6 +14,7 @@ public enum KonashiErrorType implements BletiaErrorType{
     INVALID_PULLUP_PARAM,
     INVALID_OUTPUT_PARAM,
     DATA_SIZE_TOO_LONG,
+    DATA_SIZE_TOO_SHORT,
     INVALID_BAUDRATE,
     NO_ERROR;
 
