@@ -7,6 +7,8 @@ import com.uxxu.konashi.lib.KonashiUUID;
 
 import java.util.UUID;
 
+import info.izumin.android.bletia.BletiaErrorType;
+
 /**
  * Created by izumin on 9/25/15.
  */
@@ -24,7 +26,7 @@ public class HardwareResetAction extends KonashiWriteCharacteristicAction {
     }
 
     @Override
-    protected KonashiErrorType validate() {
+    protected BletiaErrorType validate() {
         return KonashiErrorType.NO_ERROR;
     }
 }
