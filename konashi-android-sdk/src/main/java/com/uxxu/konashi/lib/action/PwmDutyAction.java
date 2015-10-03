@@ -42,7 +42,7 @@ public class PwmDutyAction extends KonashiWriteCharacteristicAction {
     @Override
     protected BletiaErrorType validate() {
         if (!PwmUtils.isValidPin(mPin)) return KonashiErrorType.INVALID_PIN_NUMBER;
-        else if (!PwmUtils.isValidDuty(mDuty, mPeriod)) return KonashiErrorType.INVALID_DUTY_RATIO;
+        else if (!PwmUtils.isValidDuty(mDuty, mPeriod)) return KonashiErrorType.INVALID_MODE;
         else return KonashiErrorType.NO_ERROR;
     }
 }
