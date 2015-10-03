@@ -2,6 +2,7 @@ package com.uxxu.konashi.lib.action;
 
 import android.bluetooth.BluetoothGattService;
 
+import com.uxxu.konashi.lib.KonashiErrorType;
 import com.uxxu.konashi.lib.KonashiUUID;
 
 import java.util.UUID;
@@ -23,7 +24,7 @@ public class HardwareResetAction extends KonashiWriteCharacteristicAction {
     }
 
     @Override
-    protected boolean hasValidParams() {
-        return true;
+    protected KonashiErrorType validate() {
+        return KonashiErrorType.NO_ERROR;
     }
 }
