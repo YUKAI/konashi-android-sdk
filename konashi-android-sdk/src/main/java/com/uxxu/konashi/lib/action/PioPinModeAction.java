@@ -53,10 +53,10 @@ public class PioPinModeAction extends KonashiWriteCharacteristicAction {
     @Override
     protected BletiaErrorType validate() {
         if (mIsForAll) {
-            return PioUtils.isValidOutput(mModes) ? KonashiErrorType.NO_ERROR : KonashiErrorType.INVALID_MODE;
+            return PioUtils.isValidModes(mModes) ? KonashiErrorType.NO_ERROR : KonashiErrorType.INVALID_MODE;
         } else {
             if (!PioUtils.isValidPin(mPin)) return KonashiErrorType.INVALID_PIN_NUMBER;
-            else if (!PioUtils.isValidOutput(mMode)) return KonashiErrorType.INVALID_MODE;
+            else if (!PioUtils.isValidMode(mMode)) return KonashiErrorType.INVALID_MODE;
             else return KonashiErrorType.NO_ERROR;
         }
     }
