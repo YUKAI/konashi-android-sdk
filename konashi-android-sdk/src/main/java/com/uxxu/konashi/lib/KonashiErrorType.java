@@ -13,9 +13,11 @@ public enum KonashiErrorType implements BletiaErrorType{
     INVALID_MODE,
     INVALID_PULLUP_PARAM,
     INVALID_OUTPUT_PARAM,
+    INVALID_DUTY_RATIO,
     DATA_SIZE_TOO_LONG,
     DATA_SIZE_TOO_SHORT,
     INVALID_BAUDRATE,
+    INVALID_CONDITION,
     NO_ERROR;
 
     @Override
