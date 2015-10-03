@@ -2,6 +2,7 @@ package com.uxxu.konashi.lib.action;
 
 import android.bluetooth.BluetoothGattService;
 
+import com.uxxu.konashi.lib.Konashi;
 import com.uxxu.konashi.lib.KonashiErrorType;
 import com.uxxu.konashi.lib.KonashiUUID;
 import com.uxxu.konashi.lib.store.I2cStore;
@@ -32,7 +33,6 @@ public class I2cModeAction extends I2cAction {
 
     @Override
     protected BletiaErrorType validate() {
-        if(I2cUtils.isValidMode(mMode)) return KonashiErrorType.NO_ERROR;
-        else return KonashiErrorType.INVALID_MODE;
+        return I2cUtils.isValidMode(mMode) ? KonashiErrorType.NO_ERROR : KonashiErrorType.INVALID_MODE;
     }
 }

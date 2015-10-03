@@ -32,7 +32,6 @@ public class I2cSendConditionAction extends I2cAction {
 
     @Override
     protected BletiaErrorType validate() {
-        if(I2cUtils.isValidCondition(mCondition)) return KonashiErrorType.NO_ERROR;
-        else return KonashiErrorType.INVALID_CONDITION;
+        return I2cUtils.isValidCondition(mCondition) ? KonashiErrorType.NO_ERROR : KonashiErrorType.INVALID_CONDITION;
     }
 }
