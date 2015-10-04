@@ -44,6 +44,6 @@ public class AioAnalogReadAction extends ReadCharacteristicAction {
     }
 
     private void rejectIfParamsAreInvalid() {
-        getDeferred().reject(new BletiaException(KonashiErrorType.NULL_CHARACTERISTIC, getCharacteristic()));
+        getDeferred().reject(new BletiaException(KonashiErrorType.INVALID_PIN_NUMBER, getCharacteristic()));
     }
 }
