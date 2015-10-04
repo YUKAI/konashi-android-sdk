@@ -18,7 +18,6 @@ public enum KonashiErrorType implements BletiaErrorType{
     DATA_SIZE_TOO_SHORT,
     INVALID_BAUDRATE,
     INVALID_CONDITION,
-    NULL_CHARACTERISTIC,
     NO_ERROR;
 
     @Override
