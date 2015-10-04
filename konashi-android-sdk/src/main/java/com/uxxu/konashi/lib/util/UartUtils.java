@@ -47,10 +47,10 @@ public final class UartUtils {
     }
 
     public static boolean isLengthTooShort(int length) {
-        return length > 0;
+        return length < 0;
     }
 
     public static boolean isLengthTooLong(int length) {
-        return length <= (Konashi.UART_DATA_MAX_LENGTH + 1);
+        return length > (Konashi.UART_DATA_MAX_LENGTH + 1);
     }
 }
