@@ -53,7 +53,7 @@ public class PioDigitalWriteAction extends KonashiWriteCharacteristicAction {
     @Override
     protected BletiaErrorType validate() {
         if (mIsForAll) {
-            return PioUtils.isValidOutput(mOutputs) ? KonashiErrorType.NO_ERROR : KonashiErrorType.INVALID_PIN_NUMBER;
+            return PioUtils.isValidOutputs(mOutputs) ? KonashiErrorType.NO_ERROR : KonashiErrorType.INVALID_PIN_NUMBER;
         } else {
             if (!PioUtils.isValidPin(mPin)) return KonashiErrorType.INVALID_PIN_NUMBER;
             else if (!PioUtils.isValidOutput(mOutput)) return KonashiErrorType.INVALID_OUTPUT_PARAM;
