@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothGattService;
 import android.util.SparseArray;
 
 import com.uxxu.konashi.lib.Konashi;
+import com.uxxu.konashi.lib.KonashiErrorType;
 import com.uxxu.konashi.lib.KonashiUUID;
 
 import java.util.UUID;
@@ -43,6 +44,6 @@ public class AioAnalogReadAction extends ReadCharacteristicAction {
     }
 
     private void rejectIfParamsAreInvalid() {
-        getDeferred().reject(new BletiaException(BleErrorType.INVALID_PARAMETER, getCharacteristic()));
+        getDeferred().reject(new BletiaException(KonashiErrorType.INVALID_PIN_NUMBER, getCharacteristic()));
     }
 }
