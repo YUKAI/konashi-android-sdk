@@ -42,12 +42,12 @@ public class AioAnalogReadActionTest {
     @Test
     public void actionCharacteristic_InvalidPinNumber() throws Exception{
         mAction = new AioAnalogReadAction(mService, 5);
-        assertThat(mAction.getCharacteristic() == null).isEqualTo(true);
+        assertThat(mAction.getCharacteristic()).isNull();
     }
 
     @Test
     public void actionCharacteristic_ValidPinNumber() throws Exception{
         mAction = new AioAnalogReadAction(mService, Konashi.AIO0);
-        assertThat(mAction.getCharacteristic() == null).isEqualTo(false);
+        assertThat(mAction.getCharacteristic()).isNotNull();
     }
 }
