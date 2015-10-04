@@ -8,18 +8,10 @@ import com.uxxu.konashi.lib.KonashiUUID;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.lang.reflect.Method;
-import java.util.UUID;
-
-import info.izumin.android.bletia.BletiaException;
-import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
-
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
 /**
@@ -29,7 +21,6 @@ public class AioAnalogReadActionTest {
 
     @Mock private BluetoothGattService mService;
     @Mock private BluetoothGattCharacteristic mCharacteristic;
-    @Mock private BluetoothGattWrapper mGattWrapper;
 
     private AioAnalogReadAction mAction;
 
