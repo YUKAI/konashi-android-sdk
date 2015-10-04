@@ -51,7 +51,7 @@ public class UartWriteActionTest {
     }
 
     @Test
-    public void hasValidParams_FotInvalidValue_TooLong() throws Exception {
+    public void hasValidParams_ForInvalidValue_TooLong() throws Exception {
         mAction = new UartWriteAction(mService, "TooLongStringHogeHogeHoge", mStore);
         assertThat(mAction.validate()).isEqualTo(KonashiErrorType.DATA_SIZE_TOO_LONG);
     }
