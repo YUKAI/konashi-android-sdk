@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 
 import com.uxxu.konashi.lib.Konashi;
+import com.uxxu.konashi.lib.KonashiUUID;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -19,12 +20,7 @@ import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.isNull;
-import static org.mockito.Matchers.notNull;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.doThrow;
 
 /**
  * Created by e10dokup on 2015/10/04
@@ -32,6 +28,7 @@ import static org.mockito.Mockito.doThrow;
 public class AioAnalogReadActionTest {
 
     @Mock private BluetoothGattService mService;
+    @Mock private BluetoothGattCharacteristic mCharacteristic;
     @Mock private BluetoothGattWrapper mGattWrapper;
 
     private AioAnalogReadAction mAction;
@@ -39,17 +36,18 @@ public class AioAnalogReadActionTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
+        when(mService.getCharacteristic(KonashiUUID.ANALOG_READ0_UUID)).thenReturn(mCharacteristic);
     }
 
     @Test
     public void actionCharacteristic_InvalidPinNumber() throws Exception{
         mAction = new AioAnalogReadAction(mService, 5);
-        assertThat(mAction.getCharacteristic()).isNull();
+        assertThat(mAction.getCharacteristic() == null).isEqualTo(true);
     }
 
     @Test
     public void actionCharacteristic_ValidPinNumber() throws Exception{
         mAction = new AioAnalogReadAction(mService, Konashi.AIO0);
-        assertThat(mAction.getCharacteristic()).isEqualTo(notNull());
+        assertThat(mAction.getCharacteristic() == null).isEqualTo(false);
     }
 }
