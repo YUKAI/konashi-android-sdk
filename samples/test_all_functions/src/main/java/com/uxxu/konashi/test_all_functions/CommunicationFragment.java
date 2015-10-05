@@ -232,16 +232,11 @@ public final class CommunicationFragment extends Fragment {
                         .then(new DoneCallback<byte[]>() {
                             @Override
                             public void onDone(final byte[] result) {
-                                getActivity().runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        int x = (((int) result[1]) << 8) | result[0];
-                                        int y = (((int) result[3]) << 8) | result[2];
-                                        int z = (((int) result[5]) << 8) | result[4];
-                                        mI2cResultEditText.setText("x:" + x + " y:" + y + " z:" + z);
-                                        mKonashiManager.i2cStopCondition();
-                                    }
-                                });
+                                int x = (((int) result[1]) << 8) | result[0];
+                                int y = (((int) result[3]) << 8) | result[2];
+                                int z = (((int) result[5]) << 8) | result[4];
+                                mI2cResultEditText.setText("x:" + x + " y:" + y + " z:" + z);
+                                mKonashiManager.i2cStopCondition();
                             }
                         });
             }
@@ -275,12 +270,7 @@ public final class CommunicationFragment extends Fragment {
             .then(new DoneCallback<BluetoothGattCharacteristic>() {
                 @Override
                 public void onDone(BluetoothGattCharacteristic result) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            setEnableUartViews(true);
-                        }
-                    });
+                    setEnableUartViews(true);
                 }
             });
         } else {
@@ -288,12 +278,7 @@ public final class CommunicationFragment extends Fragment {
             .then(new DoneCallback<BluetoothGattCharacteristic>() {
                 @Override
                 public void onDone(BluetoothGattCharacteristic result) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            setEnableUartViews(false);
-                        }
-                    });
+                    setEnableUartViews(false);
                 }
             });
         }
@@ -310,12 +295,7 @@ public final class CommunicationFragment extends Fragment {
                 .then(new DoneCallback<BluetoothGattCharacteristic>() {
                     @Override
                     public void onDone(BluetoothGattCharacteristic result) {
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                setEnableI2cViews(true);
-                            }
-                        });
+                        setEnableI2cViews(true);
                     }
                 })
                 .fail(new FailCallback<BletiaException>() {
@@ -329,12 +309,7 @@ public final class CommunicationFragment extends Fragment {
                 .then(new DoneCallback<BluetoothGattCharacteristic>() {
                     @Override
                     public void onDone(BluetoothGattCharacteristic result) {
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                setEnableI2cViews(true);
-                            }
-                        });
+                        setEnableI2cViews(true);
                     }
                 });
             }
@@ -343,12 +318,7 @@ public final class CommunicationFragment extends Fragment {
             .then(new DoneCallback<BluetoothGattCharacteristic>() {
                 @Override
                 public void onDone(BluetoothGattCharacteristic result) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            setEnableI2cViews(false);
-                        }
-                    });
+                    setEnableI2cViews(false);
                 }
             });
         }
@@ -376,13 +346,7 @@ public final class CommunicationFragment extends Fragment {
         @Override
         public void onUpdateUartRx(KonashiManager manager, byte[] value) {
             mValue = value;
-
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    mUartResultEditText.append(new String(mValue));
-                }
-            });
+            mUartResultEditText.append(new String(mValue));
         }
 
         @Override public void onUpdateBatteryLevel(KonashiManager manager, int level) {}
