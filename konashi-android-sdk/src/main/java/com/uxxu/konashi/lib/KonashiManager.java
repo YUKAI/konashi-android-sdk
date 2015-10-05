@@ -42,6 +42,7 @@ import com.uxxu.konashi.lib.store.UartStore;
 import org.jdeferred.DoneCallback;
 import org.jdeferred.DonePipe;
 import org.jdeferred.Promise;
+import org.jdeferred.android.AndroidDeferredManager;
 
 import java.util.UUID;
 
@@ -527,7 +528,7 @@ public class KonashiManager extends KonashiBaseManager {
     }
 
     private <T> Promise<T, BletiaException, Void> execute(Action<T, ?> action) {
-        return mBletia.execute(action);
+        return new AndroidDeferredManager().when(mBletia.execute(action));
     }
 
     private BluetoothGattService getKonashiService() {
