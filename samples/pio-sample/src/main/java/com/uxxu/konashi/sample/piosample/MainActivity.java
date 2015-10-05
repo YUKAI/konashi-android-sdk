@@ -1,5 +1,6 @@
 package com.uxxu.konashi.sample.piosample;
 
+import android.bluetooth.BluetoothGattCharacteristic;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -12,12 +13,16 @@ import android.widget.Switch;
 import com.uxxu.konashi.lib.Konashi;
 import com.uxxu.konashi.lib.KonashiListener;
 import com.uxxu.konashi.lib.KonashiManager;
+import com.uxxu.konashi.lib.KonashiUtils;
+
+import org.jdeferred.DoneCallback;
+import org.jdeferred.FailCallback;
 
 import info.izumin.android.bletia.BletiaException;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private Switch mBlinkSwitch;
+    private Switch mBlinkSwitch, mModeSwitch;
 
     private KonashiManager mKonashiManager;
 
@@ -26,7 +31,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mBlinkSwitch = (Switch)findViewById(R.id.switch_blink);
-        mBlinkSwitch.setOnCheckedChangeListener(mOnCheckedChangeListener);
+        mBlinkSwitch.setOnCheckedChangeListener(mOnBlinkCheckedChangeListener);
+        mModeSwitch = (Switch)findViewById(R.id.switch_mode);
+        mModeSwitch.setOnCheckedChangeListener(mOnModeCheckedChangeListener);
+        findViewById(R.id.btn_connect).setOnClickListener(this);
+        findViewById(R.id.btn_disconnect).setOnClickListener(this);
 
         mKonashiManager = new KonashiManager();
     }
@@ -67,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 boolean isReady = mKonashiManager.isReady();
                 findViewById(R.id.btn_connect).setEnabled(!isReady);
                 findViewById(R.id.btn_disconnect).setEnabled(isReady);
+                mModeSwitch.setEnabled(isReady);
                 mBlinkSwitch.setEnabled(isReady);
             }
         });
@@ -77,16 +87,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (view.getId()) {
             case R.id.btn_connect:
                 mKonashiManager.find(this);
+                break;
             case R.id.btn_disconnect:
                 mKonashiManager.disconnect();
+                break;
         }
     }
 
-    CompoundButton.OnCheckedChangeListener mOnCheckedChangeListener = new CompoundButton.OnCheckedChangeListener() {
+    CompoundButton.OnCheckedChangeListener mOnBlinkCheckedChangeListener = new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
             int value = b ? Konashi.HIGH : Konashi.LOW;
-            mKonashiManager.digitalWrite(Konashi.PIO2, value);
+            mKonashiManager.digitalWrite(Konashi.PIO1, value);
+        }
+    };
+
+    CompoundButton.OnCheckedChangeListener mOnModeCheckedChangeListener = new CompoundButton.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+            int value = b ? Konashi.OUTPUT : Konashi.INPUT;
+            mKonashiManager.pinMode(Konashi.PIO1, value);
         }
     };
 
@@ -94,7 +114,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void onConnect(KonashiManager manager) {
             refreshViews();
-            mKonashiManager.pinMode(Konashi.PIO2, Konashi.OUTPUT);
         }
 
         @Override
