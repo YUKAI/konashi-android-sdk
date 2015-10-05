@@ -12,16 +12,16 @@
         android:text="@string/text_describe"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/btn_blink"
+        android:layout_above="@+id/switch_blink"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="30dp"
         android:id="@+id/text_describe"/>
 
-    <Button
+    <Switch
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/btn_blink"
-        android:id="@+id/btn_blink"
+        android:id="@+id/switch_blink"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"/>
 
