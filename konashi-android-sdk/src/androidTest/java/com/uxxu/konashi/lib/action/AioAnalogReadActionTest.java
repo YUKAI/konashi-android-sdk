@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 
 import com.uxxu.konashi.lib.Konashi;
+import com.uxxu.konashi.lib.KonashiErrorType;
 import com.uxxu.konashi.lib.KonashiUUID;
 
 import org.junit.Before;
@@ -33,12 +34,12 @@ public class AioAnalogReadActionTest {
     @Test
     public void actionCharacteristic_InvalidPinNumber() throws Exception{
         mAction = new AioAnalogReadAction(mService, 5);
-        assertThat(mAction.getCharacteristic()).isNull();
+        assertThat(mAction.validate()).isEqualTo(KonashiErrorType.INVALID_PIN_NUMBER);
     }
 
     @Test
     public void actionCharacteristic_ValidPinNumber() throws Exception{
         mAction = new AioAnalogReadAction(mService, Konashi.AIO0);
-        assertThat(mAction.getCharacteristic()).isNotNull();
+        assertThat(mAction.validate()).isEqualTo(KonashiErrorType.NO_ERROR);
     }
 }
