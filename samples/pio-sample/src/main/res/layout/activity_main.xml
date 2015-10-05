@@ -8,22 +8,23 @@
                 android:paddingBottom="@dimen/activity_vertical_margin"
                 tools:context=".MainActivity">
 
-    <TextView
-        android:text="@string/text_describe"
+    <Switch
+        android:text="@string/btn_mode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/switch_blink"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="30dp"
-        android:id="@+id/text_describe"/>
+        android:id="@+id/switch_mode"
+        android:checked="false"/>
 
     <Switch
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/btn_blink"
         android:id="@+id/switch_blink"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"/>
+        android:layout_centerHorizontal="true"
+        android:text="@string/btn_blink"/>
 
     <Button
         android:layout_width="wrap_content"

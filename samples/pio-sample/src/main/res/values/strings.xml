@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">PioSample</string>
 
-    <string name="text_describe">ボタンを押すとLチカします</string>
+    <string name="btn_mode">モード</string>
     <string name="btn_blink">Lチカ</string>
     <string name="btn_connect">Connect</string>
     <string name="btn_disconnect">Disconnect</string>
