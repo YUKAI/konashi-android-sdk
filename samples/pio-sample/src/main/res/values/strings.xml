@@ -3,4 +3,6 @@
 
     <string name="text_describe">ボタンを押すとLチカします</string>
     <string name="btn_blink">Lチカ</string>
+    <string name="btn_connect">Connect</string>
+    <string name="btn_disconnect">Disconnect</string>
 </resources>

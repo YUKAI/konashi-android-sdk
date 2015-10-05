@@ -25,4 +25,21 @@
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"/>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/btn_connect"
+        android:id="@+id/btn_connect"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/btn_disconnect"
+        android:layout_marginTop="10dp"
+        android:id="@+id/btn_disconnect"
+        android:layout_below="@+id/btn_connect"
+        android:layout_centerHorizontal="true"/>
+
 </RelativeLayout>
