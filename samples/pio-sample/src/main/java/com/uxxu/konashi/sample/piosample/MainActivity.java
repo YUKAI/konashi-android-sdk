@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    CompoundButton.OnCheckedChangeListener mOnBlinkCheckedChangeListener = new CompoundButton.OnCheckedChangeListener() {
+    private final CompoundButton.OnCheckedChangeListener mOnBlinkCheckedChangeListener = new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
             int value = b ? Konashi.HIGH : Konashi.LOW;
@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
-    CompoundButton.OnCheckedChangeListener mOnModeCheckedChangeListener = new CompoundButton.OnCheckedChangeListener() {
+    private final CompoundButton.OnCheckedChangeListener mOnModeCheckedChangeListener = new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
             int value = b ? Konashi.OUTPUT : Konashi.INPUT;
@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
-    KonashiListener mKonashiListener = new KonashiListener() {
+    private final KonashiListener mKonashiListener = new KonashiListener() {
         @Override
         public void onConnect(KonashiManager manager) {
             refreshViews();
