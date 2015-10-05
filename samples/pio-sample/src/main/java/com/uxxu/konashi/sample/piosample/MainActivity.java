@@ -56,16 +56,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onDestroy() {
-        if (mKonashiManager != null) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    mKonashiManager.reset();
-                    mKonashiManager.disconnect();
-                    mKonashiManager = null;
-                }
-            }).start();
-        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                mKonashiManager.reset()
+                .then(new DoneCallback<BluetoothGattCharacteristic>() {
+                    @Override
+                    public void onDone(BluetoothGattCharacteristic result) {
+                        mKonashiManager.disconnect();
+                    }
+                });
+            }
+        }).start();
         super.onDestroy();
     }
 
