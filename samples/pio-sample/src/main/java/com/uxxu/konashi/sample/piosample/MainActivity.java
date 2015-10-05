@@ -85,11 +85,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     CompoundButton.OnCheckedChangeListener mOnCheckedChangeListener = new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-            if (b) {
-                mKonashiManager.digitalWrite(Konashi.PIO2, Konashi.HIGH);
-            } else {
-                mKonashiManager.digitalWrite(Konashi.PIO2, Konashi.LOW);
-            }
+            int value = b ? Konashi.HIGH : Konashi.LOW;
+            mKonashiManager.digitalWrite(Konashi.PIO2, value);
         }
     };
 
