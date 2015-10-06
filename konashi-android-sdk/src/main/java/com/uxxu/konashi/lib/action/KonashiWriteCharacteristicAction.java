@@ -37,7 +37,7 @@ public abstract class KonashiWriteCharacteristicAction extends WriteCharacterist
     }
 
     protected void rejectIfParamsAreInvalid(BletiaErrorType errorType) {
-        getDeferred().reject(new BletiaException(errorType, getCharacteristic()));
+        getDeferred().reject(new BletiaException(this, errorType));
     }
 
     protected abstract void setValue();
