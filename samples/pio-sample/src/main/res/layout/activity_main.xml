@@ -8,39 +8,23 @@
                 android:paddingBottom="@dimen/activity_vertical_margin"
                 tools:context=".MainActivity">
 
-    <Switch
-        android:text="@string/btn_mode"
+    <ToggleButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/switch_blink"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="30dp"
-        android:id="@+id/switch_mode"
-        android:checked="false"/>
-
-    <Switch
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/switch_blink"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:text="@string/btn_blink"/>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/btn_connect"
-        android:id="@+id/btn_connect"
+        android:id="@+id/toggle_blink"
+        android:text="@string/btn_blink"
+        android:visibility="gone"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"/>
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"/>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/btn_disconnect"
-        android:layout_marginTop="10dp"
-        android:id="@+id/btn_disconnect"
-        android:layout_below="@+id/btn_connect"
+        android:text="@string/btn_find"
+        android:id="@+id/btn_find"
+        android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"/>
 
 </RelativeLayout>
