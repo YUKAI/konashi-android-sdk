@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
+import android.widget.ToggleButton;
 
 import com.uxxu.konashi.lib.Konashi;
 import com.uxxu.konashi.lib.KonashiListener;
@@ -18,24 +19,21 @@ import com.uxxu.konashi.lib.KonashiUtils;
 import org.jdeferred.DoneCallback;
 import org.jdeferred.FailCallback;
 
+import javax.security.auth.callback.CallbackHandler;
+
 import info.izumin.android.bletia.BletiaException;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private Switch mBlinkSwitch, mModeSwitch;
-
     private KonashiManager mKonashiManager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mBlinkSwitch = (Switch)findViewById(R.id.switch_blink);
-        mBlinkSwitch.setOnCheckedChangeListener(mOnBlinkCheckedChangeListener);
-        mModeSwitch = (Switch)findViewById(R.id.switch_mode);
-        mModeSwitch.setOnCheckedChangeListener(mOnModeCheckedChangeListener);
-        findViewById(R.id.btn_connect).setOnClickListener(this);
-        findViewById(R.id.btn_disconnect).setOnClickListener(this);
+        ((ToggleButton) findViewById(R.id.toggle_blink)).setOnCheckedChangeListener(mOnBlinkCheckedChangeListener);
+        findViewById(R.id.btn_find).setOnClickListener(this);
 
         mKonashiManager = new KonashiManager();
     }
@@ -76,24 +74,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void run() {
                 boolean isReady = mKonashiManager.isReady();
-                findViewById(R.id.btn_connect).setEnabled(!isReady);
-                findViewById(R.id.btn_disconnect).setEnabled(isReady);
-                mModeSwitch.setEnabled(isReady);
-                mBlinkSwitch.setEnabled(isReady);
+                findViewById(R.id.btn_find).setVisibility(!isReady ? View.VISIBLE : View.GONE);
+                findViewById(R.id.toggle_blink).setVisibility(isReady ? View.VISIBLE : View.GONE);
             }
         });
     }
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.btn_connect:
-                mKonashiManager.find(this);
-                break;
-            case R.id.btn_disconnect:
-                mKonashiManager.disconnect();
-                break;
-        }
+        mKonashiManager.find(this);
     }
 
     private final CompoundButton.OnCheckedChangeListener mOnBlinkCheckedChangeListener = new CompoundButton.OnCheckedChangeListener() {
@@ -111,6 +100,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             mKonashiManager.pinMode(Konashi.PIO1, value);
         }
     };
+
+
+
+
 
     private final KonashiListener mKonashiListener = new KonashiListener() {
         @Override
