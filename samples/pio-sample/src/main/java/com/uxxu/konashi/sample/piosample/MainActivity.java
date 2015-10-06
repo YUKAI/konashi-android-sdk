@@ -3,12 +3,9 @@ package com.uxxu.konashi.sample.piosample;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.Switch;
 import android.widget.ToggleButton;
 
 import com.uxxu.konashi.lib.Konashi;
@@ -26,7 +23,6 @@ import info.izumin.android.bletia.BletiaException;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private KonashiManager mKonashiManager;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,22 +89,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
-    private final CompoundButton.OnCheckedChangeListener mOnModeCheckedChangeListener = new CompoundButton.OnCheckedChangeListener() {
-        @Override
-        public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-            int value = b ? Konashi.OUTPUT : Konashi.INPUT;
-            mKonashiManager.pinMode(Konashi.PIO1, value);
-        }
-    };
-
-
-
-
-
     private final KonashiListener mKonashiListener = new KonashiListener() {
         @Override
         public void onConnect(KonashiManager manager) {
             refreshViews();
+            mKonashiManager.pinMode(Konashi.PIO1, Konashi.OUTPUT)
+            .fail(new FailCallback<BletiaException>() {
+                @Override
+                public void onFail(BletiaException result) {
+                    KonashiUtils.log(result.getMessage());
+                }
+            });
         }
 
         @Override
