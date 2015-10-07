@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.uxxu.konashi.lib.ui.BleDeviceListAdapter;
 import com.uxxu.konashi.lib.ui.BleDeviceSelectionDialog;
 import com.uxxu.konashi.lib.ui.BleDeviceSelectionDialog.OnBleDeviceSelectListener;
+import com.uxxu.konashi.lib.util.KonashiUtils;
 
 
 /**

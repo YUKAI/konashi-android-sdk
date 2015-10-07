@@ -4,7 +4,6 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -12,12 +11,9 @@ import android.widget.ToggleButton;
 import com.uxxu.konashi.lib.Konashi;
 import com.uxxu.konashi.lib.KonashiListener;
 import com.uxxu.konashi.lib.KonashiManager;
-import com.uxxu.konashi.lib.KonashiUtils;
 
 import org.jdeferred.DoneCallback;
 import org.jdeferred.FailCallback;
-
-import javax.security.auth.callback.CallbackHandler;
 
 import info.izumin.android.bletia.BletiaException;
 
