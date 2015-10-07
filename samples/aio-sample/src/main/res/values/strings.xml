@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">AioSample</string>
 
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
+    <string name="btn_read">Read</string>
+    <string name="btn_find">konashiをさがす</string>
+    <string name="label_value">ここに測定値が表示されます</string>
 </resources>
