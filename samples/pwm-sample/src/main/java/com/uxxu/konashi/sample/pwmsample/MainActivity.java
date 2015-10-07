@@ -1,18 +1,15 @@
 package com.uxxu.konashi.sample.pwmsample;
 
-import android.app.Activity;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.SeekBar;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.uxxu.konashi.lib.Konashi;
 import com.uxxu.konashi.lib.KonashiListener;
 import com.uxxu.konashi.lib.KonashiManager;
-import com.uxxu.konashi.lib.KonashiUtils;
 
 import org.jdeferred.DoneCallback;
 import org.jdeferred.FailCallback;
