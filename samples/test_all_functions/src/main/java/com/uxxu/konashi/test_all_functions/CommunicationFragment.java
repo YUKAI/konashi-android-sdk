@@ -105,11 +105,17 @@ public final class CommunicationFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 mKonashiManager.uartWrite(mUartDataEditText.getText().toString().getBytes())
-                .then(new DoneCallback<BluetoothGattCharacteristic>() {
-                    @Override
-                    public void onDone(BluetoothGattCharacteristic result) {
-                    }
-                });
+                        .then(new DoneCallback<BluetoothGattCharacteristic>() {
+                            @Override
+                            public void onDone(BluetoothGattCharacteristic result) {
+                            }
+                        })
+                        .fail(new FailCallback<BletiaException>() {
+                            @Override
+                            public void onFail(BletiaException result) {
+                                Toast.makeText(getActivity(), result.getMessage(), Toast.LENGTH_SHORT);
+                            }
+                        });
             }
         });
 
