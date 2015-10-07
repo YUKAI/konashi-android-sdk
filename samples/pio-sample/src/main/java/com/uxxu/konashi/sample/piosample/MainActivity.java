@@ -66,14 +66,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void refreshViews() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                boolean isReady = mKonashiManager.isReady();
-                findViewById(R.id.btn_find).setVisibility(!isReady ? View.VISIBLE : View.GONE);
-                findViewById(R.id.toggle_blink).setVisibility(isReady ? View.VISIBLE : View.GONE);
-            }
-        });
+        boolean isReady = mKonashiManager.isReady();
+        findViewById(R.id.btn_find).setVisibility(!isReady ? View.VISIBLE : View.GONE);
+        findViewById(R.id.toggle_blink).setVisibility(isReady ? View.VISIBLE : View.GONE);
     }
 
     @Override
