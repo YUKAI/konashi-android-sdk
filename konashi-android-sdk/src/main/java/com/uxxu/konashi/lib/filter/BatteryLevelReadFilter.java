@@ -2,7 +2,7 @@ package com.uxxu.konashi.lib.filter;
 
 import android.bluetooth.BluetoothGattCharacteristic;
 
-import com.uxxu.konashi.lib.KonashiUtils;
+import com.uxxu.konashi.lib.util.KonashiUtils;
 
 import org.jdeferred.DoneFilter;
 

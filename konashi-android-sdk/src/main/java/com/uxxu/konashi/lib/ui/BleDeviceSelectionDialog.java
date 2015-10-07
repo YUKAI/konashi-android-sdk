@@ -12,7 +12,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
-import com.uxxu.konashi.lib.KonashiUtils;
+import com.uxxu.konashi.lib.util.KonashiUtils;
 import com.uxxu.konashi.lib.R;
 
 /**

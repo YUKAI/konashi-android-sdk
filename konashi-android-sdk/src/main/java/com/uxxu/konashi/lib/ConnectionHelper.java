@@ -10,6 +10,7 @@ import android.os.Handler;
 import com.uxxu.konashi.lib.ui.BleDeviceListAdapter;
 import com.uxxu.konashi.lib.ui.BleDeviceSelectionDialog;
 import com.uxxu.konashi.lib.util.BtUtils;
+import com.uxxu.konashi.lib.util.KonashiUtils;
 
 /**
  * Created by izumin on 10/7/15.

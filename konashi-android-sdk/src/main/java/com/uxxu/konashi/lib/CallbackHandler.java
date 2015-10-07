@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 
 import com.uxxu.konashi.lib.dispatcher.DispatcherContainer;
+import com.uxxu.konashi.lib.util.KonashiUtils;
 
 import java.util.UUID;
 
