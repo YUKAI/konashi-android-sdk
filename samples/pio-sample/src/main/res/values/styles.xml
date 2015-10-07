@@ -5,45 +5,4 @@
         <!-- Customize your theme here. -->
     </style>
 
-    <style name="TableHeaderColumn">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">match_parent</item>
-        <item name="android:layout_marginStart">@dimen/column_horizontal_margin</item>
-        <item name="android:layout_marginEnd">@dimen/column_horizontal_margin</item>
-        <item name="android:gravity">center</item>
-        <item name="android:textSize">@dimen/abc_text_size_caption_material</item>
-    </style>
-
-    <style name="TableRow">
-        <item name="android:layout_marginTop">@dimen/column_vertical_margin</item>
-        <item name="android:layout_marginBottom">@dimen/column_vertical_margin</item>
-    </style>
-
-    <style name="PioToggleButton">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginStart">@dimen/column_horizontal_margin</item>
-        <item name="android:layout_marginEnd">@dimen/column_horizontal_margin</item>
-        <item name="android:textSize">@dimen/abc_text_size_button_material</item>
-    </style>
-
-    <style name="PioModeToggleButton" parent="PioToggleButton">
-        <item name="android:textOn">@string/text_output</item>
-        <item name="android:textOff">@string/text_input</item>
-    </style>
-
-    <style name="PioOutputToggleButton" parent="PioToggleButton">
-        <item name="android:enabled">false</item>
-        <item name="android:textOff">@string/text_low</item>
-        <item name="android:textOn">@string/text_high</item>
-    </style>
-
-    <style name="PioInputTextView" parent="TableHeaderColumn">
-        <item name="android:text">@string/text_low</item>
-    </style>
-
-    <style name="PioPullupToggle">
-        <item name="android:layout_marginStart">@dimen/column_horizontal_margin</item>
-        <item name="android:layout_marginEnd">@dimen/column_horizontal_margin</item>
-    </style>
 </resources>
