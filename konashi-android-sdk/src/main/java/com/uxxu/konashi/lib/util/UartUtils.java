@@ -43,7 +43,7 @@ public final class UartUtils {
      * @return
      */
     public static boolean isValidLength(int length) {
-        return length > 0 && length <= (Konashi.UART_DATA_MAX_LENGTH + 1);
+        return length >= 0 && length <= (Konashi.UART_DATA_MAX_LENGTH + 1);
     }
 
     public static boolean isLengthTooShort(int length) {
