@@ -11,7 +11,7 @@ build:
     - script:
         name: run gradle test
         code: |
-          gradle --full-stacktrace -q --project-cache-dir=$WERCKER_CACHE_DIR :konashi-android-sdk:test
+          gradle --full-stacktrace -info --project-cache-dir=$WERCKER_CACHE_DIR :konashi-android-sdk:test
     - script:
         name: start android emulator
         code: |
