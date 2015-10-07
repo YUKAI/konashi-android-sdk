@@ -1,5 +1,6 @@
 package com.uxxu.konashi.lib;
 
+import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
@@ -10,8 +11,8 @@ import com.uxxu.konashi.lib.action.BatteryLevelReadAction;
 import com.uxxu.konashi.lib.action.HardwareResetAction;
 import com.uxxu.konashi.lib.action.I2cModeAction;
 import com.uxxu.konashi.lib.action.I2cReadAction;
-import com.uxxu.konashi.lib.action.I2cSetReadParamAction;
 import com.uxxu.konashi.lib.action.I2cSendConditionAction;
+import com.uxxu.konashi.lib.action.I2cSetReadParamAction;
 import com.uxxu.konashi.lib.action.I2cWriteAction;
 import com.uxxu.konashi.lib.action.PioDigitalWriteAction;
 import com.uxxu.konashi.lib.action.PioPinModeAction;
@@ -73,7 +74,7 @@ import info.izumin.android.bletia.action.Action;
  * limitations under the License.
  *
  */
-public class KonashiManager extends KonashiBaseManager {
+public class KonashiManager {
     // konashi members
     // PIO
     private PioStore mPioStore;
@@ -99,6 +100,9 @@ public class KonashiManager extends KonashiBaseManager {
     private EventEmitter mEmitter;
     private CallbackHandler mCallbackHandler;
     private DispatcherContainer mDispacherContainer;
+
+    private BluetoothDevice mDevice;
+    private ConnectionHelper mConnectionHelper;
 
     ///////////////////////////
     // Initialization
@@ -130,20 +134,59 @@ public class KonashiManager extends KonashiBaseManager {
         mUartStore = new UartStore(mUartDispatcher);
     }
 
-    @Override
     public void initialize(Context context) {
-        super.initialize(context);
-
         mBletia = new Bletia(context);
         mBletia.addListener(mCallbackHandler);
+        mConnectionHelper = new ConnectionHelper(mConnectionHelperCallback, context);
     }
 
+    /**
+     * konashiを見つける(konashiのみBLEデバイスリストに表示する)
+     * @param activity BLEデバイスリストを表示する先のActivity
+     */
+    public void find(Activity activity){
+        mConnectionHelper.find(activity, true, null);
+    }
+
+    /**
+     * konashiを見つける
+     * @param activity BLEデバイスリストを表示する先のActivity
+     * @param isShowKonashiOnly konashiだけを表示するか、すべてのBLEデバイスを表示するか
+     */
+    public void find(Activity activity, boolean isShowKonashiOnly){
+        mConnectionHelper.find(activity, isShowKonashiOnly, null);
+    }
+
+    /**
+     * 名前を指定してkonashiを探索。
+     * @param activity BLEデバイスリストを表示する先のActivity
+     * @param name konashiの緑色のチップに貼られているシールに書いている数字(例: konashi#0-1234)
+     */
+    public void findWithName(Activity activity, String name){
+        mConnectionHelper.find(activity, true, name);
+    }
+
+    /**
+     * 接続しているkonashiの名前を取得する
+     * @return konashiの名前
+     */
+    public String getPeripheralName() {
+        return (mDevice == null) ? "" : mDevice.getName();
+    }
 
     /**
      * konashiとの接続を解除する
      */
     public void disconnect(){
         mBletia.disconenct();
+    }
+
+    /**
+     * konashiと接続済みかどうか
+     * @return konashiと接続済みだったらtrue
+     */
+    public boolean isConnected(){
+        return mBletia.getState() == BleState.CONNECTED;
     }
 
     /**
@@ -518,8 +561,7 @@ public class KonashiManager extends KonashiBaseManager {
         return mBletia.readRemoteRssi();
     }
 
-    @Override
-    protected void connect(BluetoothDevice device){
+    private void connect(BluetoothDevice device){
         mBletia.connect(device);
     }
 
@@ -538,4 +580,11 @@ public class KonashiManager extends KonashiBaseManager {
     private BluetoothGattService getService(UUID uuid) {
         return mBletia.getService(uuid);
     }
+
+    private final ConnectionHelper.Callback mConnectionHelperCallback = new ConnectionHelper.Callback() {
+        @Override
+        public void onSelectBleDevice(BluetoothDevice device) {
+            connect(device);
+        }
+    };
 }
