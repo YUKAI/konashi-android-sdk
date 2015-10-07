@@ -1,4 +1,4 @@
-package com.uxxu.konashi.lib;
+package com.uxxu.konashi.lib.util;
 
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.util.Log;

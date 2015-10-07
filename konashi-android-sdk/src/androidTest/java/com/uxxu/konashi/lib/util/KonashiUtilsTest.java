@@ -1,8 +1,11 @@
-package com.uxxu.konashi.lib;
+package com.uxxu.konashi.lib.util;
 
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.support.test.runner.AndroidJUnit4;
 
+import com.uxxu.konashi.lib.Konashi;
+
+import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -33,7 +36,7 @@ public class KonashiUtilsTest {
     public void testGetBatteryLevel() {
         byte[] values = new byte[]{0x55};
         Mockito.when(mCharacteristic.getValue()).thenReturn(values);
-        assertThat(KonashiUtils.getBatteryLevel(mCharacteristic)).isEqualTo(85);
+        Assertions.assertThat(KonashiUtils.getBatteryLevel(mCharacteristic)).isEqualTo(85);
     }
 
     @Test
