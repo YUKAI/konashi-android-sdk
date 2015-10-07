@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">UartSample</string>
 
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
+    <string name="btn_send">Send</string>
+    <string name="label_read">Read value</string>
+    <string name="btn_find">konashiをさがす</string>
 </resources>
