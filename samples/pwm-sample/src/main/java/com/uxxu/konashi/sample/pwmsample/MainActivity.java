@@ -20,6 +20,7 @@ import org.jdeferred.FailCallback;
 import info.izumin.android.bletia.BletiaException;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+    public final MainActivity self = this;
 
     private KonashiManager mKonashiManager;
 
@@ -100,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     .fail(new FailCallback<BletiaException>() {
                         @Override
                         public void onFail(BletiaException result) {
-                            KonashiUtils.log(result.getMessage());
+                            Toast.makeText(self, result.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
         }
