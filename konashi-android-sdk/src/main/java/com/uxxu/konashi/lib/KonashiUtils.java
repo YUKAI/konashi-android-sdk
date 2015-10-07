@@ -5,7 +5,6 @@ import android.util.Log;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.Arrays;
 
 /**
  * konashiライブラリの便利ツール。ライブラリ外から使うことはたぶんないかな！
@@ -56,89 +55,11 @@ public class KonashiUtils {
 
     /**
      * characteristicからAnalogReadの値を取得する
-     * @param pin AIOのPIN番号
-     * @param characteristic 返ってきたcharacteristic
-     * @return AnalogRead値
-     */
-    public static int getAnalogValue(int pin, BluetoothGattCharacteristic characteristic) {
-        byte[] value = characteristic.getValue();
-        switch (pin) {
-            case Konashi.AIO0:
-            case Konashi.AIO1:
-            case Konashi.AIO2:
-                return (value[0] << 8 & 0xff00) | (value[1] & 0xff);
-            default:
-                throw new IllegalArgumentException();
-        }
-    }
-
-    /**
-     * characteristicからAnalogReadの値を取得する
      * @param characteristic 返ってきたcharacteristic
      * @return BatteryLevel値
      */
     public static int getBatteryLevel(BluetoothGattCharacteristic characteristic) {
         return characteristic.getValue()[0] & 0xff;
-    }
-
-    /**
-     * characteristicからPwmのPeriodを取得する
-     * @param characteristic 返ってきたcharacteristic
-     * @return Period値
-     */
-    public static int getPwmPeriod(BluetoothGattCharacteristic characteristic) {
-        byte[] bytes = characteristic.getValue();
-        bytes = Arrays.copyOfRange(bytes, 1, bytes.length);
-        return bytes2int(bytes);
-    }
-
-    /**
-     * characteristicからPwmのDutyを取得する
-     * @param characteristic 返ってきたcharacteristic
-     * @return Duty値
-     */
-    public static int getPwmDuty(BluetoothGattCharacteristic characteristic) {
-        byte[] bytes = characteristic.getValue();
-        bytes = Arrays.copyOfRange(bytes, 1, bytes.length);
-        return bytes2int(bytes);
-    }
-
-    /**
-     * characteristicからUARTのbaudrateを取得する
-     * @param characteristic 返ってきたcharacteristic
-     * @return baudrate
-     */
-    public static int getUartBaudrate(BluetoothGattCharacteristic characteristic) {
-        return bytes2int(characteristic.getValue());
-    }
-
-    /**
-     * characteristicからUARTの送信データを取得する
-     * @param characteristic 返ってきたcharacteristic
-     * @return 送信したバイト列
-     */
-    public static byte[] getUartWriteData(BluetoothGattCharacteristic characteristic) {
-        byte[] bytes = characteristic.getValue();
-        return Arrays.copyOfRange(bytes, 1, bytes[0] + 1);
-    }
-
-    /**
-     * characteristicからI2Cの送信アドレスを取得する
-     * @param characteristic 返ってきたcharacteristic
-     * @return 送信先アドレス
-     */
-    public static byte getI2cWriteAddress(BluetoothGattCharacteristic characteristic) {
-        return (byte) ((characteristic.getValue()[1] >> 1) & 0x7F);
-    }
-
-    /**
-     * characteristicからI2Cの送信データを取得する
-     * @param characteristic 返ってきたcharacteristic
-     * @return 送信したバイト列
-     */
-    public static byte[] getI2cWriteData(BluetoothGattCharacteristic characteristic) {
-        byte[] bytes = characteristic.getValue();
-        return Arrays.copyOfRange(bytes, 2, bytes[0] + 1);
     }
 
     public static int bytes2int(byte[] bytes) {
@@ -154,14 +75,5 @@ public class KonashiUtils {
         ByteBuffer buffer = ByteBuffer.allocate(arraySize);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
         return buffer.putInt(a).array();
-    }
-
-    //TODO: pwmModeをPWM_ENABLE_LEDにした時にpwmModeが反映されなくなるので応急処置的に遅延．要変更
-    public static void sleep(int millis) {
-        try {
-            Thread.sleep(millis);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 }
