@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.uxxu.konashi.lib.Konashi;
@@ -21,6 +22,7 @@ import javax.security.auth.callback.CallbackHandler;
 import info.izumin.android.bletia.BletiaException;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+    private final MainActivity self = this;
 
     private KonashiManager mKonashiManager;
 
@@ -92,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             .fail(new FailCallback<BletiaException>() {
                 @Override
                 public void onFail(BletiaException result) {
-                    KonashiUtils.log(result.getMessage());
+                    Toast.makeText(self, result.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
         }
