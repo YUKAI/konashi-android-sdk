@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">PwmSample</string>
+
+    <string name="btn_find">konashiをさがす</string>
 </resources>
