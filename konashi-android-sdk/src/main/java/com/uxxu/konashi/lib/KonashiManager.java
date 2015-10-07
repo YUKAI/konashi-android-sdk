@@ -186,7 +186,7 @@ public class KonashiManager {
      * @return konashiと接続済みだったらtrue
      */
     public boolean isConnected(){
-        return mBletia.getState() == BleState.CONNECTED;
+        return (mBletia.getState() == BleState.CONNECTED) || isReady();
     }
 
     /**
