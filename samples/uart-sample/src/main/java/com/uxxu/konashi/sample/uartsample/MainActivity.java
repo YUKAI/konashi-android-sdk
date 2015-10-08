@@ -96,14 +96,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private final CompoundButton.OnCheckedChangeListener mOnBlinkCheckedChangeListener = new CompoundButton.OnCheckedChangeListener() {
-        @Override
-        public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-            int value = b ? Konashi.HIGH : Konashi.LOW;
-            mKonashiManager.digitalWrite(Konashi.PIO1, value);
-        }
-    };
-
     private final KonashiListener mKonashiListener = new KonashiListener() {
         @Override
         public void onConnect(KonashiManager manager) {
