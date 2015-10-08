@@ -477,6 +477,15 @@ public class KonashiManager {
         return execute(new I2cSendConditionAction(getKonashiService(), condition, mI2cStore));
     }
 
+    private <D> DonePipe<D, BluetoothGattCharacteristic, BletiaException, Void> i2cSendConditionPipe(final int condition) {
+        return new DonePipe<D, BluetoothGattCharacteristic, BletiaException, Void>() {
+            @Override
+            public Promise<BluetoothGattCharacteristic, BletiaException, Void> pipeDone(D result) {
+                return execute(new I2cSendConditionAction(getKonashiService(), condition, mI2cStore));
+            }
+        };
+    }
+
     /**
      * I2Cを有効/無効を設定する
      * @param mode 設定するI2Cのモード。Konashi.I2C_DISABLE , Konashi.I2C_ENABLE, Konashi.I2C_ENABLE_100K, Konashi.I2C_ENABLE_400Kを指定。
@@ -493,10 +502,24 @@ public class KonashiManager {
     }
 
     /**
+     * I2Cのスタートコンディションを発行する
+     */
+    public <D> DonePipe<D, BluetoothGattCharacteristic, BletiaException, Void> i2cStartConditionPipe() {
+        return i2cSendConditionPipe(Konashi.I2C_START_CONDITION);
+    }
+
+    /**
      * I2Cのリスタートコンディションを発行する
      */
     public Promise<BluetoothGattCharacteristic, BletiaException, Void> i2cRestartCondition() {
         return i2cSendCondition(Konashi.I2C_RESTART_CONDITION);
+    }
+
+    /**
+     * I2Cのリスタートコンディションを発行する
+     */
+    public <D> DonePipe<D, BluetoothGattCharacteristic, BletiaException, Void> i2cRestartConditionPipe() {
+        return i2cSendConditionPipe(Konashi.I2C_RESTART_CONDITION);
     }
 
     /**
@@ -507,6 +530,13 @@ public class KonashiManager {
     }
 
     /**
+     * I2Cのストップコンディションを発行する
+     */
+    public <D> DonePipe<D, BluetoothGattCharacteristic, BletiaException, Void> i2cStopConditionPipe() {
+        return i2cSendConditionPipe(Konashi.I2C_STOP_CONDITION);
+    }
+
+    /**
      * I2Cで指定したアドレスにデータを書き込む
      * @param length 書き込むデータ(byte)の長さ。最大 Konashi.I2C_DATA_MAX_LENGTH (19)byteまで
      * @param data 書き込むデータの配列
@@ -514,6 +544,21 @@ public class KonashiManager {
      */
     public Promise<BluetoothGattCharacteristic, BletiaException, Void> i2cWrite(int length, byte[] data, byte address) {
         return execute(new I2cWriteAction(getKonashiService(), address, data, mI2cStore));
+    }
+
+    /**
+     * I2Cで指定したアドレスにデータを書き込む
+     * @param length 書き込むデータ(byte)の長さ。最大 Konashi.I2C_DATA_MAX_LENGTH (19)byteまで
+     * @param data 書き込むデータの配列
+     * @param address 書き込み先アドレス
+     */
+    public <D> DonePipe<D, BluetoothGattCharacteristic, BletiaException, Void> i2cWritePipe(final int length, final byte[] data, final byte address) {
+        return new DonePipe<D, BluetoothGattCharacteristic, BletiaException, Void>() {
+            @Override
+            public Promise<BluetoothGattCharacteristic, BletiaException, Void> pipeDone(D result) {
+                return i2cWrite(length, data, address);
+            }
+        };
     }
 
     /**
@@ -531,6 +576,20 @@ public class KonashiManager {
                     }
                 })
                 .then(new I2cReadFilter());
+    }
+
+    /**
+     * I2Cで指定したアドレスからデータを読み込むリクエストを行う
+     * @param length 読み込むデータの長さ。最大 Konashi.I2C_DATA_MAX_LENGTHs (19)
+     * @param address 読み込み先のアドレス
+     */
+    public <D> DonePipe<D, byte[], BletiaException, Void> i2cReadPipe(final int length, final byte address) {
+        return new DonePipe<D, byte[], BletiaException, Void>() {
+            @Override
+            public Promise<byte[], BletiaException, Void> pipeDone(D result) {
+                return i2cRead(length, address);
+            }
+        };
     }
 
     ///////////////////////////
