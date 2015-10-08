@@ -25,11 +25,12 @@ public abstract class I2cAction extends KonashiWriteCharacteristicAction {
     }
 
     @Override
-    public void execute(BluetoothGattWrapper gattWrapper) {
+    public boolean execute(BluetoothGattWrapper gattWrapper) {
         if (mStore.isEnabled() || mIsTypeMode) {
-            super.execute(gattWrapper);
+            return super.execute(gattWrapper);
         } else {
             getDeferred().reject(new BletiaException(this, KonashiErrorType.NOT_ENABLED_I2C));
+            return false;
         }
     }
 }
