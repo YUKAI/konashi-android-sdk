@@ -68,7 +68,7 @@ public class KonashiManagerTest extends AndroidTestCase {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        mKonashiManager = new KonashiManager();
+        mKonashiManager = new KonashiManager(getContext());
         mDeferred = new DeferredObject<>();
         mPromise = mDeferred.promise();
         when(mBletia.getService(any(UUID.class))).thenReturn(mService);
