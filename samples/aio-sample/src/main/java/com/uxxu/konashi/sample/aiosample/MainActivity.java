@@ -19,7 +19,6 @@ import android.widget.ToggleButton;
 import com.uxxu.konashi.lib.Konashi;
 import com.uxxu.konashi.lib.KonashiListener;
 import com.uxxu.konashi.lib.KonashiManager;
-import com.uxxu.konashi.lib.KonashiUtils;
 
 import org.jdeferred.DoneCallback;
 import org.jdeferred.FailCallback;
