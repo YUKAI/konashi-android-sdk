@@ -151,13 +151,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void onConnect(KonashiManager manager) {
             refreshViews();
-            mKonashiManager.i2cMode(Konashi.I2C_ENABLE_100K)
-                    .fail(new FailCallback<BletiaException>() {
-                        @Override
-                        public void onFail(BletiaException result) {
-                            Toast.makeText(self, result.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    });
         }
 
         @Override
