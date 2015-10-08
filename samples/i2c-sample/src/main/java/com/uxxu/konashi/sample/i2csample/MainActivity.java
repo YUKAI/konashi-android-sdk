@@ -87,36 +87,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void sendData() {
+
+        byte[] value = mSendEdit.getText().toString().trim().getBytes();
         mKonashiManager.i2cMode(Konashi.I2C_ENABLE_100K)
-                .then(new DonePipe<BluetoothGattCharacteristic, BluetoothGattCharacteristic, BletiaException, Void>() {
+                .then(mKonashiManager.<BluetoothGattCharacteristic>i2cStartConditionPipe())
+                .then(mKonashiManager.<BluetoothGattCharacteristic>i2cWritePipe(value.length, value, I2C_ADDRESS))
+                .then(mKonashiManager.<BluetoothGattCharacteristic>i2cStopConditionPipe())
+                .fail(new FailCallback<BletiaException>() {
                     @Override
-                    public Promise<BluetoothGattCharacteristic, BletiaException, Void> pipeDone(BluetoothGattCharacteristic result) {
-                        return mKonashiManager.i2cStartCondition();
-                    }
-                })
-                .then(new DonePipe<BluetoothGattCharacteristic, BluetoothGattCharacteristic, BletiaException, Void>() {
-                    @Override
-                    public Promise<BluetoothGattCharacteristic, BletiaException, Void> pipeDone(BluetoothGattCharacteristic result) {
-                        byte[] value = mSendEdit.getText().toString().trim().getBytes();
-                        return mKonashiManager.i2cWrite(value.length, value, I2C_ADDRESS);
-                    }
-                })
-                .then(new DonePipe<BluetoothGattCharacteristic, BluetoothGattCharacteristic, BletiaException, Void>() {
-                    @Override
-                    public Promise<BluetoothGattCharacteristic, BletiaException, Void> pipeDone(BluetoothGattCharacteristic result) {
-                        return mKonashiManager.i2cStopCondition();
+                    public void onFail(BletiaException result) {
+                        Toast.makeText(self, result.toString(), Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 
     private void readData() {
-        mKonashiManager.i2cStartCondition()
-                .then(new DonePipe<BluetoothGattCharacteristic, byte[], BletiaException, Void>() {
-                    @Override
-                    public Promise<byte[], BletiaException, Void> pipeDone(BluetoothGattCharacteristic result) {
-                        return mKonashiManager.i2cRead(Konashi.I2C_DATA_MAX_LENGTH, I2C_ADDRESS);
-                    }
-                })
+        mKonashiManager.i2cMode(Konashi.I2C_ENABLE_100K)
+                .then(mKonashiManager.<BluetoothGattCharacteristic>i2cStartConditionPipe())
+                .then(mKonashiManager.<BluetoothGattCharacteristic>i2cReadPipe(Konashi.I2C_DATA_MAX_LENGTH, I2C_ADDRESS))
                 .then(new DonePipe<byte[], BluetoothGattCharacteristic, BletiaException, Void>() {
                     @Override
                     public Promise<BluetoothGattCharacteristic, BletiaException, Void> pipeDone(final byte[] result) {
@@ -126,6 +114,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                         mResultText.setText(builder.toString().substring(0, builder.length() - 1));
                         return mKonashiManager.i2cStopCondition();
+                    }
+                })
+                .fail(new FailCallback<BletiaException>() {
+                    @Override
+                    public void onFail(BletiaException result) {
+                        Toast.makeText(self, result.toString(), Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -157,13 +151,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void onConnect(KonashiManager manager) {
             refreshViews();
-            mKonashiManager.i2cMode(Konashi.I2C_ENABLE_100K)
-                    .fail(new FailCallback<BletiaException>() {
-                        @Override
-                        public void onFail(BletiaException result) {
-                            Toast.makeText(self, result.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    });
         }
 
         @Override
