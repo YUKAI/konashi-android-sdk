@@ -159,26 +159,11 @@ public final class CommunicationFragment extends Fragment {
         mI2cDataSendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                byte[] value = mI2cDataEditText.getText().toString().trim().getBytes();
                 mKonashiManager.i2cMode(Konashi.I2C_ENABLE_100K)
-                        .then(new DonePipe<BluetoothGattCharacteristic, BluetoothGattCharacteristic, BletiaException, Void>() {
-                            @Override
-                            public Promise<BluetoothGattCharacteristic, BletiaException, Void> pipeDone(BluetoothGattCharacteristic result) {
-                                return mKonashiManager.i2cStartCondition();
-                            }
-                        })
-                        .then(new DonePipe<BluetoothGattCharacteristic, BluetoothGattCharacteristic, BletiaException, Void>() {
-                            @Override
-                            public Promise<BluetoothGattCharacteristic, BletiaException, Void> pipeDone(BluetoothGattCharacteristic result) {
-                                byte[] value = mI2cDataEditText.getText().toString().trim().getBytes();
-                                return mKonashiManager.i2cWrite(value.length, value, I2C_ADDRESS);
-                            }
-                        })
-                        .then(new DonePipe<BluetoothGattCharacteristic, BluetoothGattCharacteristic, BletiaException, Void>() {
-                            @Override
-                            public Promise<BluetoothGattCharacteristic, BletiaException, Void> pipeDone(BluetoothGattCharacteristic result) {
-                                return mKonashiManager.i2cStopCondition();
-                            }
-                        })
+                        .then(mKonashiManager.<BluetoothGattCharacteristic>i2cStartConditionPipe())
+                        .then(mKonashiManager.<BluetoothGattCharacteristic>i2cWritePipe(value.length, value, I2C_ADDRESS))
+                        .then(mKonashiManager.<BluetoothGattCharacteristic>i2cStopConditionPipe())
                         .fail(new FailCallback<BletiaException>() {
                             @Override
                             public void onFail(BletiaException result) {
@@ -195,21 +180,16 @@ public final class CommunicationFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 mKonashiManager.i2cStartCondition()
-                        .then(new DonePipe<BluetoothGattCharacteristic, byte[], BletiaException, Void>() {
+                        .then(mKonashiManager.<BluetoothGattCharacteristic>i2cReadPipe(Konashi.I2C_DATA_MAX_LENGTH, I2C_ADDRESS))
+                        .then(new DoneCallback<byte[]>() {
                             @Override
-                            public Promise<byte[], BletiaException, Void> pipeDone(BluetoothGattCharacteristic result) {
-                                return mKonashiManager.i2cRead(Konashi.I2C_DATA_MAX_LENGTH, I2C_ADDRESS);
-                            }
-                        })
-                        .then(new DonePipe<byte[], BluetoothGattCharacteristic, BletiaException, Void>() {
-                            @Override
-                            public Promise<BluetoothGattCharacteristic, BletiaException, Void> pipeDone(final byte[] result) {
+                            public void onDone(final byte[] result) {
                                 StringBuilder builder = new StringBuilder();
                                 for (byte b : result) { builder.append(b).append(","); }
                                 mI2cResultEditText.setText(builder.toString().substring(0, builder.length() - 1));
-                                return mKonashiManager.i2cStopCondition();
                             }
                         })
+                        .then(mKonashiManager.<byte[]>i2cStopConditionPipe())
                         .fail(new FailCallback<BletiaException>() {
                             @Override
                             public void onFail(BletiaException result) {
