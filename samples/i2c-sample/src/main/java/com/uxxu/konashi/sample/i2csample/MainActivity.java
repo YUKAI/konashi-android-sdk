@@ -86,6 +86,50 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mResultText.setVisibility(isReady ? View.VISIBLE : View.GONE);
     }
 
+    private void sendData() {
+        mKonashiManager.i2cMode(Konashi.I2C_ENABLE_100K)
+                .then(new DonePipe<BluetoothGattCharacteristic, BluetoothGattCharacteristic, BletiaException, Void>() {
+                    @Override
+                    public Promise<BluetoothGattCharacteristic, BletiaException, Void> pipeDone(BluetoothGattCharacteristic result) {
+                        return mKonashiManager.i2cStartCondition();
+                    }
+                })
+                .then(new DonePipe<BluetoothGattCharacteristic, BluetoothGattCharacteristic, BletiaException, Void>() {
+                    @Override
+                    public Promise<BluetoothGattCharacteristic, BletiaException, Void> pipeDone(BluetoothGattCharacteristic result) {
+                        byte[] value = mSendEdit.getText().toString().trim().getBytes();
+                        return mKonashiManager.i2cWrite(value.length, value, I2C_ADDRESS);
+                    }
+                })
+                .then(new DonePipe<BluetoothGattCharacteristic, BluetoothGattCharacteristic, BletiaException, Void>() {
+                    @Override
+                    public Promise<BluetoothGattCharacteristic, BletiaException, Void> pipeDone(BluetoothGattCharacteristic result) {
+                        return mKonashiManager.i2cStopCondition();
+                    }
+                });
+    }
+
+    private void readData() {
+        mKonashiManager.i2cStartCondition()
+                .then(new DonePipe<BluetoothGattCharacteristic, byte[], BletiaException, Void>() {
+                    @Override
+                    public Promise<byte[], BletiaException, Void> pipeDone(BluetoothGattCharacteristic result) {
+                        return mKonashiManager.i2cRead(Konashi.I2C_DATA_MAX_LENGTH, I2C_ADDRESS);
+                    }
+                })
+                .then(new DonePipe<byte[], BluetoothGattCharacteristic, BletiaException, Void>() {
+                    @Override
+                    public Promise<BluetoothGattCharacteristic, BletiaException, Void> pipeDone(final byte[] result) {
+                        StringBuilder builder = new StringBuilder();
+                        for (byte b : result) {
+                            builder.append(b).append(",");
+                        }
+                        mResultText.setText(builder.toString().substring(0, builder.length() - 1));
+                        return mKonashiManager.i2cStopCondition();
+                    }
+                });
+    }
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -93,46 +137,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mKonashiManager.find(this);
                 break;
             case R.id.btn_send:
-                mKonashiManager.i2cMode(Konashi.I2C_ENABLE_100K)
-                        .then(new DonePipe<BluetoothGattCharacteristic, BluetoothGattCharacteristic, BletiaException, Void>() {
-                            @Override
-                            public Promise<BluetoothGattCharacteristic, BletiaException, Void> pipeDone(BluetoothGattCharacteristic result) {
-                                return mKonashiManager.i2cStartCondition();
-                            }
-                        })
-                        .then(new DonePipe<BluetoothGattCharacteristic, BluetoothGattCharacteristic, BletiaException, Void>() {
-                            @Override
-                            public Promise<BluetoothGattCharacteristic, BletiaException, Void> pipeDone(BluetoothGattCharacteristic result) {
-                                byte[] value = mSendEdit.getText().toString().trim().getBytes();
-                                return mKonashiManager.i2cWrite(value.length, value, I2C_ADDRESS);
-                            }
-                        })
-                        .then(new DonePipe<BluetoothGattCharacteristic, BluetoothGattCharacteristic, BletiaException, Void>() {
-                            @Override
-                            public Promise<BluetoothGattCharacteristic, BletiaException, Void> pipeDone(BluetoothGattCharacteristic result) {
-                                return mKonashiManager.i2cStopCondition();
-                            }
-                        });
+                sendData();
                 break;
             case R.id.btn_read:
-                mKonashiManager.i2cStartCondition()
-                        .then(new DonePipe<BluetoothGattCharacteristic, byte[], BletiaException, Void>() {
-                            @Override
-                            public Promise<byte[], BletiaException, Void> pipeDone(BluetoothGattCharacteristic result) {
-                                return mKonashiManager.i2cRead(Konashi.I2C_DATA_MAX_LENGTH, I2C_ADDRESS);
-                            }
-                        })
-                        .then(new DonePipe<byte[], BluetoothGattCharacteristic, BletiaException, Void>() {
-                            @Override
-                            public Promise<BluetoothGattCharacteristic, BletiaException, Void> pipeDone(final byte[] result) {
-                                StringBuilder builder = new StringBuilder();
-                                for (byte b : result) {
-                                    builder.append(b).append(",");
-                                }
-                                mResultText.setText(builder.toString().substring(0, builder.length() - 1));
-                                return mKonashiManager.i2cStopCondition();
-                            }
-                        });
+                readData();
         }
     }
 
