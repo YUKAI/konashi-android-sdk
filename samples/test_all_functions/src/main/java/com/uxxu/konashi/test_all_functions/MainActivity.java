@@ -66,9 +66,11 @@ public class MainActivity extends AppCompatActivity
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    mKonashiManager.reset();
-                    mKonashiManager.disconnect();
-                    mKonashiManager = null;
+                    if (mKonashiManager.isConnected()) {
+                        mKonashiManager.reset();
+                        mKonashiManager.disconnect();
+                        mKonashiManager = null;
+                    }
                 }
             }).start();
         }
