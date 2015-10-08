@@ -109,10 +109,11 @@ public class KonashiManager {
     ///////////////////////////
 
 
-    public KonashiManager() {
+    public KonashiManager(Context context) {
         mEmitter = new EventEmitter();
         mDispacherContainer = new DispatcherContainer();
         mCallbackHandler = new CallbackHandler(this, mEmitter, mDispacherContainer);
+
         // PIO
         mPioDispatcher = mDispacherContainer.getPioDispatcher();
         mPioStore = new PioStore(mPioDispatcher);
@@ -132,12 +133,10 @@ public class KonashiManager {
         // UART
         mUartDispatcher = mDispacherContainer.getUartDispatcher();
         mUartStore = new UartStore(mUartDispatcher);
-    }
 
-    public void initialize(Context context) {
         mBletia = new Bletia(context);
-        mBletia.addListener(mCallbackHandler);
         mConnectionHelper = new ConnectionHelper(mConnectionHelperCallback, context);
+        mBletia.addListener(mCallbackHandler);
     }
 
     /**
