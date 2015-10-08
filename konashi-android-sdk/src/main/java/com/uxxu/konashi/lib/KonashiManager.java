@@ -561,6 +561,7 @@ public class KonashiManager {
     }
 
     private void connect(BluetoothDevice device){
+        mDevice = device;
         mBletia.connect(device);
     }
 
