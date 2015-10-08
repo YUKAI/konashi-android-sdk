@@ -120,7 +120,7 @@ public final class CommunicationFragment extends Fragment {
                         .fail(new FailCallback<BletiaException>() {
                             @Override
                             public void onFail(BletiaException result) {
-                                Toast.makeText(getActivity(), result.getMessage(), Toast.LENGTH_SHORT);
+                                Toast.makeText(getActivity(), result.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         });
             }
@@ -174,7 +174,7 @@ public final class CommunicationFragment extends Fragment {
                         .fail(new FailCallback<BletiaException>() {
                             @Override
                             public void onFail(BletiaException result) {
-                                Toast.makeText(getActivity(), result.getMessage(), Toast.LENGTH_SHORT);
+                                Toast.makeText(getActivity(), result.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         });
             }
@@ -200,7 +200,7 @@ public final class CommunicationFragment extends Fragment {
                         .fail(new FailCallback<BletiaException>() {
                             @Override
                             public void onFail(BletiaException result) {
-                                Toast.makeText(getActivity(), result.getMessage(), Toast.LENGTH_SHORT);
+                                Toast.makeText(getActivity(), result.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         });
             }
