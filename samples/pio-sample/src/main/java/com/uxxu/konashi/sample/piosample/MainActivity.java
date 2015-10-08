@@ -29,14 +29,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ((ToggleButton) findViewById(R.id.toggle_blink)).setOnCheckedChangeListener(mOnBlinkCheckedChangeListener);
         findViewById(R.id.btn_find).setOnClickListener(this);
 
-        mKonashiManager = new KonashiManager();
+        mKonashiManager = new KonashiManager(getApplicationContext());
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         mKonashiManager.addListener(mKonashiListener);
-        mKonashiManager.initialize(this);
         refreshViews();
     }
 
