@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.os.Handler;
+import android.os.Looper;
 
 import com.uxxu.konashi.lib.ui.BleDeviceListAdapter;
 import com.uxxu.konashi.lib.ui.BleDeviceSelectionDialog;
@@ -38,11 +39,11 @@ class ConnectionHelper implements BleDeviceSelectionDialog.OnBleDeviceSelectList
 
     public ConnectionHelper(Callback callback, Context context) {
         mCallback = callback;
-        mHandler = new Handler();
+        mHandler = new Handler(Looper.getMainLooper());
 
         mBleDeviceListAdapter = new BleDeviceListAdapter(context);
 
-        mBluetoothManager = (BluetoothManager)context.getSystemService(context.BLUETOOTH_SERVICE);
+        mBluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
         mBluetoothAdapter = mBluetoothManager.getAdapter();
 
         mDialog = new BleDeviceSelectionDialog(mBleDeviceListAdapter, this);

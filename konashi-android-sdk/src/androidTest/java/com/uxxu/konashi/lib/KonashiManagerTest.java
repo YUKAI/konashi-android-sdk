@@ -2,6 +2,7 @@ package com.uxxu.konashi.lib;
 
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
+import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.AndroidTestCase;
 
@@ -33,7 +34,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
 import org.mockito.internal.util.reflection.Whitebox;
 
 import java.util.UUID;
@@ -44,6 +44,7 @@ import info.izumin.android.bletia.action.Action;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -58,7 +59,7 @@ public class KonashiManagerTest extends AndroidTestCase {
     @Mock private BluetoothGattService mService;
     @Mock private BluetoothGattCharacteristic mCharacteristic;
     @Mock private Bletia mBletia;
-    @Spy private KonashiManager mKonashiManager;
+    private KonashiManager mKonashiManager;
 
     private Deferred<BluetoothGattCharacteristic, BletiaException, Void> mDeferred;
     private Promise<BluetoothGattCharacteristic, BletiaException, Void> mPromise;
@@ -68,7 +69,7 @@ public class KonashiManagerTest extends AndroidTestCase {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        mKonashiManager = new KonashiManager(getContext());
+        mKonashiManager = spy(new KonashiManager(InstrumentationRegistry.getTargetContext()));
         mDeferred = new DeferredObject<>();
         mPromise = mDeferred.promise();
         when(mBletia.getService(any(UUID.class))).thenReturn(mService);
