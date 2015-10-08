@@ -43,14 +43,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mSendEdit = (EditText) findViewById(R.id.edit_send);
         mResultText = (TextView) findViewById(R.id.text_read);
 
-        mKonashiManager = new KonashiManager();
+        mKonashiManager = new KonashiManager(getApplicationContext());
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         mKonashiManager.addListener(mKonashiListener);
-        mKonashiManager.initialize(this);
         refreshViews();
     }
 
