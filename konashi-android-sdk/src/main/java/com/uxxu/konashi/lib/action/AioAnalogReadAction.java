@@ -34,12 +34,13 @@ public class AioAnalogReadAction extends ReadCharacteristicAction {
     }
 
     @Override
-    public void execute(BluetoothGattWrapper gattWrapper) {
+    public boolean execute(BluetoothGattWrapper gattWrapper) {
         BletiaErrorType errorType = validate();
         if (validate() == KonashiErrorType.NO_ERROR) {
-            super.execute(gattWrapper);
+            return super.execute(gattWrapper);
         } else {
             rejectIfParamsAreInvalid(errorType);
+            return false;
         }
     }
 
