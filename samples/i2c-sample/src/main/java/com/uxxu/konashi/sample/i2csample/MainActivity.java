@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mSendEdit = (EditText) findViewById(R.id.edit_send);
         mResultText = (TextView) findViewById(R.id.text_read);
 
-        mKonashiManager = new KonashiManager(this);
+        mKonashiManager = new KonashiManager(getApplicationContext());
     }
 
     @Override
