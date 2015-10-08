@@ -29,7 +29,7 @@ public final class AioFragment extends Fragment {
 
     public static final String TITLE = "Analog I/O";
 
-    private final KonashiManager mKonashiManager = Konashi.getManager();
+    private KonashiManager mKonashiManager;
 
     private TableLayout mTableLayout;
     private List<AioTableRow> mRows = new ArrayList<>();
@@ -56,6 +56,13 @@ public final class AioFragment extends Fragment {
         }
 
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        mKonashiManager = Konashi.getManager();
     }
 
     @Override

@@ -34,7 +34,7 @@ public final class CommunicationFragment extends Fragment {
     private static final byte I2C_ADDRESS = 0x01f;
     public static final String TITLE = "Communication (UART, I2C)";
 
-    private final KonashiManager mKonashiManager = Konashi.getManager();
+    private KonashiManager mKonashiManager;
 
     private Switch mUartSwitch;
     private Spinner mUartBaudrateSpinner;
@@ -57,7 +57,6 @@ public final class CommunicationFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getActivity().setTitle(TITLE);
-        mKonashiManager.addListener(mKonashiListener);
     }
 
     @Override
@@ -68,6 +67,14 @@ public final class CommunicationFragment extends Fragment {
         initI2cViews(view);
 
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        mKonashiManager = Konashi.getManager();
+        mKonashiManager.addListener(mKonashiListener);
     }
 
     @Override
