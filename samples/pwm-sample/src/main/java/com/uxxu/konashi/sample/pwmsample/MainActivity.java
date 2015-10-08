@@ -28,14 +28,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ((SeekBar) findViewById(R.id.seek_pwm)).setOnSeekBarChangeListener(mOnSeekBarChangeListener);
         findViewById(R.id.btn_find).setOnClickListener(this);
 
-        mKonashiManager = new KonashiManager();
+        mKonashiManager = new KonashiManager(getApplicationContext());
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         mKonashiManager.addListener(mKonashiListener);
-        mKonashiManager.initialize(this);
         refreshViews();
     }
 

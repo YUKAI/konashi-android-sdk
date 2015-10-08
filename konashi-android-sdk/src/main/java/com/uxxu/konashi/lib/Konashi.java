@@ -252,26 +252,26 @@ public class Konashi {
      * APIの失敗レスポンス
      */
     public static final int FAILURE = -1;
-    
-    
+
+
     /**
      * KonashiManagerのシングルトン
      */
-    private static final KonashiManager sKonashiManager = new KonashiManager();
-    
+    private static KonashiManager sKonashiManager;
+
     /**
      * コンストラクタ。privateにして外部からインスタンス生成できないようにする
      */
     private Konashi(){}
-    
+
     /**
      * konashiの初期化
      * @param context konashiを使用するときのActivity
      */
     public static void initialize(Context context){
-        sKonashiManager.initialize(context);
+        sKonashiManager = new KonashiManager(context);
     }
-    
+
     /**
      * デストラクタ
      */
@@ -280,7 +280,7 @@ public class Konashi {
             sKonashiManager.disconnect();
         }
     }
-    
+
     /**
      * Konashiシングルトンオブジェクトを取得
      * @return KonashiManagerのシングルトンオブジェクト
@@ -288,5 +288,4 @@ public class Konashi {
     public static KonashiManager getManager(){
         return sKonashiManager;
     }
-
 }

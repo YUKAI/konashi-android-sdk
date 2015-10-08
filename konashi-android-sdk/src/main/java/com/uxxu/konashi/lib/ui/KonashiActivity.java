@@ -37,15 +37,13 @@ public class KonashiActivity extends Activity {
         super.onCreate(savedInstanceState);
         
         // Initialize konashi manager
-        mKonashiManager = new KonashiManager();
-        mKonashiManager.initialize(getApplicationContext());
+        mKonashiManager = new KonashiManager(getApplicationContext());
     }
     
     @Override
     protected void onDestroy() {
-        if(mKonashiManager!=null){
+        if(mKonashiManager != null){
             mKonashiManager.disconnect();
-            mKonashiManager = null;
         }
         
         super.onDestroy();

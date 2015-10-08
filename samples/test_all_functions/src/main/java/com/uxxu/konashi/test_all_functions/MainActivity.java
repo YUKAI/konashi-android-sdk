@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mKonashiManager.initialize(getApplicationContext());
+        Konashi.initialize(getApplicationContext());
         mNavigationDrawerFragment =
                 (NavigationDrawerFragment) getFragmentManager().findFragmentById(R.id.navigation_drawer);
         mNavigationDrawerFragment.setUp(
