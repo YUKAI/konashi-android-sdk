@@ -30,7 +30,7 @@ public final class PioFragment extends Fragment {
 
     public static final String TITLE = "PIO";
 
-    private final KonashiManager mKonashiManager = Konashi.getManager();
+    private KonashiManager mKonashiManager;
 
     private TableLayout mTableLayout;
     private List<PioTableRow> mRows = new ArrayList<>();
@@ -39,8 +39,6 @@ public final class PioFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getActivity().setTitle(TITLE);
-
-        mKonashiManager.addListener(mKonashiListener);
     }
 
     @Override
@@ -60,6 +58,14 @@ public final class PioFragment extends Fragment {
             mRows.add(row);
         }
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        mKonashiManager = Konashi.getManager();
+        mKonashiManager.addListener(mKonashiListener);
     }
 
     @Override

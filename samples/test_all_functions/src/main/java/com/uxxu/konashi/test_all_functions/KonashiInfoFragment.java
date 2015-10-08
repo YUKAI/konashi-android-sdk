@@ -21,7 +21,7 @@ public final class KonashiInfoFragment extends Fragment {
 
     public static final String TITLE = "Konashi Info";
 
-    private final KonashiManager mKonashiManager = Konashi.getManager();
+    private KonashiManager mKonashiManager;
 
     private TextView mNameTextView;
     private TextView mRssiTextView;
@@ -56,9 +56,15 @@ public final class KonashiInfoFragment extends Fragment {
             }
         });
 
-        reload();
-
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        mKonashiManager = Konashi.getManager();
+        reload();
     }
 
     @Override

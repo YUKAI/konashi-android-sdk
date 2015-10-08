@@ -25,7 +25,7 @@ import info.izumin.android.bletia.BletiaException;
 public class MainActivity extends AppCompatActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
-    private KonashiManager mKonashiManager = Konashi.getManager();
+    private KonashiManager mKonashiManager;
 
     private NavigationDrawerFragment mNavigationDrawerFragment;
     private View mOverlay;
@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         Konashi.initialize(getApplicationContext());
+        mKonashiManager = Konashi.getManager();
         mNavigationDrawerFragment =
                 (NavigationDrawerFragment) getFragmentManager().findFragmentById(R.id.navigation_drawer);
         mNavigationDrawerFragment.setUp(
