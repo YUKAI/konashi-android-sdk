@@ -89,4 +89,14 @@ class UartUtilsTest extends Specification {
         19      | false
         20      | true
     }
+
+    def ".removeLengthByte()"() {
+        expect:
+        UartUtils.removeLengthByte(bytes) == result
+
+        where:
+        bytes                                  | result
+        [0] as byte[]                          | [] as byte[]
+        [4, 0x74, 0x65, 0x73, 0x74] as byte[]  | [0x74, 0x65, 0x73, 0x74] as byte[]
+    }
 }
