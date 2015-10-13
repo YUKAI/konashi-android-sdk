@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothGattService;
 
 import com.uxxu.konashi.lib.dispatcher.DispatcherContainer;
 import com.uxxu.konashi.lib.util.KonashiUtils;
+import com.uxxu.konashi.lib.util.UartUtils;
 
 import java.util.UUID;
 
@@ -64,10 +65,7 @@ class CallbackHandler implements BletiaListener {
             mEmitter.emitUpdatePioOutput(mManager, characteristic.getValue()[0]);
         } else if (KonashiUUID.UART_RX_NOTIFICATION_UUID.equals(uuid)) {
             mDispatcherContainer.getUartDispatcher().onDone(characteristic);
-            byte[] value = characteristic.getValue();
-            byte[] emitValue = new byte[value.length-1];
-            System.arraycopy(value, 1, emitValue, 0, value.length - 1);
-            mEmitter.emitUpdateUartRx(mManager, emitValue);
+            mEmitter.emitUpdateUartRx(mManager, UartUtils.removeLengthByte(characteristic.getValue()));
         } else if (KonashiUUID.HARDWARE_LOW_BAT_NOTIFICATION_UUID.equals(uuid)) {
             mEmitter.emitUpdateBatteryLevel(mManager, KonashiUtils.getBatteryLevel(characteristic));
         }
