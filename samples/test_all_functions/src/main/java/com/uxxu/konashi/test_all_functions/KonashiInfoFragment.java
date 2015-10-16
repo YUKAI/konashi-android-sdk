@@ -82,15 +82,25 @@ public final class KonashiInfoFragment extends Fragment {
         mKonashiManager.getBatteryLevel().then(new DoneCallback<Integer>() {
             @Override
             public void onDone(final Integer result) {
-                mBatteryTextView.setText(String.format("%d%%", result));
-                mBatteryProgressBar.setProgress(result);
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mBatteryTextView.setText(String.format("%d%%", result));
+                        mBatteryProgressBar.setProgress(result);
+                    }
+                });
             }
         });
         mKonashiManager.getSignalStrength().then(new DoneCallback<Integer>() {
             @Override
-            public void onDone(Integer result) {
-                mRssiTextView.setText(String.format("%ddb", result));
-                mRssiProgressBar.setProgress(Math.abs(result));
+            public void onDone(final Integer result) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mRssiTextView.setText(String.format("%ddb", result));
+                        mRssiProgressBar.setProgress(Math.abs(result));
+                    }
+                });
             }
         });
     }
