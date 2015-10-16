@@ -16,6 +16,7 @@ import com.uxxu.konashi.lib.Konashi;
 import com.uxxu.konashi.lib.KonashiManager;
 
 import org.jdeferred.DoneCallback;
+import org.jdeferred.DonePipe;
 import org.jdeferred.FailCallback;
 import org.jdeferred.Promise;
 
@@ -99,12 +100,12 @@ public final class UzukiFragment extends Fragment {
                         public void run() {
                             readAccelerometer();
                             if (getView() != null && getView().getVisibility() == View.VISIBLE) {
-                                accelerometerHandler.postDelayed(this, 300);
+                                accelerometerHandler.postDelayed(this, 200);
                             }
                         }
                     };
                 }
-                accelerometerHandler.postDelayed(accelerometerRunnable, 300);
+                accelerometerHandler.postDelayed(accelerometerRunnable, 200);
             }
         });
 
@@ -116,13 +117,30 @@ public final class UzukiFragment extends Fragment {
                 // https://github.com/mpression/UzukiSensorShield/blob/Uzuki2.1/konashiSensorShield/konashiSensorShield/FirstViewController.m#L218
                 // 5.1.2. Measuring Temperature
                 // https://www.silabs.com/Support%20Documents/TechnicalDocs/Si7013-A20.pdf
-                mUzuki.i2cReadTemperature().done(new DoneCallback<byte[]>() {
-                    @Override
-                    public void onDone(byte[] result) {
-                        double temperature = (double) (result[0] << 8 ^ result[1]) * 175.72 / 65536.0 - 46.85;
-                        mTemperatureResultsTextView.setText(String.format("temp: %.1f", temperature));
-                    }
-                });
+                mUzuki.i2cReadTemperature()
+                        .then(new DonePipe<byte[], Void, BletiaException, Void>() {
+                            @Override
+                            public Promise<Void, BletiaException, Void> pipeDone(byte[] result) {
+                                double temperature = (double) (result[0] << 8 ^ result[1]) * 175.72 / 65536.0 - 46.85;
+                                mTemperatureResultsTextView.setText(String.format("temp: %.1f", temperature));
+                                return null;
+                            }
+                        })
+                        .then(mKonashiManager.<Void>i2cStopConditionPipe())
+                        .fail(new FailCallback<BletiaException>() {
+                            @Override
+                            public void onFail(final BletiaException result) {
+                                final String message = "Failed to read temperature: " + result.getMessage();
+                                Log.d(TITLE, message, result);
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                        });
+
             }
         });
 
@@ -133,9 +151,9 @@ public final class UzukiFragment extends Fragment {
         // https://github.com/mpression/UzukiSensorShield/blob/Uzuki2.1/konashiSensorShield/konashiSensorShield/FirstViewController.m#L339-L341
         // http://www.analog.com/media/en/technical-documentation/data-sheets/ADXL345.pdf
         mUzuki.i2cReadAccelerometer()
-                .done(new DoneCallback<byte[]>() {
+                .then(new DonePipe<byte[], Void, BletiaException, Void>() {
                     @Override
-                    public void onDone(byte[] result) {
+                    public Promise<Void, BletiaException, Void> pipeDone(byte[] result) {
                         try {
                             int y = (result[3] << 8 ^ result[2]) / 256;
                             int z = (result[5] << 8 ^ result[4]) / 256;
@@ -143,7 +161,7 @@ public final class UzukiFragment extends Fragment {
                             final String text = String.format("x: %d, y: %d, z: %d", x, y, z);
                             Log.d(TITLE, text);
                             if (getActivity() == null) {
-                                return;
+                                return null;
                             }
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
@@ -154,8 +172,10 @@ public final class UzukiFragment extends Fragment {
                         } catch (Exception e) {
                             Log.d(TITLE, "Error", e);
                         }
+                        return null;
                     }
                 })
+                .then(mKonashiManager.<Void>i2cStopConditionPipe())
                 .fail(new FailCallback<BletiaException>() {
                     @Override
                     public void onFail(BletiaException result) {
@@ -227,9 +247,9 @@ public final class UzukiFragment extends Fragment {
                     .i2cMode(Konashi.I2C_ENABLE_100K)
                     .then(mKonashiManager.<BluetoothGattCharacteristic>i2cStartConditionPipe())
                     .then(mKonashiManager.<BluetoothGattCharacteristic>i2cWritePipe(1, new byte[]{(byte) 0xE5}, TEMPERATURE_ADDR))
-                    .then(mKonashiManager.<BluetoothGattCharacteristic>i2cRestartConditionPipe())
+                    .then(mKonashiManager.<BluetoothGattCharacteristic>i2cStopConditionPipe())
+                    .then(mKonashiManager.<BluetoothGattCharacteristic>i2cStartConditionPipe())
                     .then(mKonashiManager.<BluetoothGattCharacteristic>i2cReadPipe(3, TEMPERATURE_ADDR));
         }
-
     }
 }
