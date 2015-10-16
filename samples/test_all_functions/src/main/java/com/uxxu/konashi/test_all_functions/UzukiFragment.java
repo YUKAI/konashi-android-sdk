@@ -114,6 +114,8 @@ public final class UzukiFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // https://github.com/mpression/UzukiSensorShield/blob/Uzuki2.1/konashiSensorShield/konashiSensorShield/FirstViewController.m#L218
+                // 5.1.2. Measuring Temperature
+                // https://www.silabs.com/Support%20Documents/TechnicalDocs/Si7013-A20.pdf
                 mUzuki.i2cReadTemperature().done(new DoneCallback<byte[]>() {
                     @Override
                     public void onDone(byte[] result) {
@@ -129,6 +131,7 @@ public final class UzukiFragment extends Fragment {
 
     private void readAccelerometer() {
         // https://github.com/mpression/UzukiSensorShield/blob/Uzuki2.1/konashiSensorShield/konashiSensorShield/FirstViewController.m#L339-L341
+        // http://www.analog.com/media/en/technical-documentation/data-sheets/ADXL345.pdf
         mUzuki.i2cReadAccelerometer()
                 .done(new DoneCallback<byte[]>() {
                     @Override
@@ -180,6 +183,10 @@ public final class UzukiFragment extends Fragment {
     private final class Uzuki {
 
         private static final byte ADXL345_ADDR = (byte) 0x1D;
+        private static final byte ADXL345_DATA_FORMAT_REGISTER = (byte) 0x31;
+        private static final byte ADXL345_POWER_CONTROL_REGISTER = (byte) 0x2D;
+        private static final byte ADXL345_THRESHOLD_ACTIVE = (byte) 0x24;
+        private static final byte ADXL345_ACTIVE_INACTIVE_CONTROL_REGISTER = (byte) 0x27;
         private static final byte TEMPERATURE_ADDR = (byte) 0x40;
 
         private final KonashiManager mKonashiManager;
@@ -188,14 +195,21 @@ public final class UzukiFragment extends Fragment {
             this.mKonashiManager = mKonashiManager;
         }
 
+        // https://github.com/mpression/UzukiSensorShield/blob/Uzuki2.1/konashiSensorShield/Sensors/Adxl345.m
         private Promise<BluetoothGattCharacteristic, BletiaException, Void> setupAdxl345() throws InterruptedException {
             return mKonashiManager
                     .i2cMode(Konashi.I2C_ENABLE_100K)
                     .then(mKonashiManager.<BluetoothGattCharacteristic>i2cStartConditionPipe())
-                    .then(mKonashiManager.<BluetoothGattCharacteristic>i2cWritePipe(2, new byte[]{0x31, 0x0b}, ADXL345_ADDR))
+                    .then(mKonashiManager.<BluetoothGattCharacteristic>i2cWritePipe(2, new byte[]{ADXL345_DATA_FORMAT_REGISTER, 0x0B}, ADXL345_ADDR))
                     .then(mKonashiManager.<BluetoothGattCharacteristic>i2cStopConditionPipe())
                     .then(mKonashiManager.<BluetoothGattCharacteristic>i2cStartConditionPipe())
-                    .then(mKonashiManager.<BluetoothGattCharacteristic>i2cWritePipe(2, new byte[]{0x2d, 0x08}, ADXL345_ADDR))
+                    .then(mKonashiManager.<BluetoothGattCharacteristic>i2cWritePipe(2, new byte[]{ADXL345_POWER_CONTROL_REGISTER, 0x08}, ADXL345_ADDR))
+                    .then(mKonashiManager.<BluetoothGattCharacteristic>i2cStopConditionPipe())
+                    .then(mKonashiManager.<BluetoothGattCharacteristic>i2cStartConditionPipe())
+                    .then(mKonashiManager.<BluetoothGattCharacteristic>i2cWritePipe(2, new byte[]{ADXL345_THRESHOLD_ACTIVE, 0x20}, ADXL345_ADDR))
+                    .then(mKonashiManager.<BluetoothGattCharacteristic>i2cStopConditionPipe())
+                    .then(mKonashiManager.<BluetoothGattCharacteristic>i2cStartConditionPipe())
+                    .then(mKonashiManager.<BluetoothGattCharacteristic>i2cWritePipe(2, new byte[]{ADXL345_ACTIVE_INACTIVE_CONTROL_REGISTER, (byte) 0xF0}, ADXL345_ADDR))
                     .then(mKonashiManager.<BluetoothGattCharacteristic>i2cStopConditionPipe());
         }
 
@@ -207,6 +221,7 @@ public final class UzukiFragment extends Fragment {
                     .then(mKonashiManager.<BluetoothGattCharacteristic>i2cReadPipe(6, ADXL345_ADDR));
         }
 
+        // https://github.com/mpression/UzukiSensorShield/blob/Uzuki2.1/konashiSensorShield/konashiSensorShield/Si7013.m
         private Promise<byte[], BletiaException, Void> i2cReadTemperature() {
             return mKonashiManager
                     .i2cMode(Konashi.I2C_ENABLE_100K)
