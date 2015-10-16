@@ -102,7 +102,8 @@ public class NavigationDrawerFragment extends Fragment {
                         PioFragment.TITLE,
                         PwmFragment.TITLE,
                         AioFragment.TITLE,
-                        CommunicationFragment.TITLE
+                        CommunicationFragment.TITLE,
+                        UzukiFragment.TITLE
                 }));
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
         return mDrawerListView;
