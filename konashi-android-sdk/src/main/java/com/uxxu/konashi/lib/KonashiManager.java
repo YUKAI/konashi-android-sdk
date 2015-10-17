@@ -51,6 +51,7 @@ import info.izumin.android.bletia.BleState;
 import info.izumin.android.bletia.Bletia;
 import info.izumin.android.bletia.BletiaException;
 import info.izumin.android.bletia.action.Action;
+import info.izumin.android.bletia.action.ReadRemoteRssiAction;
 
 
 /**
@@ -616,7 +617,7 @@ public class KonashiManager {
      * @return 電波強度(単位はdb)
      */
     public Promise<Integer, BletiaException, Void> getSignalStrength() {
-        return mBletia.readRemoteRssi();
+        return execute(new ReadRemoteRssiAction());
     }
 
     private void connect(BluetoothDevice device){

@@ -41,12 +41,11 @@ import java.util.UUID;
 import info.izumin.android.bletia.Bletia;
 import info.izumin.android.bletia.BletiaException;
 import info.izumin.android.bletia.action.Action;
+import info.izumin.android.bletia.action.ReadRemoteRssiAction;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
@@ -237,6 +236,6 @@ public class KonashiManagerTest extends AndroidTestCase {
     @Test
     public void testGetSignalStrength() throws Exception {
         mKonashiManager.getSignalStrength();
-        verify(mBletia, times(1)).readRemoteRssi();
+        assertThat(mActionCaptor.getValue()).isInstanceOf(ReadRemoteRssiAction.class);
     }
 }
