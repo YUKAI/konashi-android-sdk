@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.uxxu.konashi.lib.KonashiUtils;
+import com.uxxu.konashi.lib.util.KonashiUtils;
 import com.uxxu.konashi.lib.R;
 
 import java.util.ArrayList;

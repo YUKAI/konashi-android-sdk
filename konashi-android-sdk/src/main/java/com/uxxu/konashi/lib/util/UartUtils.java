@@ -43,6 +43,20 @@ public final class UartUtils {
      * @return
      */
     public static boolean isValidLength(int length) {
-        return length > 0 && length <= (Konashi.UART_DATA_MAX_LENGTH + 1);
+        return length >= 0 && length <= (Konashi.UART_DATA_MAX_LENGTH + 1);
+    }
+
+    public static boolean isLengthTooShort(int length) {
+        return length < 0;
+    }
+
+    public static boolean isLengthTooLong(int length) {
+        return length > (Konashi.UART_DATA_MAX_LENGTH + 1);
+    }
+
+    public static byte[] removeLengthByte(byte[] base) {
+        byte[] value = new byte[base.length-1];
+        System.arraycopy(base, 1, value, 0, base.length - 1);
+        return value;
     }
 }

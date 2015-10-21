@@ -211,7 +211,11 @@ public class Konashi {
     /**
      * I2Cで一度に送受信できる最大バイト数
      */
-    public static final int I2C_DATA_MAX_LENGTH = 19;
+    public static final int I2C_DATA_MAX_LENGTH = 16;
+    /**
+     * i2cWriteでsetValue()する際のbyte配列の最大バイト数
+     */
+    public static final int I2C_MAX_VALUE_SIZE = 18;
     /**
      * I2Cを無効にする
      */
@@ -248,26 +252,26 @@ public class Konashi {
      * APIの失敗レスポンス
      */
     public static final int FAILURE = -1;
-    
-    
+
+
     /**
      * KonashiManagerのシングルトン
      */
-    private static final KonashiManager sKonashiManager = new KonashiManager();
-    
+    private static KonashiManager sKonashiManager;
+
     /**
      * コンストラクタ。privateにして外部からインスタンス生成できないようにする
      */
     private Konashi(){}
-    
+
     /**
      * konashiの初期化
      * @param context konashiを使用するときのActivity
      */
     public static void initialize(Context context){
-        sKonashiManager.initialize(context);
+        sKonashiManager = new KonashiManager(context);
     }
-    
+
     /**
      * デストラクタ
      */
@@ -276,7 +280,7 @@ public class Konashi {
             sKonashiManager.disconnect();
         }
     }
-    
+
     /**
      * Konashiシングルトンオブジェクトを取得
      * @return KonashiManagerのシングルトンオブジェクト
@@ -284,5 +288,4 @@ public class Konashi {
     public static KonashiManager getManager(){
         return sKonashiManager;
     }
-
 }

@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">I2cSample</string>
+
+    <string name="btn_send">Send</string>
+    <string name="btn_read">Read</string>
+    <string name="label_read">Read value</string>
+    <string name="btn_find">konashiをさがす</string>
+</resources>

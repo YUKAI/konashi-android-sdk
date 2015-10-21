@@ -34,7 +34,7 @@ public final class PwmFragment extends Fragment {
 
     public static final String TITLE = "PWM";
 
-    private final KonashiManager mKonashiManager = Konashi.getManager();
+    private KonashiManager mKonashiManager;
 
     private Spinner mOptionPinSpinner;
     private EditText mOptionPeriodEditText;
@@ -68,6 +68,13 @@ public final class PwmFragment extends Fragment {
         initOptionViews(view);
 
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        mKonashiManager = Konashi.getManager();
     }
 
     @Override

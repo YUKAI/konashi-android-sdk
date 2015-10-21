@@ -1,7 +1,6 @@
 package com.uxxu.konashi.lib.util;
 
 import com.uxxu.konashi.lib.Konashi;
-import com.uxxu.konashi.lib.KonashiUtils;
 
 import java.util.Arrays;
 
@@ -23,11 +22,11 @@ public final class PwmUtils {
     }
 
     public static boolean isValidPeriod(int period, int duty) {
-        return duty <= period;
+        return (period >= 0) && (duty >= 0) && (duty <= period);
     }
 
     public static boolean isValidDuty(int duty, int period) {
-        return duty <= period;
+        return isValidPeriod(period, duty);
     }
 
     public static boolean isValidDutyRatio(float dutyRatio) {

@@ -12,7 +12,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
-import com.uxxu.konashi.lib.KonashiUtils;
+import com.uxxu.konashi.lib.util.KonashiUtils;
 import com.uxxu.konashi.lib.R;
 
 /**
@@ -95,7 +95,7 @@ public class BleDeviceSelectionDialog implements OnItemClickListener {
                 }
             }
         });
-        builder.setOnCancelListener(new DialogInterface.OnCancelListener() {  
+        builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
                 if(mListener!=null){
@@ -103,8 +103,16 @@ public class BleDeviceSelectionDialog implements OnItemClickListener {
                 }
             }
         });
+        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                if(mListener!=null){
+                    mListener.onCancelSelectingBleDevice();
+                }
+            }
+        });
         mDialog = builder.show();
-        
+
         startFinding();
     }
     
