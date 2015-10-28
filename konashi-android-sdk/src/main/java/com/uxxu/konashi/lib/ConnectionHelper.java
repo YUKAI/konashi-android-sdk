@@ -88,7 +88,7 @@ class ConnectionHelper implements BleDeviceSelectionDialog.OnBleDeviceSelectList
         mActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (!mIsShowKonashiOnly || device.getName().startsWith(KONAHSHI_DEVICE_NAME))) {
+                if (!mIsShowKonashiOnly || device.getName().startsWith(KONAHSHI_DEVICE_NAME)) {
                     mBleDeviceListAdapter.addDevice(device);
                     mBleDeviceListAdapter.notifyDataSetChanged();
                 }
