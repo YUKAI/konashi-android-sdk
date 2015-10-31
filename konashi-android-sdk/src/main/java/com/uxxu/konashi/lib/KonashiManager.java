@@ -439,7 +439,7 @@ public class KonashiManager {
      * @param string 送信するデータ(string)
      */
     public Promise<BluetoothGattCharacteristic, BletiaException, Void> uartWrite(String string) {
-        return execute(new UartWriteAction(getKonashiService(), string, mUartStore), mUartDispatcher);
+        return execute(new UartWriteAction(getKonashiService(), string, mUartStore));
     }
 
     /**
