@@ -30,6 +30,7 @@ import com.uxxu.konashi.lib.dispatcher.DispatcherContainer;
 import com.uxxu.konashi.lib.dispatcher.I2cStoreUpdater;
 import com.uxxu.konashi.lib.dispatcher.PioStoreUpdater;
 import com.uxxu.konashi.lib.dispatcher.PwmStoreUpdater;
+import com.uxxu.konashi.lib.dispatcher.SpiStoreUpdater;
 import com.uxxu.konashi.lib.dispatcher.UartStoreUpdater;
 import com.uxxu.konashi.lib.filter.AioAnalogReadFilter;
 import com.uxxu.konashi.lib.filter.BatteryLevelReadFilter;
@@ -38,6 +39,7 @@ import com.uxxu.konashi.lib.store.AioStore;
 import com.uxxu.konashi.lib.store.I2cStore;
 import com.uxxu.konashi.lib.store.PioStore;
 import com.uxxu.konashi.lib.store.PwmStore;
+import com.uxxu.konashi.lib.store.SpiStore;
 import com.uxxu.konashi.lib.store.UartStore;
 
 import org.jdeferred.DoneCallback;
@@ -97,6 +99,10 @@ public class KonashiManager {
     private UartStore mUartStore;
     private CharacteristicDispatcher<UartStore, UartStoreUpdater> mUartDispatcher;
 
+    // SPI
+    private SpiStore mSpiStore;
+    private CharacteristicDispatcher<SpiStore, SpiStoreUpdater> mSpiDispatcher;
+
     private Bletia mBletia;
     private EventEmitter mEmitter;
     private CallbackHandler mCallbackHandler;
@@ -134,6 +140,10 @@ public class KonashiManager {
         // UART
         mUartDispatcher = mDispacherContainer.getUartDispatcher();
         mUartStore = new UartStore(mUartDispatcher);
+
+        // SPI
+        mSpiDispatcher = mDispacherContainer.getSpiDispatcher();
+        mSpiStore = new SpiStore(mSpiDispatcher);
 
         mBletia = new Bletia(context);
         mConnectionHelper = new ConnectionHelper(mConnectionHelperCallback, context);
