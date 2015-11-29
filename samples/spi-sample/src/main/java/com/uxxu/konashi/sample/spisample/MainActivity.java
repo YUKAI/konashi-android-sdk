@@ -1,4 +1,4 @@
-package info.izumin.android.spisample;
+package com.uxxu.konashi.sample.spisample;
 
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.os.Bundle;
