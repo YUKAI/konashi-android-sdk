@@ -1,7 +1,9 @@
 package com.uxxu.konashi.lib.store;
 
+import com.uxxu.konashi.lib.Konashi;
 import com.uxxu.konashi.lib.dispatcher.CharacteristicDispatcher;
 import com.uxxu.konashi.lib.dispatcher.SpiStoreUpdater;
+import com.uxxu.konashi.lib.util.KonashiUtils;
 
 /**
  * Created by izumin on 11/14/15.
@@ -9,9 +11,9 @@ import com.uxxu.konashi.lib.dispatcher.SpiStoreUpdater;
 public class SpiStore implements Store {
     public static final String TAG = SpiStore.class.getSimpleName();
 
-    private byte mMode;
-    private byte mEndianness;
-    private byte[] mSpeed;
+    private byte mMode = Konashi.SPI_MODE_DISABLE;
+    private byte mEndianness = Konashi.SPI_BIT_ORDER_LITTLE_ENDIAN;
+    private byte[] mSpeed = KonashiUtils.int2bytes(Konashi.SPI_SPEED_1M);
     private byte[] mData;
 
     public SpiStore(CharacteristicDispatcher<SpiStore, SpiStoreUpdater> dispatcher) {

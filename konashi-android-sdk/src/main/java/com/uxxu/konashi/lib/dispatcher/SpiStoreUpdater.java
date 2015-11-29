@@ -32,6 +32,6 @@ public enum SpiStoreUpdater implements CharacteristicDispatcher.Updater<SpiStore
 
     @Override
     public UUID getUuid() {
-        return null;
+        return mUuid;
     }
 }
