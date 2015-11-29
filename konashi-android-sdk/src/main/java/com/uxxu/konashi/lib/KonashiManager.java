@@ -21,6 +21,9 @@ import com.uxxu.konashi.lib.action.PwmDutyAction;
 import com.uxxu.konashi.lib.action.PwmLedDriveAction;
 import com.uxxu.konashi.lib.action.PwmPeriodAction;
 import com.uxxu.konashi.lib.action.PwmPinModeAction;
+import com.uxxu.konashi.lib.action.SpiConfigAction;
+import com.uxxu.konashi.lib.action.SpiReadAction;
+import com.uxxu.konashi.lib.action.SpiWriteAction;
 import com.uxxu.konashi.lib.action.UartBaudrateAction;
 import com.uxxu.konashi.lib.action.UartModeAction;
 import com.uxxu.konashi.lib.action.UartWriteAction;
@@ -601,6 +604,29 @@ public class KonashiManager {
             }
         };
     }
+
+
+    ///////////////////////////
+    // SPI
+    ///////////////////////////
+
+    public Promise<BluetoothGattCharacteristic, BletiaException, Void> spiConfig(int mode, int byteOrder, int speed) {
+        return execute(new SpiConfigAction(getKonashiService(), mode, byteOrder, speed, mSpiStore))
+                .then(mSpiDispatcher);
+    }
+
+    public Promise<BluetoothGattCharacteristic, BletiaException, Void> spiWrite(String data) {
+        return execute(new SpiWriteAction(getKonashiService(), data));
+    }
+
+    public Promise<BluetoothGattCharacteristic, BletiaException, Void> spiWrite(byte[] data) {
+        return execute(new SpiWriteAction(getKonashiService(), data));
+    }
+
+    public Promise<BluetoothGattCharacteristic, BletiaException, Void> spiRead() {
+        return execute(new SpiReadAction(getKonashiService()));
+    }
+
 
     ///////////////////////////
     // Hardware
