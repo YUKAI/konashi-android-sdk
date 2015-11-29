@@ -272,6 +272,7 @@ public class Konashi {
     public static final int SPI_BIT_ORDER_BIG_ENDIAN = 0;
     public static final int SPI_BIT_ORDER_LITTLE_ENDIAN = 1;
 
+    public static final int SPI_DATA_MAX_LENGTH = 64;
 
     /**
      * KonashiManagerのシングルトン
