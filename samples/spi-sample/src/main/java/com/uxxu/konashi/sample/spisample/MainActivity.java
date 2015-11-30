@@ -93,7 +93,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         .then(new DonePipe<BluetoothGattCharacteristic, BluetoothGattCharacteristic, BletiaException, Void>() {
                             @Override
                             public Promise<BluetoothGattCharacteristic, BletiaException, Void> pipeDone(BluetoothGattCharacteristic result) {
-//                                return mKonashiManager.spiWrite(new byte[]{0b00000110, 0b00000000, 0b00000000});
                                 return mKonashiManager.spiWrite(mSendEdit.getText().toString().getBytes());
                             }
                         })
