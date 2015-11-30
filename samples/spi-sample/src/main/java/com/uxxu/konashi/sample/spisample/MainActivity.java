@@ -175,7 +175,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void onUpdateSpiMiso(KonashiManager manager, byte[] value) {
             Log.d("onUpdateSpiMiso()", Arrays.toString(value));
-//            mResultText.setText(Arrays.toString(value));
         }
 
         @Override
