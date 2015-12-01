@@ -4,7 +4,7 @@ import spock.lang.Specification
 /**
  * Created by izumin on 10/7/15.
  */
-class SpiUtilsTest extends Specification {
+class SpiUtilsSpec extends Specification {
     def ".isValidMode()"() {
         expect:
         SpiUtils.isValidMode(mode) == result
