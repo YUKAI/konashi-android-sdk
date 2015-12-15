@@ -53,7 +53,7 @@ class CallbackHandler implements BletiaListener {
             bletia.enableNotification(service.getCharacteristic(KonashiUUID.UART_RX_NOTIFICATION_UUID), true);
             bletia.enableNotification(service.getCharacteristic(KonashiUUID.HARDWARE_LOW_BAT_NOTIFICATION_UUID), true);
             BluetoothGattCharacteristic spiCharacteristic = service.getCharacteristic(KonashiUUID.SPI_NOTIFICATION_UUID);
-            if(spiCharacteristic != null) bletia.enableNotification(service.getCharacteristic(KonashiUUID.SPI_NOTIFICATION_UUID), true);
+            if(spiCharacteristic != null) bletia.enableNotification(spiCharacteristic, true);
             mEmitter.emitConnect(mManager);
         }
     }
