@@ -12,5 +12,13 @@
         <item>100kHz</item>
         <item>400kHz</item>
     </string-array>
+    <string-array name="spi_baudrates_labels">
+        <item>200K</item>
+        <item>500K</item>
+        <item>1M</item>
+        <item>2M</item>
+        <item>3M</item>
+        <item>6M</item>
+    </string-array>
     <color name="frosted_grass">#ccffffff</color>
 </resources>
