@@ -27,7 +27,7 @@ import org.jdeferred.Promise;
 import info.izumin.android.bletia.BletiaException;
 
 /**
- * Created by kiryu on 7/27/15.
+ * Created by e10dokup on 12/16/15
  */
 public final class SpiFragment extends Fragment {
     public static final String TITLE = "SPI";
@@ -100,7 +100,7 @@ public final class SpiFragment extends Fragment {
         mSpiDataSendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mKonashiManager.uartWrite(mSpiDataEditText.getText().toString().getBytes())
+                mKonashiManager.spiWrite(mSpiDataEditText.getText().toString().getBytes())
                         .then(new DoneCallback<BluetoothGattCharacteristic>() {
                             @Override
                             public void onDone(BluetoothGattCharacteristic result) {
