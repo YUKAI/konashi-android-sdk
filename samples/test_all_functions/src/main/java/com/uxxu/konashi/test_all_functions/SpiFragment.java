@@ -24,6 +24,8 @@ import org.jdeferred.DonePipe;
 import org.jdeferred.FailCallback;
 import org.jdeferred.Promise;
 
+import java.util.Arrays;
+
 import info.izumin.android.bletia.BletiaException;
 
 /**
@@ -100,10 +102,33 @@ public final class SpiFragment extends Fragment {
         mSpiDataSendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mKonashiManager.spiWrite(mSpiDataEditText.getText().toString().getBytes())
+                mKonashiManager.digitalWrite(Konashi.PIO2, Konashi.LOW)
+                        .then(new DonePipe<BluetoothGattCharacteristic, BluetoothGattCharacteristic, BletiaException, Void>() {
+                            @Override
+                            public Promise<BluetoothGattCharacteristic, BletiaException, Void> pipeDone(BluetoothGattCharacteristic result) {
+                                return mKonashiManager.spiWrite(mSpiDataEditText.getText().toString().getBytes());
+                            }
+                        })
+                        .then(new DonePipe<BluetoothGattCharacteristic, BluetoothGattCharacteristic, BletiaException, Void>() {
+                            @Override
+                            public Promise<BluetoothGattCharacteristic, BletiaException, Void> pipeDone(BluetoothGattCharacteristic result) {
+                                return mKonashiManager.digitalWrite(Konashi.PIO2, Konashi.HIGH);
+                            }
+                        })
+                        .then(new DonePipe<BluetoothGattCharacteristic, BluetoothGattCharacteristic, BletiaException, Void>() {
+                            @Override
+                            public Promise<BluetoothGattCharacteristic, BletiaException, Void> pipeDone(BluetoothGattCharacteristic result) {
+                                return mKonashiManager.spiRead();
+                            }
+                        })
                         .then(new DoneCallback<BluetoothGattCharacteristic>() {
                             @Override
                             public void onDone(BluetoothGattCharacteristic result) {
+                                byte data[] = new byte[result.getValue().length];
+                                for (int i = 0; i < result.getValue().length; i++) {
+                                    data[i] = (byte) ((result.getValue()[i] & 0xff) );
+                                }
+                                mSpiResultEditText.setText(Arrays.toString(data));
                             }
                         })
                         .fail(new FailCallback<BletiaException>() {
