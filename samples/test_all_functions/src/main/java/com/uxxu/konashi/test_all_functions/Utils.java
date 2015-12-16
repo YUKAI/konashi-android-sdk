@@ -80,4 +80,26 @@ public class Utils {
             return tableRow;
         }
     }
+
+    public static int spiLabelToValue(String spiLabel) {
+        if (spiLabel.equals("200K")) {
+            return Konashi.SPI_SPEED_200K;
+        }
+        if (spiLabel.equals("500K")) {
+            return Konashi.SPI_SPEED_500K;
+        }
+        if (spiLabel.equals("1M")) {
+            return Konashi.SPI_SPEED_1M;
+        }
+        if (spiLabel.equals("2M")) {
+            return Konashi.SPI_SPEED_2M;
+        }
+        if (spiLabel.equals("3M")) {
+            return Konashi.SPI_SPEED_3M;
+        }
+        if (spiLabel.equals("6M")) {
+            return Konashi.SPI_SPEED_6M;
+        }
+        return 0;
+    }
 }
