@@ -37,7 +37,7 @@ public final class SpiFragment extends Fragment {
     private KonashiManager mKonashiManager;
 
     private Switch mSpiSwitch;
-    private Spinner mSpiBaudrateSpinner;
+    private Spinner mSpiSpeedSpinner;
     private EditText mSpiDataEditText;
     private Button mSpiDataSendButton;
     private EditText mSpiResultEditText;
@@ -75,9 +75,9 @@ public final class SpiFragment extends Fragment {
     }
 
     private void initSpiViews(final View parent) {
-        mSpiBaudrateSpinner = (Spinner) parent.findViewById(R.id.spiBaudrateSpinner);
-        mSpiBaudrateSpinner.setSelection(1);
-        mSpiBaudrateSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        mSpiSpeedSpinner = (Spinner) parent.findViewById(R.id.spiSpeedSpinner);
+        mSpiSpeedSpinner.setSelection(1);
+        mSpiSpeedSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 resetSpi();
@@ -157,12 +157,12 @@ public final class SpiFragment extends Fragment {
             return;
         }
         if (mSpiSwitch.isChecked()) {
-            int i = mSpiBaudrateSpinner.getSelectedItemPosition();
-            String[] labels = getResources().getStringArray(R.array.uart_baudrates_labels);
+            int i = mSpiSpeedSpinner.getSelectedItemPosition();
+            String[] labels = getResources().getStringArray(R.array.spi_speeds_labels);
             String label = labels[i];
-            int baudrate = Utils.spiLabelToValue(label);
+            int speed = Utils.spiLabelToValue(label);
             mKonashiManager.spiConfig(Konashi.SPI_MODE_ENABLE_CPOL0_CPHA0,
-                    Konashi.SPI_BIT_ORDER_LITTLE_ENDIAN, baudrate)
+                    Konashi.SPI_BIT_ORDER_LITTLE_ENDIAN, speed)
                     .then(new DonePipe<BluetoothGattCharacteristic, BluetoothGattCharacteristic, BletiaException, Void>() {
                         @Override
                         public Promise<BluetoothGattCharacteristic, BletiaException, Void> pipeDone(BluetoothGattCharacteristic result) {
@@ -195,7 +195,7 @@ public final class SpiFragment extends Fragment {
 
 
     private void setEnableSpiViews(boolean enable) {
-        mSpiBaudrateSpinner.setEnabled(enable);
+        mSpiSpeedSpinner.setEnabled(enable);
         mSpiDataEditText.setEnabled(enable);
         mSpiDataSendButton.setEnabled(enable);
     }

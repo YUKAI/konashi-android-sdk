@@ -24,11 +24,11 @@
             android:textStyle="bold"/>
 
         <Spinner
-            android:id="@+id/spiBaudrateSpinner"
+            android:id="@+id/spiSpeedSpinner"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:entries="@array/spi_baudrates_labels"
+            android:entries="@array/spi_speeds_labels"
             android:spinnerMode="dropdown"/>
 
         <Switch

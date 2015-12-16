@@ -12,7 +12,7 @@
         <item>100kHz</item>
         <item>400kHz</item>
     </string-array>
-    <string-array name="spi_baudrates_labels">
+    <string-array name="spi_speeds_labels">
         <item>200K</item>
         <item>500K</item>
         <item>1M</item>
