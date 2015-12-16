@@ -157,6 +157,7 @@ public final class SpiFragment extends Fragment {
             return;
         }
         if (mSpiSwitch.isChecked()) {
+            mSpiSpeedSpinner.setSelection(1);
             int i = mSpiSpeedSpinner.getSelectedItemPosition();
             String[] labels = getResources().getStringArray(R.array.spi_speeds_labels);
             String label = labels[i];
