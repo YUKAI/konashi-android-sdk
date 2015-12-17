@@ -2,19 +2,14 @@
 [![wercker status](https://app.wercker.com/status/6617295015c7f7518afc67a3182bd241/s/master "wercker status")](https://app.wercker.com/project/bykey/6617295015c7f7518afc67a3182bd241)
 [![Download](https://api.bintray.com/packages/konashi-dev/maven/konashi-android-sdk/images/download.svg)](https://bintray.com/konashi-dev/maven/konashi-android-sdk/_latestVersion)
 
----
-
-## Requirements
+# Requirements
 
 - Android 4.3 or later
 - Android Studio 1.0 or later
-
-### Boards
-- konashi2.0以降のみをサポートしています。
-- konashi ver1 (緑色のモジュールを搭載) につきましては、 [konashi-v1-android-sdk](https://github.com/YUKAI/konashi-v1-android-sdk)
-（現在保守停止中）の利用を検討ください。
-
-## Installation
+- konashi 2.0 or later
+  - konashi ver1 は[konashi-v1-android-sdk](https://github.com/YUKAI/konashi-v1-android-sdk)(obsoleted)にてサポートしておりました。
+  
+# Installation
 
 ```groovy
 dependencies {
@@ -37,7 +32,8 @@ dependencies {
 - I2cSample
 - SpiSample
 
-## 開発について
+
+# 開発について
 
 ### 機能要望やバグ報告をするには
 開発者に要望を伝える報告する方法は以下です。
