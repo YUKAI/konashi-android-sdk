@@ -2,19 +2,15 @@
 [![wercker status](https://app.wercker.com/status/6617295015c7f7518afc67a3182bd241/s/master "wercker status")](https://app.wercker.com/project/bykey/6617295015c7f7518afc67a3182bd241)
 [![Download](https://api.bintray.com/packages/konashi-dev/maven/konashi-android-sdk/images/download.svg)](https://bintray.com/konashi-dev/maven/konashi-android-sdk/_latestVersion)
 
----
+# Requirements
 
-<img src="http://konashi.ux-xu.com/img/documents/i2c.png" width="600" />
+- Android 4.3 or later
+- Android Studio 1.0 or later
+- konashi 2.0 or later
 
----
+*konashi ver1 は [konashi-v1-android-sdk](https://github.com/YUKAI/konashi-v1-android-sdk)(obsoleted) にてサポートしておりました。*
 
-## Supported version
-
-現在、konashi2.0以降のみをサポートしています。
-
-将来、konashi ver1 (緑色のモジュールを搭載) 用のsdk [konashi-v1-android-sdk](https://github.com/YUKAI/konashi-v1-android-sdk)を統合予定です。
-
-## Installation
+# Installation
 
 ```groovy
 dependencies {
@@ -24,9 +20,21 @@ dependencies {
 
 ## Getting Started
 
-\{Android版ドキュメントは2015年8月末をめどに更新予定です\}
+- [Getting Started](http://konashi.ux-xu.com/android/#getting-started)
+- [APIリファレンス](http://konashi.ux-xu.com/android/#title-software)
 
-## 開発について
+## Usage
+`samples` フォルダ内に各機能の使い方を紹介するサンプルアプリを用意しています。
+
+- PioSample
+- PwmSample
+- AioSample
+- UartSample
+- I2cSample
+- SpiSample
+
+
+# 開発について
 
 ### 機能要望やバグ報告をするには
 開発者に要望を伝える報告する方法は以下です。
