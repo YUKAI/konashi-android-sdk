@@ -1,7 +1,10 @@
 package com.uxxu.konashi.lib;
 
+import android.bluetooth.BluetoothGattCharacteristic;
 import android.os.Handler;
 import android.os.Looper;
+
+import org.jdeferred.DoneCallback;
 
 import java.util.ArrayList;
 
@@ -72,10 +75,22 @@ class EventEmitter extends ArrayList<KonashiListener> {
 
     public void emitUpdateSpiMiso(final KonashiManager manager, final byte[] value) {
         mHandler.post(new Runnable() {
+            private byte mData[];
+            private KonashiListener mKonashiListener;
             @Override
             public void run() {
                 for (KonashiListener listener : self) {
-                    listener.onUpdateSpiMiso(manager, value);
+                    mKonashiListener = listener;
+                    manager.spiRead().then(new DoneCallback<BluetoothGattCharacteristic>() {
+                        @Override
+                        public void onDone(BluetoothGattCharacteristic result) {
+                            mData = new byte[result.getValue().length];
+                            for (int i = 0; i < result.getValue().length; i++) {
+                                mData[i] = (byte) ((result.getValue()[i] & 0xff));
+                                mKonashiListener.onUpdateSpiMiso(manager, mData);
+                            }
+                        }
+                    });
                 }
             }
         });
