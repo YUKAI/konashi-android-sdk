@@ -4,11 +4,16 @@
 
 ---
 
-## Supported version
+## Requirements
 
-現在、konashi2.0以降のみをサポートしています。
+### Supported boards
+- konashi2.0以降のみをサポートしています。
+- konashi ver1 (緑色のモジュールを搭載) につきましては、 [konashi-v1-android-sdk](https://github.com/YUKAI/konashi-v1-android-sdk)
+（現在保守停止中）の利用を検討ください。
 
-将来、konashi ver1 (緑色のモジュールを搭載) 用のsdk [konashi-v1-android-sdk](https://github.com/YUKAI/konashi-v1-android-sdk)を統合予定です。
+### Supported enviroments
+- Android 4.3 or later
+- Android Studio 1.0 or later
 
 ## Installation
 
@@ -22,6 +27,16 @@ dependencies {
 
 - [Getting Started](http://konashi.ux-xu.com/android/#getting-started)
 - [APIリファレンス](http://konashi.ux-xu.com/android/#title-software)
+
+## Usage
+samplesフォルダ内に様々なサンプルアプリを用意しています。
+
+- PioSample
+- PwmSample
+- AioSample
+- UartSample
+- I2cSample
+- SpiSample
 
 ## 開発について
 
