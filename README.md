@@ -7,8 +7,9 @@
 - Android 4.3 or later
 - Android Studio 1.0 or later
 - konashi 2.0 or later
-  - konashi ver1 は[konashi-v1-android-sdk](https://github.com/YUKAI/konashi-v1-android-sdk)(obsoleted)にてサポートしておりました。
-  
+
+*konashi ver1 は [konashi-v1-android-sdk](https://github.com/YUKAI/konashi-v1-android-sdk)(obsoleted) にてサポートしておりました。*
+
 # Installation
 
 ```groovy
