@@ -74,26 +74,7 @@ class EventEmitter extends ArrayList<KonashiListener> {
     }
 
     public void emitUpdateSpiMiso(final KonashiManager manager, final byte[] value) {
-        mHandler.post(new Runnable() {
-            private byte mData[];
-            private KonashiListener mKonashiListener;
-            @Override
-            public void run() {
-                for (KonashiListener listener : self) {
-                    mKonashiListener = listener;
-                    manager.spiRead().then(new DoneCallback<BluetoothGattCharacteristic>() {
-                        @Override
-                        public void onDone(BluetoothGattCharacteristic result) {
-                            mData = new byte[result.getValue().length];
-                            for (int i = 0; i < result.getValue().length; i++) {
-                                mData[i] = (byte) ((result.getValue()[i] & 0xff));
-                                mKonashiListener.onUpdateSpiMiso(manager, mData);
-                            }
-                        }
-                    });
-                }
-            }
-        });
+        mHandler.post(new UpdateSpiMisoRunnable(self, manager));
     }
 
     public void emitUpdateBatteryLevel(final KonashiManager manager, final int level) {
@@ -105,5 +86,34 @@ class EventEmitter extends ArrayList<KonashiListener> {
                 }
             }
         });
+    }
+}
+
+class UpdateSpiMisoRunnable implements Runnable {
+
+    private EventEmitter mEventEmitter;
+    private KonashiManager mKonashiManager;
+    private KonashiListener mKonashiListener;
+
+    public UpdateSpiMisoRunnable(EventEmitter eventEmitter, KonashiManager konashiManager) {
+        mEventEmitter = eventEmitter;
+        mKonashiManager = konashiManager;
+    }
+
+    @Override
+    public void run() {
+        for (KonashiListener listener : mEventEmitter) {
+            mKonashiListener = listener;
+            mKonashiManager.spiRead().then(new DoneCallback<BluetoothGattCharacteristic>() {
+                @Override
+                public void onDone(BluetoothGattCharacteristic result) {
+                    byte mData[] = new byte[result.getValue().length];
+                    for (int i = 0; i < result.getValue().length; i++) {
+                        mData[i] = (byte) ((result.getValue()[i] & 0xff));
+                        mKonashiListener.onUpdateSpiMiso(mKonashiManager, mData);
+                    }
+                }
+            });
+        }
     }
 }
