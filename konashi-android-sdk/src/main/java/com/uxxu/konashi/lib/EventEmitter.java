@@ -74,7 +74,14 @@ class EventEmitter extends ArrayList<KonashiListener> {
     }
 
     public void emitUpdateSpiMiso(final KonashiManager manager, final byte[] value) {
-        mHandler.post(new UpdateSpiMisoRunnable(self, manager));
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                for (KonashiListener listener : self) {
+                    listener.onUpdateSpiMiso(manager, value);
+                }
+            }
+        });
     }
 
     public void emitUpdateBatteryLevel(final KonashiManager manager, final int level) {
@@ -86,34 +93,5 @@ class EventEmitter extends ArrayList<KonashiListener> {
                 }
             }
         });
-    }
-}
-
-class UpdateSpiMisoRunnable implements Runnable {
-
-    private EventEmitter mEventEmitter;
-    private KonashiManager mKonashiManager;
-    private KonashiListener mKonashiListener;
-
-    public UpdateSpiMisoRunnable(EventEmitter eventEmitter, KonashiManager konashiManager) {
-        mEventEmitter = eventEmitter;
-        mKonashiManager = konashiManager;
-    }
-
-    @Override
-    public void run() {
-        for (KonashiListener listener : mEventEmitter) {
-            mKonashiListener = listener;
-            mKonashiManager.spiRead().then(new DoneCallback<BluetoothGattCharacteristic>() {
-                @Override
-                public void onDone(BluetoothGattCharacteristic result) {
-                    byte mData[] = new byte[result.getValue().length];
-                    for (int i = 0; i < result.getValue().length; i++) {
-                        mData[i] = (byte) ((result.getValue()[i] & 0xff));
-                        mKonashiListener.onUpdateSpiMiso(mKonashiManager, mData);
-                    }
-                }
-            });
-        }
     }
 }

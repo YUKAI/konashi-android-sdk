@@ -8,6 +8,8 @@ import com.uxxu.konashi.lib.dispatcher.DispatcherContainer;
 import com.uxxu.konashi.lib.util.KonashiUtils;
 import com.uxxu.konashi.lib.util.UartUtils;
 
+import org.jdeferred.DoneCallback;
+
 import java.util.UUID;
 
 import info.izumin.android.bletia.Bletia;
@@ -69,9 +71,22 @@ class CallbackHandler implements BletiaListener {
             mDispatcherContainer.getUartDispatcher().onDone(characteristic);
             mEmitter.emitUpdateUartRx(mManager, UartUtils.removeLengthByte(characteristic.getValue()));
         } else if (KonashiUUID.SPI_NOTIFICATION_UUID.equals(uuid)) {
-            mEmitter.emitUpdateSpiMiso(mManager, characteristic.getValue());
+            mManager.spiRead().then(mSpiReadDoneCallback);
         } else if (KonashiUUID.HARDWARE_LOW_BAT_NOTIFICATION_UUID.equals(uuid)) {
             mEmitter.emitUpdateBatteryLevel(mManager, KonashiUtils.getBatteryLevel(characteristic));
         }
     }
+
+    private DoneCallback<BluetoothGattCharacteristic> mSpiReadDoneCallback = new DoneCallback<BluetoothGattCharacteristic>() {
+        @Override
+        public void onDone(BluetoothGattCharacteristic result) {
+            byte mData[] = new byte[result.getValue().length];
+            for(int i = 0; i< result.getValue().length; i++) {
+                mData[i] = (byte)((result.getValue()[i] & 0xff));
+                mEmitter.emitUpdateSpiMiso(mManager, mData);
+            }
+        }
+    };
 }
+
+
