@@ -80,11 +80,11 @@ class CallbackHandler implements BletiaListener {
     private DoneCallback<BluetoothGattCharacteristic> mSpiReadDoneCallback = new DoneCallback<BluetoothGattCharacteristic>() {
         @Override
         public void onDone(BluetoothGattCharacteristic result) {
-            byte mData[] = new byte[result.getValue().length];
+            byte data[] = new byte[result.getValue().length];
             for(int i = 0; i< result.getValue().length; i++) {
-                mData[i] = (byte)((result.getValue()[i] & 0xff));
-                mEmitter.emitUpdateSpiMiso(mManager, mData);
+                data[i] = (byte)((result.getValue()[i] & 0xff));
             }
+            mEmitter.emitUpdateSpiMiso(mManager, data);
         }
     };
 }
