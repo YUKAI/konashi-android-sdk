@@ -45,10 +45,10 @@ public final class SpiUtils {
         return length <= 0;
     }
 
-    public static byte[] getDataFromResult(BluetoothGattCharacteristic result) {
-        byte data[] = new byte[result.getValue().length];
-        for(int i = 0; i< result.getValue().length; i++) {
-            data[i] = (byte)((result.getValue()[i] & 0xff));
+    public static byte[] getDataFromResult(byte[] result) {
+        byte data[] = new byte[result.length];
+        for(int i = 0; i< result.length; i++) {
+            data[i] = (byte)((result[i] & 0xff));
         }
 
         return data;

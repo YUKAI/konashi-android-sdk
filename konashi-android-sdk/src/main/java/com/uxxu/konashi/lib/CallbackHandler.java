@@ -75,7 +75,7 @@ class CallbackHandler implements BletiaListener {
             mManager.spiRead().then(new DoneCallback<BluetoothGattCharacteristic>() {
                 @Override
                 public void onDone(BluetoothGattCharacteristic result) {
-                    mEmitter.emitUpdateSpiMiso(mManager, SpiUtils.getDataFromResult(result));
+                    mEmitter.emitUpdateSpiMiso(mManager, SpiUtils.getDataFromResult(result.getValue()));
                 }
             });
         } else if (KonashiUUID.HARDWARE_LOW_BAT_NOTIFICATION_UUID.equals(uuid)) {
