@@ -102,22 +102,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 return mKonashiManager.digitalWrite(Konashi.PIO2, Konashi.HIGH);
                             }
                         })
-                        .then(new DonePipe<BluetoothGattCharacteristic, BluetoothGattCharacteristic, BletiaException, Void>() {
-                            @Override
-                            public Promise<BluetoothGattCharacteristic, BletiaException, Void> pipeDone(BluetoothGattCharacteristic result) {
-                                return mKonashiManager.spiRead();
-                            }
-                        })
-                        .then(new DoneCallback<BluetoothGattCharacteristic>() {
-                            @Override
-                            public void onDone(BluetoothGattCharacteristic result) {
-                                byte data[] = new byte[result.getValue().length];
-                                for (int i = 0; i < result.getValue().length; i++) {
-                                    data[i] = (byte) ((result.getValue()[i] & 0xff) );
-                                }
-                                mResultText.setText(Arrays.toString(data));
-                            }
-                        })
                         .fail(new FailCallback<BletiaException>() {
                             @Override
                             public void onFail(BletiaException result) {
@@ -174,7 +158,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         public void onUpdateSpiMiso(KonashiManager manager, byte[] value) {
-            Log.d("onUpdateSpiMiso()", Arrays.toString(value));
+            mResultText.setText(Arrays.toString(value));
         }
 
         @Override
