@@ -1,10 +1,7 @@
 package com.uxxu.konashi.lib;
 
-import android.bluetooth.BluetoothGattCharacteristic;
 import android.os.Handler;
 import android.os.Looper;
-
-import org.jdeferred.DoneCallback;
 
 import java.util.ArrayList;
 
