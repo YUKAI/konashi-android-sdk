@@ -100,4 +100,15 @@ class SpiUtilsSpec extends Specification {
         [0] as byte[]                          | [] as byte[]
         [4, 0x74, 0x65, 0x73, 0x74] as byte[]  | [0x74, 0x65, 0x73, 0x74] as byte[]
     }
+
+    def ".getDataFromResult()"() {
+
+        expect:
+        SpiUtils.getDataFromResult(data) == result
+
+        where:
+        data                                    | result
+        [] as byte[]                            | [] as byte[]
+        [0x74, 0x65, 0x73, 0x74] as byte[]      | [0x74, 0x65, 0x73, 0x74] as byte[]
+    }
 }

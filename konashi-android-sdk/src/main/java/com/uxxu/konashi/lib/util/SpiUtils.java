@@ -1,5 +1,7 @@
 package com.uxxu.konashi.lib.util;
 
+import android.bluetooth.BluetoothGattCharacteristic;
+
 import com.uxxu.konashi.lib.Konashi;
 
 /**
@@ -41,5 +43,14 @@ public final class SpiUtils {
 
     public static boolean isTooShortData(int length) {
         return length <= 0;
+    }
+
+    public static byte[] getDataFromResult(byte[] result) {
+        byte data[] = new byte[result.length];
+        for(int i = 0; i< result.length; i++) {
+            data[i] = (byte)((result[i] & 0xff));
+        }
+
+        return data;
     }
 }
