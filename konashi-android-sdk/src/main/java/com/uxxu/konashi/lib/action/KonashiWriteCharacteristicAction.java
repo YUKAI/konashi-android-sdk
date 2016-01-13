@@ -27,6 +27,10 @@ public abstract class KonashiWriteCharacteristicAction extends WriteCharacterist
 
     @Override
     public boolean execute(BluetoothGattWrapper gattWrapper) {
+        if (getCharacteristic() != null) {
+            rejectIfParamsAreInvalid(KonashiErrorType.UNSUPPORTED_OPERATION);
+            return false;
+        }
         BletiaErrorType errorType = validate();
         if (errorType == KonashiErrorType.NO_ERROR) {
             setValue();
