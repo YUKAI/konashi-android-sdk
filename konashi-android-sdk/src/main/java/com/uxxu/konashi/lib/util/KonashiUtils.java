@@ -63,12 +63,11 @@ public class KonashiUtils {
     }
 
     /**
-     * characteristicから
-     * @param characteristic
-     * @return
+     * Revisionのvalueから最後の1バイト（0x00）を取り除く
+     * @param value 返ってきたcharacteristicのvalue
+     * @return RevisionのString
      */
-    public static String getSoftwareRevision(BluetoothGattCharacteristic characteristic) {
-        byte[] value = characteristic.getValue();
+    public static String getSoftwareRevision(byte[] value) {
         byte[] cutValue = new byte[value.length-1];
         for(int i=0; i<cutValue.length; i++) {
             cutValue[i] = value[i];

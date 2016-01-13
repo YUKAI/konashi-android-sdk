@@ -13,6 +13,6 @@ public class SoftwareRevisionReadFilter implements DoneFilter<BluetoothGattChara
 
     @Override
     public String filterDone(BluetoothGattCharacteristic result) {
-        return KonashiUtils.getSoftwareRevision(result);
+        return KonashiUtils.getSoftwareRevision(result.getValue());
     }
 }
