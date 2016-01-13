@@ -34,6 +34,7 @@ public class KonashiUUID {
     public static final UUID BATTERY_LEVEL_UUID                   = UUID.fromString("00002A19-0000-1000-8000-00805f9b34fb");
 
     // Software revision UUID
+    public static final UUID DEVICE_INFORMATION_SERVICE_UUID      = UUID.fromString("0000180A-0000-1000-8000-00805f9b34fb");
     public static final UUID SOFTWARE_REVISION_UUID               = UUID.fromString("00002A28-0000-1000-8000-00805f9b34fb");
 
     /**
