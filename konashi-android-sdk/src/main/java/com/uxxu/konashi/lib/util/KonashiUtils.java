@@ -62,6 +62,20 @@ public class KonashiUtils {
         return characteristic.getValue()[0] & 0xff;
     }
 
+    /**
+     * characteristicから
+     * @param characteristic
+     * @return
+     */
+    public static String getSoftwareRevision(BluetoothGattCharacteristic characteristic) {
+        byte[] value = characteristic.getValue();
+        byte[] cutValue = new byte[value.length-1];
+        for(int i=0; i<cutValue.length; i++) {
+            cutValue[i] = value[i];
+        }
+        return new String(cutValue);
+    }
+
     public static int bytes2int(byte[] bytes) {
         int value = 0;
         for (byte b : bytes) {
