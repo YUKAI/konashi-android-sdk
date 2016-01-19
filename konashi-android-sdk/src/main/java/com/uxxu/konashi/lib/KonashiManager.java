@@ -680,9 +680,13 @@ public class KonashiManager {
     }
 
     private <T> Promise<T, BletiaException, Void> execute(Action<T, ?> action) {
-        BluetoothGattCharacteristic characteristic = ((CharacteristicAction) action).getCharacteristic();
-        if(characteristic != null) return new AndroidDeferredManager().when(mBletia.execute(action));
-        else return new AndroidDeferredManager().when(action.getDeferred().reject(new BletiaException(action, KonashiErrorType.UNSUPPORTED_OPERATION)).promise());
+        if(action instanceof CharacteristicAction) {
+            BluetoothGattCharacteristic characteristic = ((CharacteristicAction) action).getCharacteristic();
+            if(characteristic != null) return new AndroidDeferredManager().when(mBletia.execute(action));
+            else return new AndroidDeferredManager().when(action.getDeferred().reject(new BletiaException(action, KonashiErrorType.UNSUPPORTED_OPERATION)).promise());
+        } else {
+            return new AndroidDeferredManager().when(mBletia.execute(action));
+        }
     }
 
     private BluetoothGattService getKonashiService() {
