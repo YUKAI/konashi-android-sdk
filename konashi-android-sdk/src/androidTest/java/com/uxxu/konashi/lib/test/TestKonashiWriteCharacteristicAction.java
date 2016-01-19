@@ -16,21 +16,23 @@ import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
 
 public class TestKonashiWriteCharacteristicAction extends KonashiWriteCharacteristicAction {
 
-    public TestKonashiWriteCharacteristicAction(BluetoothGattCharacteristic characteristic) {
-        super(characteristic);
-    }
-
     public TestKonashiWriteCharacteristicAction(BluetoothGattService service, UUID uuid) {
         super(service, uuid);
     }
 
     @Override
-    public boolean execute(BluetoothGattWrapper gattWrapper) {
-        return super.execute(gattWrapper);
+    public boolean execute(BluetoothGattWrapper mWrapper) {
+        return super.execute(mWrapper);
+    }
+
+    @Override
+    public void rejectIfParamsAreInvalid(BletiaErrorType errorType) {
+        getDeferred().reject(new BletiaException(this, errorType));
     }
 
     @Override
     public void setValue() {
+
     }
 
     @Override
