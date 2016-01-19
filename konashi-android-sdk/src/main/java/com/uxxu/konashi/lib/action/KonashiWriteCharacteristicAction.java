@@ -22,7 +22,7 @@ public abstract class KonashiWriteCharacteristicAction extends WriteCharacterist
 
     @Override
     public boolean execute(BluetoothGattWrapper gattWrapper) {
-        if (getCharacteristic() != null) {
+        if (getCharacteristic() == null) {
             rejectIfParamsAreInvalid(KonashiErrorType.UNSUPPORTED_OPERATION);
             return false;
         }
