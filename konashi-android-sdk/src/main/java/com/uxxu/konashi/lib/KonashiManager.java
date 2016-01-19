@@ -51,6 +51,8 @@ import org.jdeferred.DoneCallback;
 import org.jdeferred.DonePipe;
 import org.jdeferred.Promise;
 import org.jdeferred.android.AndroidDeferredManager;
+import org.jdeferred.android.AndroidDeferredObject;
+import org.jdeferred.impl.DeferredPromise;
 
 import java.util.UUID;
 
@@ -58,6 +60,7 @@ import info.izumin.android.bletia.BleState;
 import info.izumin.android.bletia.Bletia;
 import info.izumin.android.bletia.BletiaException;
 import info.izumin.android.bletia.action.Action;
+import info.izumin.android.bletia.action.CharacteristicAction;
 import info.izumin.android.bletia.action.ReadRemoteRssiAction;
 
 
@@ -677,7 +680,9 @@ public class KonashiManager {
     }
 
     private <T> Promise<T, BletiaException, Void> execute(Action<T, ?> action) {
-        return new AndroidDeferredManager().when(mBletia.execute(action));
+        BluetoothGattCharacteristic characteristic = ((CharacteristicAction) action).getCharacteristic();
+        if(characteristic != null) return new AndroidDeferredManager().when(mBletia.execute(action));
+        else return new AndroidDeferredManager().when(action.getDeferred().reject(new BletiaException(action, KonashiErrorType.UNSUPPORTED_OPERATION)).promise());
     }
 
     private BluetoothGattService getKonashiService() {
