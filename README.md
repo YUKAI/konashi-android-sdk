@@ -1,3 +1,5 @@
+※ バグ改善や要望以外の質問については `konashi`**AT**`ux-xu.com` 宛にご連絡下さい。
+
 # konashi SDK for Android
 [![wercker status](https://app.wercker.com/status/6617295015c7f7518afc67a3182bd241/s/master "wercker status")](https://app.wercker.com/project/bykey/6617295015c7f7518afc67a3182bd241)
 [![Download](https://api.bintray.com/packages/konashi-dev/maven/konashi-android-sdk/images/download.svg)](https://bintray.com/konashi-dev/maven/konashi-android-sdk/_latestVersion)
