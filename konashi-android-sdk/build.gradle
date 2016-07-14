@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'groovyx.grooid.groovy-android'
 
 def versionMajor = 1
-def versionMinor = 0
+def versionMinor = 1
 def versionPatch = 1
 def versionBuild = 0
 
