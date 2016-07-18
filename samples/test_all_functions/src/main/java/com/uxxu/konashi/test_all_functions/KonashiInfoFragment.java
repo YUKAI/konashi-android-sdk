@@ -2,6 +2,7 @@ package com.uxxu.konashi.test_all_functions;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,9 @@ import com.uxxu.konashi.lib.Konashi;
 import com.uxxu.konashi.lib.KonashiManager;
 
 import org.jdeferred.DoneCallback;
+import org.jdeferred.FailCallback;
+
+import info.izumin.android.bletia.BletiaException;
 
 /**
  * Created by kiryu on 7/27/15.
@@ -84,6 +88,12 @@ public final class KonashiInfoFragment extends Fragment {
             public void onDone(final Integer result) {
                 mBatteryTextView.setText(String.format("%d%%", result));
                 mBatteryProgressBar.setProgress(result);
+            }
+        })
+        .fail(new FailCallback<BletiaException>() {
+            @Override
+            public void onFail(BletiaException result) {
+                Log.d("KonashiInfoFragment", result.getMessage());
             }
         });
         mKonashiManager.getSignalStrength().then(new DoneCallback<Integer>() {
