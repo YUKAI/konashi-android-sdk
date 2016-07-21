@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 
+import com.uxxu.konashi.lib.action.KonashiEnableNotificationAction;
 import com.uxxu.konashi.lib.dispatcher.DispatcherContainer;
 import com.uxxu.konashi.lib.util.KonashiUtils;
 import com.uxxu.konashi.lib.util.SpiUtils;
@@ -50,13 +51,22 @@ class CallbackHandler implements BletiaListener {
 
     @Override
     public void onServicesDiscovered(Bletia bletia, int status) {
+//        if (status == BluetoothGatt.GATT_SUCCESS) {
+//            BluetoothGattService service = bletia.getService(KonashiUUID.KONASHI_SERVICE_UUID);
+//            bletia.enableNotification(service.getCharacteristic(KonashiUUID.PIO_INPUT_NOTIFICATION_UUID), true);
+//            bletia.enableNotification(service.getCharacteristic(KonashiUUID.UART_RX_NOTIFICATION_UUID), true);
+//            bletia.enableNotification(service.getCharacteristic(KonashiUUID.HARDWARE_LOW_BAT_NOTIFICATION_UUID), true);
+//            BluetoothGattCharacteristic spiCharacteristic = service.getCharacteristic(KonashiUUID.SPI_NOTIFICATION_UUID);
+//            if(spiCharacteristic != null) bletia.enableNotification(spiCharacteristic, true);
+//            mEmitter.emitConnect(mManager);
+//        }
         if (status == BluetoothGatt.GATT_SUCCESS) {
             BluetoothGattService service = bletia.getService(KonashiUUID.KONASHI_SERVICE_UUID);
-            bletia.enableNotification(service.getCharacteristic(KonashiUUID.PIO_INPUT_NOTIFICATION_UUID), true);
-            bletia.enableNotification(service.getCharacteristic(KonashiUUID.UART_RX_NOTIFICATION_UUID), true);
-            bletia.enableNotification(service.getCharacteristic(KonashiUUID.HARDWARE_LOW_BAT_NOTIFICATION_UUID), true);
+            bletia.execute(new KonashiEnableNotificationAction(service.getCharacteristic(KonashiUUID.PIO_INPUT_NOTIFICATION_UUID), true));
+            bletia.execute(new KonashiEnableNotificationAction(service.getCharacteristic(KonashiUUID.UART_RX_NOTIFICATION_UUID), true));
+            bletia.execute(new KonashiEnableNotificationAction(service.getCharacteristic(KonashiUUID.HARDWARE_LOW_BAT_NOTIFICATION_UUID), true));
             BluetoothGattCharacteristic spiCharacteristic = service.getCharacteristic(KonashiUUID.SPI_NOTIFICATION_UUID);
-            if(spiCharacteristic != null) bletia.enableNotification(spiCharacteristic, true);
+            if(spiCharacteristic != null) bletia.execute(new KonashiEnableNotificationAction(spiCharacteristic, true));
             mEmitter.emitConnect(mManager);
         }
     }
