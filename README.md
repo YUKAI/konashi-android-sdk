@@ -2,6 +2,8 @@
 [![wercker status](https://app.wercker.com/status/6617295015c7f7518afc67a3182bd241/s/master "wercker status")](https://app.wercker.com/project/bykey/6617295015c7f7518afc67a3182bd241)
 [![Download](https://api.bintray.com/packages/konashi-dev/maven/konashi-android-sdk/images/download.svg)](https://bintray.com/konashi-dev/maven/konashi-android-sdk/_latestVersion)
 
+※ バグ改善や要望以外の質問については `konashi`**AT**`ux-xu.com` 宛にご連絡下さい。
+
 # Requirements
 
 - Android 4.3 or later
@@ -14,7 +16,7 @@
 
 ```groovy
 dependencies {
-    compile 'com.uxxu.konashi:konashi-android-sdk:1.0.1'
+    compile 'com.uxxu.konashi:konashi-android-sdk:2.0.0'
 }
 ```
 
