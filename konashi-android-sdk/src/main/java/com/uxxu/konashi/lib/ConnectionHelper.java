@@ -125,6 +125,9 @@ class ConnectionHelper implements BleDeviceSelectionDialog.OnBleDeviceSelectList
                 mIsScanning = false;
                 if (mKonashiName == null) {
                     mDialog.finishFinding();
+                } else {
+                    // findWithNameした時にデバイスが見つけられなかったとき
+                    mCallback.onFindNoDevice();
                 }
             }
         }
@@ -132,5 +135,6 @@ class ConnectionHelper implements BleDeviceSelectionDialog.OnBleDeviceSelectList
 
     public interface Callback {
         void onSelectBleDevice(BluetoothDevice device);
+        void onFindNoDevice();
     }
 }

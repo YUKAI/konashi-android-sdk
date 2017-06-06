@@ -7,10 +7,12 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.uxxu.konashi.lib.Konashi;
 import com.uxxu.konashi.lib.KonashiListener;
 import com.uxxu.konashi.lib.KonashiManager;
+import com.uxxu.konashi.lib.util.KonashiUtils;
 
 import org.jdeferred.DoneCallback;
 
@@ -109,6 +111,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void onConnect(KonashiManager manager) {
             refreshViews();
+        }
+
+        @Override
+        public void onFindNoDevice(KonashiManager manager) {
+            refreshViews();
+
+            Toast.makeText(MainActivity.this, "Find No Konashi Devices", Toast.LENGTH_SHORT).show();
         }
 
         @Override

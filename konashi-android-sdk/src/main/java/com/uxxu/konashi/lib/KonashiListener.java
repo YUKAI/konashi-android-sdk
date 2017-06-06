@@ -7,6 +7,7 @@ import info.izumin.android.bletia.BletiaException;
  */
 public interface KonashiListener {
     void onConnect(KonashiManager manager);
+    void onFindNoDevice(KonashiManager manager);
     void onDisconnect(KonashiManager manager);
     void onError(KonashiManager manager, BletiaException e);
     void onUpdatePioOutput(KonashiManager manager, int value);
