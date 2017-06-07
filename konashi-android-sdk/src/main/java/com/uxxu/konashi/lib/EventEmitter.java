@@ -37,6 +37,17 @@ class EventEmitter extends ArrayList<KonashiListener> {
         });
     }
 
+    public void emitConnectOtherDevice(final KonashiManager manager) {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                for (KonashiListener listener : self) {
+                    listener.onConnectOtherDevice(manager);
+                }
+            }
+        });
+    }
+
     public void emitDisconnect(final KonashiManager manager) {
         mHandler.post(new Runnable() {
             @Override

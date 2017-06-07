@@ -227,6 +227,15 @@ public class MainActivity extends AppCompatActivity
         }
 
         @Override
+        public void onConnectOtherDevice(KonashiManager manager) {
+            KonashiUtils.log("onConnectedOtherDevice");
+            refreshActionBarMenu();
+            mOverlay.setVisibility(View.VISIBLE);
+
+            Toast.makeText(MainActivity.this, "Connected Device is not Konashi", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
         public void onDisconnect(KonashiManager manager) {
             KonashiUtils.log("onDisconnected");
             refreshActionBarMenu();

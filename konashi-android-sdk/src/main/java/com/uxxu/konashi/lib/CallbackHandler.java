@@ -62,6 +62,9 @@ class CallbackHandler implements BletiaListener {
 //        }
         if (status == BluetoothGatt.GATT_SUCCESS) {
             BluetoothGattService service = bletia.getService(KonashiUUID.KONASHI_SERVICE_UUID);
+            if (service == null) {
+                mEmitter.emitConnectOtherDevice(mManager);
+            }
             bletia.execute(new KonashiEnableNotificationAction(service.getCharacteristic(KonashiUUID.PIO_INPUT_NOTIFICATION_UUID), true));
             bletia.execute(new KonashiEnableNotificationAction(service.getCharacteristic(KonashiUUID.UART_RX_NOTIFICATION_UUID), true));
             bletia.execute(new KonashiEnableNotificationAction(service.getCharacteristic(KonashiUUID.HARDWARE_LOW_BAT_NOTIFICATION_UUID), true));

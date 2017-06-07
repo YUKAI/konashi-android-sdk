@@ -126,6 +126,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         @Override
+        public void onConnectOtherDevice(KonashiManager manager) {
+            refreshViews();
+
+            Toast.makeText(MainActivity.this, "Connected Device is not Konashi", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
         public void onError(KonashiManager manager, BletiaException e) {
 
         }
