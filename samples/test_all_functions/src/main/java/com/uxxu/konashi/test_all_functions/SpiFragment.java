@@ -3,7 +3,6 @@ package com.uxxu.konashi.test_all_functions;
 import android.app.Fragment;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -203,6 +202,8 @@ public final class SpiFragment extends Fragment {
     private final KonashiListener mKonashiListener = new KonashiListener() {
         @Override public void onConnect(KonashiManager manager) {}
         @Override public void onDisconnect(KonashiManager manager) {}
+        @Override public void onFindNoDevice(KonashiManager manager) {}
+        @Override public void onConnectOtherDevice(KonashiManager manager) {}
         @Override public void onError(KonashiManager manager, BletiaException e) {}
         @Override public void onUpdatePioOutput(KonashiManager manager, int value) {}
         @Override public void onUpdateUartRx(KonashiManager manager, byte[] value) {}

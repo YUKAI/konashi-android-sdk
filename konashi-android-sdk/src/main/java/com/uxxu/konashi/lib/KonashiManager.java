@@ -702,5 +702,10 @@ public class KonashiManager {
         public void onSelectBleDevice(BluetoothDevice device) {
             connect(device);
         }
+
+        @Override
+        public void onFindNoDevice() {
+            mEmitter.emitFindNoDevice(KonashiManager.this);
+        }
     };
 }

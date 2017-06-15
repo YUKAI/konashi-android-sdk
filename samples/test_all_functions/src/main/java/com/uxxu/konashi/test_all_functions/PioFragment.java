@@ -87,6 +87,8 @@ public final class PioFragment extends Fragment {
     private final KonashiListener mKonashiListener = new KonashiListener() {
         @Override public void onConnect(KonashiManager manager) {}
         @Override public void onDisconnect(KonashiManager manager) {}
+        @Override public void onFindNoDevice(KonashiManager manager) {}
+        @Override public void onConnectOtherDevice(KonashiManager manager) {}
         @Override public void onError(KonashiManager manager, BletiaException e) {}
 
         @Override
