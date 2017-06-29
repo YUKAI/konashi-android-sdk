@@ -51,8 +51,6 @@ import org.jdeferred.DoneCallback;
 import org.jdeferred.DonePipe;
 import org.jdeferred.Promise;
 import org.jdeferred.android.AndroidDeferredManager;
-import org.jdeferred.android.AndroidDeferredObject;
-import org.jdeferred.impl.DeferredPromise;
 
 import java.util.UUID;
 
@@ -119,6 +117,8 @@ public class KonashiManager {
     private BluetoothDevice mDevice;
     private ConnectionHelper mConnectionHelper;
 
+    private Context mContext;
+
     ///////////////////////////
     // Initialization
     ///////////////////////////
@@ -156,6 +156,8 @@ public class KonashiManager {
         mBletia = new Bletia(context);
         mConnectionHelper = new ConnectionHelper(mConnectionHelperCallback, context);
         mBletia.addListener(mCallbackHandler);
+
+        mContext = context;
     }
 
     /**
@@ -247,7 +249,7 @@ public class KonashiManager {
     ///////////////////////////
     // PIO
     ///////////////////////////
-    
+
     /**
      * PIOのピンを入力として使うか、出力として使うかの設定を行う
      * @param pin 設定するPIOのピン名。
@@ -256,7 +258,7 @@ public class KonashiManager {
     public Promise<BluetoothGattCharacteristic, BletiaException, Void> pinMode(int pin, int mode){
         return execute(new PioPinModeAction(getKonashiService(), pin, mode, mPioStore.getModes()), mPioDispatcher);
     }
-    
+
     /**
      * PIOのピンを入力として使うか、出力として使うかの設定を行う
      * @param modes PIO0 〜 PIO7 の計8ピンの設定
@@ -264,7 +266,7 @@ public class KonashiManager {
     public Promise<BluetoothGattCharacteristic, BletiaException, Void> pinModeAll(int modes){
         return execute(new PioPinModeAction(getKonashiService(), modes), mPioDispatcher);
     }
-    
+
     /**
      * PIOのピンをプルアップするかの設定を行う
      * @param pin 設定するPIOのピン名
@@ -273,7 +275,7 @@ public class KonashiManager {
     public Promise<BluetoothGattCharacteristic, BletiaException, Void> pinPullup(int pin, int pullup){
         return execute(new PioPinPullupAction(getKonashiService(), pin, pullup, mPioStore.getPullups()), mPioDispatcher);
     }
-    
+
     /**
      * PIOのピンをプルアップするかの設定を行う
      * @param pullups PIO0 〜 PIO7 の計8ピンのプルアップの設定
@@ -281,7 +283,7 @@ public class KonashiManager {
     public Promise<BluetoothGattCharacteristic, BletiaException, Void> pinPullupAll(int pullups){
         return execute(new PioPinPullupAction(getKonashiService(), pullups), mPioDispatcher);
     }
-    
+
     /**
      * PIOの特定のピンの入力状態を取得する
      * @param pin PIOのピン名
@@ -290,7 +292,7 @@ public class KonashiManager {
     public int digitalRead(int pin){
         return mPioStore.getInput(pin);
     }
-    
+
     /**
      * PIOのすべてのピンの状態を取得する
      * @return PIOの状態(PIO0〜PIO7の入力状態が8bit(1byte)で表現)
@@ -298,7 +300,7 @@ public class KonashiManager {
     public int digitalReadAll(){
         return mPioStore.getInputs();
     }
-    
+
     /**
      * PIOの特定のピンの出力状態を設定する
      * @param pin 設定するPIOのピン名
@@ -307,7 +309,7 @@ public class KonashiManager {
     public Promise<BluetoothGattCharacteristic, BletiaException, Void> digitalWrite(int pin, int output){
         return execute(new PioDigitalWriteAction(getKonashiService(), pin, output, mPioStore.getOutputs()), mPioDispatcher);
     }
-    
+
     /**
      * PIOの特定のピンの出力状態を設定する
      * @param outputs PIOの出力状態。PIO0〜PIO7の出力状態が8bit(1byte)で表現
@@ -315,12 +317,12 @@ public class KonashiManager {
     public Promise<BluetoothGattCharacteristic, BletiaException, Void> digitalWriteAll(int outputs){
         return execute(new PioDigitalWriteAction(getKonashiService(), outputs), mPioDispatcher);
     }
-    
-    
+
+
     ///////////////////////////
     // PWM
     ///////////////////////////
-    
+
     /**
      * PIO の指定のピンを PWM として使用する/しないかを設定する
      * @param pin PWMモードの設定をするPIOのピン番号。Konashi.PIO0 〜 Konashi.PIO7。
@@ -346,7 +348,7 @@ public class KonashiManager {
 
         return promise;
     }
-    
+
     /**
      * 指定のピンのPWM周期を設定する
      * @param pin PWMモードの設定をするPIOのピン番号。Konashi.PIO0 〜 Konashi.PIO7。
@@ -355,7 +357,7 @@ public class KonashiManager {
     public Promise<BluetoothGattCharacteristic, BletiaException, Void> pwmPeriod(int pin, int period){
         return execute(new PwmPeriodAction(getKonashiService(), pin, period, mPwmStore.getDuty(pin))).then(mPwmDispatcher);
     }
-    
+
     /**
      * 指定のピンのPWMのデューティ(ONになっている時間)を設定する。
      * @param pin PWMモードの設定をするPIOのピン番号。Konashi.PIO0 〜 Konashi.PIO7。
@@ -364,7 +366,7 @@ public class KonashiManager {
     public Promise<BluetoothGattCharacteristic, BletiaException, Void> pwmDuty(int pin, int duty){
         return execute(new PwmDutyAction(getKonashiService(), pin, duty, mPwmStore.getPeriod(pin))).then(mPwmDispatcher);
     }
-    
+
     /**
      * 指定のピンのLEDの明るさを0%〜100%で指定する
      * @param pin PWMモードの設定をするPIOのピン番号。Konashi.PIO0 〜 Konashi.PIO7。
@@ -373,7 +375,7 @@ public class KonashiManager {
     public Promise<BluetoothGattCharacteristic, BletiaException, Void> pwmLedDrive(int pin, float dutyRatio){
         return execute(new PwmLedDriveAction(getKonashiService(), pin, dutyRatio, mPwmStore.getPeriod(pin))).then(mPwmDispatcher);
     }
-    
+
     /**
      * pwmLedDrive(int pin, float dutyRatio) の doubleでdutyRatioを指定する版。
      * @param pin PWMモードの設定をするPIOのピン番号。Konashi.PIO0 〜 Konashi.PIO7。
@@ -382,8 +384,8 @@ public class KonashiManager {
     public Promise<BluetoothGattCharacteristic, BletiaException, Void> pwmLedDrive(int pin, double dutyRatio){
         return pwmLedDrive(pin, (float) dutyRatio);
     }
-    
-    
+
+
     ///////////////////////////
     // AIO
     ///////////////////////////
@@ -397,7 +399,7 @@ public class KonashiManager {
                 .then(mAioDispatcher)
                 .then(new AioAnalogReadFilter(pin));
     }
-    
+
     /**
      * AIO の指定のピンに任意の電圧を出力する
      * @param pin AIOのピン名。指定可能なピン名は AIO0, AIO1, AIO
@@ -424,7 +426,7 @@ public class KonashiManager {
 //        }
 //    }
 
-    
+
     ///////////////////////////
     // UART
     ///////////////////////////
@@ -435,7 +437,7 @@ public class KonashiManager {
     public Promise<BluetoothGattCharacteristic, BletiaException, Void> uartMode(int mode){
         return execute(new UartModeAction(getKonashiService(), mode, mUartStore), mUartDispatcher);
     }
-    
+
     /**
      * UART の通信速度を設定する
      * @param baudrate UARTの通信速度。Konashi.UART_RATE_2K4 か Konashi.UART_RATE_9K6 を指定
@@ -481,12 +483,12 @@ public class KonashiManager {
 //            notifyKonashiError(KonashiErrorReason.NOT_ENABLED_UART);
 //        }
 //    }
-    
-    
+
+
     ///////////////////////////
     // I2C
     ///////////////////////////
-    
+
     /**
      * I2Cのコンディションを発行する
      * @param condition コンディション。Konashi.I2C_START_CONDITION, Konashi.I2C_RESTART_CONDITION, Konashi.I2C_STOP_CONDITION を指定できる。
@@ -672,6 +674,8 @@ public class KonashiManager {
 
     private void connect(BluetoothDevice device){
         mDevice = device;
+        mBletia = new Bletia(mContext);
+        mBletia.addListener(mCallbackHandler);
         mBletia.connect(device);
     }
 
