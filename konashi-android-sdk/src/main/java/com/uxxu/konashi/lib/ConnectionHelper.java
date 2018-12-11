@@ -20,7 +20,7 @@ class ConnectionHelper implements BleDeviceSelectionDialog.OnBleDeviceSelectList
     private final ConnectionHelper self = this;
 
     private static final long SCAN_PERIOD = 3000;
-    private static final String KONAHSHI_DEVICE_NAME = "konashi2";
+    private static final String KONAHSHI_DEVICE_NAME = "konashi";
 
     private Callback mCallback;
 
