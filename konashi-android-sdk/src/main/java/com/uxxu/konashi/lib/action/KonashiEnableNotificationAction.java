@@ -4,6 +4,8 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
 
+import com.uxxu.konashi.lib.util.KonashiUtils;
+
 import java.util.UUID;
 
 import info.izumin.android.bletia.BleErrorType;
@@ -36,6 +38,10 @@ public class KonashiEnableNotificationAction extends EnableNotificationAction {
     @Override
     public boolean execute(BluetoothGattWrapper gattWrapper) {
         if (gattWrapper.setCharacteristicNotification(getCharacteristic(), getEnabled())) {
+            KonashiUtils.log("setCharacteristicNotification execute");
+            BluetoothGattDescriptor descriptor = getCharacteristic().getDescriptor(UUID.fromString("00002902-0000-1000-8000-00805f9b34fb"));
+            descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+            gattWrapper.writeDescriptor(descriptor);
             return true;
         } else {
             getDeferred().reject(new BletiaException(this, BleErrorType.REQUEST_FAILURE));
