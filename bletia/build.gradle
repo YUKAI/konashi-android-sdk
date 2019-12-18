@@ -1,9 +1,8 @@
 apply plugin: 'com.android.library'
-apply plugin: 'groovyx.grooid.groovy-android'
 
-def versionMajor = 2
-def versionMinor = 1
-def versionPatch = 3
+def versionMajor = 1
+def versionMinor = 3
+def versionPatch = 5
 def versionBuild = 0
 
 def sdkVersionCode = versionMajor * 1000 + versionMinor * 100 + versionPatch * 10 + versionBuild
@@ -15,19 +14,14 @@ android {
 
     defaultConfig {
         minSdkVersion 18
-        targetSdkVersion 22
+        targetSdkVersion 23
         versionCode sdkVersionCode
         versionName sdkVersionName
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     packagingOptions {
-        exclude 'asm-license.txt'
-        exclude 'LICENSE'
-        exclude 'LICENSE.txt'
         exclude 'NOTICE'
-        exclude 'META-INF/LICENSE'
-        exclude 'META-INF/LICENSE.txt'
-        exclude 'META-INF/NOTICE'
+        exclude 'asm-license.txt'
     }
     buildTypes {
         release {
@@ -35,35 +29,26 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
-    lintOptions {
-        abortOnError false
-    }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile project(":bletia")
+    compile 'org.jdeferred:jdeferred-android-aar:1.2.4'
 
     androidTestCompile 'com.android.support.test:runner:0.3'
     androidTestCompile 'com.android.support.test:rules:0.3'
     androidTestCompile 'org.mockito:mockito-core:1.9.5'
-    androidTestCompile 'com.google.dexmaker:dexmaker:1.2'
     androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.2'
-    androidTestCompile 'com.squareup.assertj:assertj-android:1.0.1'
-
-    testCompile "org.spockframework:spock-core:1.0-groovy-2.4"
+    androidTestCompile 'com.squareup.assertj:assertj-android:1.1.0'
 }
-
 
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 
-group = 'com.uxxu.konashi'
+group = 'info.izumin.android'
 version = sdkVersionName
 
-def siteUrl = 'https://github.com/YUKAI/konashi-android-sdk'
-def gitUrl = 'https://github.com/YUKAI/konashi-android-sdk.git'
+def siteUrl = 'https://github.com/izumin5210/Bletia'
+def gitUrl = 'https://github.com/izumin5210/Bletia.git'
 
 bintray {
     user = System.getenv('BINTRAY_USER')
@@ -74,17 +59,16 @@ bintray {
     pkg {
         repo = 'maven'
         name = project.name
-        userOrg = 'konashi-dev'
-        desc = 'konashi SDK for Android'
+        desc = 'Android BLE Gatt wrapper with promise.'
         websiteUrl = siteUrl
         issueTrackerUrl = "${siteUrl}/issues"
         vcsUrl = gitUrl
         licenses = ['Apache-2.0']
-        labels = ['aar', 'android', 'konashi', 'BLE']
+        labels = ['aar', 'android', 'BLE']
         publicDownloadNumbers = true
         version {
             name = sdkVersionName
-            desc = "konashi Android SDK ${sdkVersionName}"
+            desc = "Bletia: Android BLE Gatt wrapper ${sdkVersionName}"
             released  = new Date()
             vcsTag = sdkVersionName
         }
@@ -96,7 +80,7 @@ install {
         pom {
             project {
                 packaging 'aar'
-                name 'konashi-android-sdk'
+                name 'bletia'
                 url siteUrl
                 licenses {
                     license {
@@ -109,11 +93,6 @@ install {
                         id 'izumin5210'
                         name 'Masayuki IZUMI'
                         email 'masayuki@izumin.info'
-                    }
-                    developer {
-                        id 'e10dokup'
-                        name 'Yoshihiro WADA'
-                        email '1365196t@stu.kobe-u.ac.jp'
                     }
                 }
                 scm {
