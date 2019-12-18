@@ -1,6 +1,7 @@
 package com.uxxu.konashi.lib.action;
 
 import android.bluetooth.BluetoothGattService;
+import android.util.Log;
 
 import com.uxxu.konashi.lib.KonashiErrorType;
 
