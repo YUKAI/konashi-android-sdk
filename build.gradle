@@ -5,7 +5,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.2'
+        classpath 'com.android.tools.build:gradle:2.1.0'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.0'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:1.4'
         classpath 'org.codehaus.groovy:gradle-groovy-android-plugin:0.3.6'
@@ -24,6 +24,6 @@ allprojects {
 
 project.ext {
     compileSdkVersion = 23
-    buildToolsVersion = "28.0.3"
+    buildToolsVersion = "23.0.1"
     permissionsDispatcherVersion = "2.1.2"
 }
