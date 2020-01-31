@@ -112,8 +112,18 @@ class CallbackHandler implements BletiaListener {
             @Override
             public void onDone(BluetoothGattCharacteristic bluetoothGattCharacteristic) {
                 BluetoothGattCharacteristic spiCharacteristic = service.getCharacteristic(KonashiUUID.SPI_NOTIFICATION_UUID);
-                if(spiCharacteristic != null) bletia.execute(new KonashiEnableNotificationAction(spiCharacteristic, true));
-                mEmitter.emitConnect(mManager);
+                if(spiCharacteristic != null) {
+                    bletia.execute(new KonashiEnableNotificationAction(spiCharacteristic, true))
+                        .done(new DoneCallback<BluetoothGattCharacteristic>() {
+                            @Override
+                            public void onDone(BluetoothGattCharacteristic characteristic) {
+                                mEmitter.emitConnect(mManager);
+                            }
+                        });
+                } else {
+                    mEmitter.emitConnect(mManager);
+                }
+
             }
         }).fail(new FailCallback<BletiaException>() {
             @Override
